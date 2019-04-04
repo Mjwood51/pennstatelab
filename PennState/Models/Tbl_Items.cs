@@ -30,7 +30,7 @@ namespace PennState.Models
         public string WebAddress { get; set; }
         public string Vendor { get; set; }
         public string ContactInfo { get; set; }
-        public Nullable<System.DateTime> PurchaseDate { get; set; }
+        public System.DateTime PurchaseDate { get; set; }
         public Nullable<System.DateTime> Added { get; set; }
         public Nullable<System.DateTime> Updated { get; set; }
         public decimal PurchasePrice { get; set; }
