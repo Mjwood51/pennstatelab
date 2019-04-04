@@ -4,39 +4,194 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Scripts.Render("~/bundles/jquery")
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+    <link id="active_style" rel="stylesheet" href="//netdna.bootstrapcdn.com/bootswatch/3.1.1/cosmo/bootstrap.min.css">
+    <link href="~/Content/PagedList.css" rel="stylesheet" />
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
+    <link href="~/Content/jquery-ui.theme.min.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+    @Html.Partial("_NavBar")
+
+    <div class="container body-content">
+        @RenderBody()
+    </div>
+
+    <div class="logModal" id="logInModal" data-backdrop="false">
+        <div class="modal-content" id="modContent">
+            <div class="modal-header">
+                <h3 class="modal-title">Physics Lab Inventory - Sign In</h3>
             </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
-                </ul>
+            <div class="modal-body" id="logInBod">
             </div>
         </div>
     </div>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-        </footer>
-    </div>
-
-    @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
 </body>
 </html>
+<script src="~/Scripts/chosen.jquery.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<script src="~/Scripts/notify.js"></script>
+<script type="text/javascript">
+    $('#myModal2').on('shown.bs.modal', function () {
+        $('.chosen-select', this).chosen();
+    });
+
+    $('#myModal').on('shown.bs.modal', function () {
+        $('.chosen-select', this).chosen();
+    });
+
+
+    $.notify.addStyle('happygreen', {
+        html: "<div>☺<span data-notify-text/>☺</div>",
+        classes: {
+            base: {
+                "white-space": "nowrap",
+                "background-color": "lightgreen",
+                "padding": "5px"
+            },
+            supergreen: {
+                "color": "white",
+                "background-color": "limegreen"
+            }
+        }
+    });
+
+    function validateAddForm() {
+        if (!$("#createForm").valid()) {
+            return false;
+        }
+        else {
+            $.notify("Item Has Been Added", {
+                style: 'happygreen'
+            });
+        }
+    };
+
+    function validateEditForm() {
+        if (!$("#editForm").valid()) {
+            return false;
+        }
+        else {
+            $.notify("Item Saved", {
+                style: 'happygreen'
+            });
+        }
+    };
+
+
+        var logIn = function () {
+            var modal = document.getElementById('logInModal');
+        var url = '@Url.Action("Login", "Account")';
+            $("#logInBod").load(url, function () {
+                //$(".jumbotron").fadeIn(500).addClass('fadein');
+                //$("body").fadeIn(500).addClass('fadein');
+                $("#logInModal").fadeIn(500).modal(modal.style.display = "block").show();
+
+            });
+            window.onclick = function (event) {
+                if (!$(event.target).closest('#logInModal').length && !$(event.target).is('#logInModal')) {
+
+                    $("#logInModal").fadeOut(500).modal(modal.style.display = "none").hide();
+                    //$(".jumbotron").fadeIn(500).removeClass('fadein');
+                    //$("body").fadeIn(500).removeClass('fadein');
+
+                }
+            }
+
+        }
+
+        var modal2 = document.getElementById('myModal');
+        function closeEdit() {
+            $("body").fadeIn(500).removeClass('fadein');
+            $("#myModal").fadeOut(500).modal('hide', function () {
+
+                modal2.style.right = "-600px";
+            }, window.location.reload());
+        }
+
+
+        var editItem = function (id) {
+
+
+            var url = '@Url.Action("Edit", "Item")/' + id;
+                    $("#modalBod").load(url, function () {
+                        $("body").fadeIn(500).addClass('fadein');
+                        $("#myModal").fadeIn(500).modal('show', modal2.style.right = "0px");
+            });
+
+            window.ondblclick = function (event) {
+
+                if (!$(event.target).closest('#myModal').length) {
+                    closeEdit();
+                }
+            }
+
+
+         }
+        var modal3 = document.getElementById('myModal2');
+        //Close Add New Item
+        function closeAdd() {
+            $("body").fadeIn(500).removeClass('fadein');
+            $("#myModal2").fadeOut(500).modal('hide', function () {
+                modal3.style.display = "none";
+            }, window.location.reload());
+        }
+
+
+        var addItem = function () {
+
+            var url = '@Url.Action("AddItem", "Item")';
+                    $("#createBod").load(url, function () {
+
+                        $("#myModal2").fadeIn(500).modal('show', function () {
+                            modal3.style.display = "block";
+                            $("body").fadeIn(500).addClass('fadein');
+                        });
+                    });
+
+            window.ondblclick = function (event) {
+                if (!$(event.target).closest('#myModal2').length) {
+                    closeAdd();
+                }
+            }
+        }
+
+    var confirmDelete = function(itemid){
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("DeleteItem", "Item")/' + itemid,
+            beforeSend: function () {
+                return confirm("Are you sure you want to delete this item?");
+            }
+        }).done(function (data) {
+            $("#delModal").hide();
+            $("#row_" + itemid).remove();
+            $.notify("Item Deleted", {
+                style: 'happygreen'
+            });
+        });
+    }
+
+
+
+        $('.dropdown-toggle').on("hover", function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+            $(this).next('.dropdown-menu').toggle();
+
+
+    });
+
+
+
+
+
+
+</script>

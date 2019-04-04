@@ -1,14 +1,106 @@
 ﻿body {
-    padding-top: 50px;
     padding-bottom: 20px;
+    position: relative;
+    background-color: #FFFFFF;
+}
+
+.categoryButton {
+    width: 190px;
+    left: 5px;
+}
+
+.categoryDrop {
+    padding-top: 20px;
+}
+
+
+.padRight {
+    padding-right: 170px;
+}
+
+.padLeft {
+    position: relative
+}
+
+.inner-addon {
+    position: relative;
+}
+
+    /* style icon */
+    .inner-addon .glyphicon {
+        position: absolute;
+        float: right;
+        padding: 10px;
+        pointer-events: none;
+    }
+
+.imgHolder {
+    position: relative;
+}
+
+    .imgHolder span {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+    }
+
+.text-box {
+    width: 200px;
+    height: 40px;
+}
+
+.check-box {
+    display: block;
+    width: 20px;
+}
+
+.single-line {
+    position: relative;
+}
+
+.overlap {
+    display: flex;
 }
 
 /* Set padding to keep content from hitting the edges */
 .body-content {
-    padding-left: 15px;
-    padding-right: 15px;
+    padding-left: 5px;
+    padding-right: 5px;
+    position: relative;
 }
 
+.dropdown-submenu {
+    position: relative;
+}
+
+    .dropdown-submenu .dropdown-menu {
+        top: 0;
+        left: 100%;
+        margin-top: -1px;
+    }
+
+label {
+    display: inline-block;
+    /*width:230px;*/
+    text-align: left;
+    white-space: nowrap;
+    float: left;
+}
+
+.block {
+    padding-top: 20px;
+    padding-bottom: 5px;
+}
+
+
+#header {
+    position: relative;
+    padding-top: 0px;
+}
+
+.page-init {
+    margin-top: 100px;
+}
 /* Override the default bootstrap behavior where horizontal description lists 
    will truncate terms that are too long to fit in the left column 
 */
@@ -16,9 +108,222 @@
     white-space: normal;
 }
 
-/* Set width on the form input elements since they're 100% wide by default */
-input,
-select,
-textarea {
-    max-width: 280px;
+.menu-icon {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 50px;
+    height: 44px;
+    padding: 4px 8px;
+    background: #262626;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+    .menu-icon span {
+        width: 100%;
+        height: 4px;
+        display: block;
+        background: #fff;
+        margin: 6px 0;
+        transition: .5s;
+    }
+
+.container-pos {
+    position: inherit;
+}
+
+.myTableRow tr {
+    background: #F5F5DC;
+}
+
+    .myTableRow tr:hover {
+        color: aqua;
+    }
+
+.parent-sidebar {
+    position: center;
+}
+
+.fadein {
+    background-color: dimgrey;
+}
+
+.text-left {
+    left: 90px;
+}
+
+.align-left {
+    float: left;
+}
+
+.sidebar {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    top: 62px;
+    width: 280px;
+    height: 100vh;
+    background: #262626;
+    transition: .5s;
+    padding: 20px;
+    text-align: center;
+    align-content: center;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+
+.edit {
+    display: inline-block;
+    position: relative;
+    /*float: left;*/
+}
+
+p.thick {
+    font-weight: bold;
+}
+
+.listBox {
+    position: fixed;
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    overflow: auto;
+    width: 1640px;
+    margin-right: 10px;
+    height: inherit;
+    left: inherit;
+    top: 62px;
+    right: -10px;
+    bottom: 0px;
+    background: #FFFFFF;
+}
+
+
+.sideModal {
+    position: fixed;
+    right: -600px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    top: 62px;
+    width: 600px;
+    height: 93.6vh;
+    background: #FFFFFF;
+    transition: .5s;
+    text-align: left;
+    overflow: auto;
+}
+
+.modal-content {
+    height: 50%;
+    width: 40%;
+    margin: 15% auto;
+}
+
+.ui-dialog {
+    overflow: visible;
+}
+
+.modal-title {
+    margin-left: 20px;
+}
+
+.logModal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    box-sizing: border-box;
+}
+
+.createModal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    bottom: 0px;
+    left: 600px;
+    width: 675px; /* Full width */
+    height: 100vh; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: white; /* Fallback color */
+    box-sizing: border-box;
+}
+
+
+
+#searchWrapper img {
+    vertical-align: middle;
+}
+
+
+table.myFormat {
+    table-layout: fixed;
+    width: 100%;
+    float: right;
+    position: relative;
+}
+
+.modallogin {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%; /* Could be more or less, depending on screen size */
+}
+
+.table-spacing {
+    border-spacing: 5px;
+    position: relative;
+}
+
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-menu {
+    top: 0;
+    left: 100%;
+    display: none;
+    transition: 2s;
+}
+
+.dropup,
+.dropright,
+.dropleft,
+.dropdown {
+    position: relative;
+}
+
+.dropdown-toggle {
+    position: relative;
+    transition: 500ms;
+}
+
+.dropdown:hover .dropdown-menu {
+    transition-delay: 0s;
+    display: block;
+}
+
+.dropdown-menu:hover .dropdown-menu {
+    transition-delay: 0s;
+    display: block;
+}
+
+#background {
+    top: 0px;
+    right: 200px;
+    left: 0;
+    bottom: 0px;
+    background: white;
 }

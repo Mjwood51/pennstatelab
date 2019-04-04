@@ -1,0 +1,646 @@
+﻿@model PennState.ViewModels.ItemViewModel
+@using System.Web.UI.WebControls
+@using PennState.Models
+@using PennState.Controllers;
+@using PagedList.Mvc;
+@using PagedList;
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (TempData["SM"] != null)
+{
+    <div class="alert alert-success">@TempData["SM"]</div>
+}
+
+@{
+    List<Item> items = Model.Items.ToList();
+    TempData["List"] = items;
+    TempData.Keep("List");
+}
+
+<div class="page-init">
+    <div id="listBoxId" class="listBox">
+        <div id="theTable">
+            <table id="myTable" class="table table-hover table-striped header-fixed">
+                <tbody id="myTableBody">
+                    <tr>
+                        <th scope="col">
+                            Name
+                        </th>
+                        <th scope="col">
+                            Vendor
+                        </th>
+                        <th scope="col">
+                            Amount
+                        </th>
+                        <th scope="col">
+                            Location
+                        </th>
+                        <th scope="col">
+                            Type
+                        </th>
+                        <th scope="col">Owner</th>
+                        <th scope="col">Added</th>
+                        <th scope="col">Updated</th>
+                        <th scope="col"> </th>
+                    </tr>
+
+                    @foreach (var item in ViewBag.ItemList)
+                    {
+                        <tr class="table-primary" scope="row" id="row_@item.Id" data-toggle="modal">
+                            <td onclick="editItem(@item.Id)">
+                                @item.ItemName
+                            </td>
+                            <td onclick="editItem(@item.Id)">
+                                @item.Vendor
+                            </td>
+                            <td onclick="editItem(@item.Id)">
+                                @item.AmountInStock
+                            </td>
+                            <td onclick="editItem(@item.Id)">
+                                @item.Location.LocationName<br>
+                                @item.SubLocation.SubLocationName<br>
+                                @item.LocationComments<br>
+                            </td>
+                            <td onclick="editItem(@item.Id)">
+                                @item.ItemType
+                            </td>
+                            <td onclick="editItem(@item.Id)">@item.User.FirstName @item.User.LastName</td>
+                            <td onclick="editItem(@item.Id)">@item.Added</td>
+                            <td onclick="editItem(@item.Id)">@item.Updated</td>
+                            <td>
+                                <a href="#"><i class="glyphicon glyphicon-eye-open"></i></a> |
+                                <a href="#" onclick="editItem(@item.Id)" data-toggle="modal"><i class="glyphicon glyphicon-edit"></i></a> |
+                                <a href="#" onclick="confirmDelete(@item.Id)"><i class="glyphicon glyphicon-trash"></i></a>
+                                <form id="itemId" hidden="hidden">
+                                    @item.Id
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="col-md-12 text-center">
+                <ul class="pagination pagination-lg pager" id="myPager"></ul>
+            </div>
+            @*@Html.PagedListPager(ViewBag.ItemList, page => Url.Action("NextPage",
+        new
+        {
+            page
+        }))*@
+        @*PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "theTable", InsertionMode = InsertionMode.Replace }))*@
+        </div>
+    </div>
+</div>
+
+<div tabindex="-1" class="sideModal" role="dialog" id="myModal" data-backdrop="false">
+    <div style="bottom:20px">
+        <div class="modal-header">
+            <h3 class="modal-title">Edit Item</h3>
+        </div>
+        <div class="modal-body" id="modalBod">
+
+        </div>
+    </div>
+
+</div>
+
+<div tabindex="-1" class="createModal" role="dialog" id="myModal2" data-backdrop="false">
+        <div style="bottom:20px">
+            <div class="modal-header">
+                <h3 class="modal-title" style="text-align:left">Add Item In Physics Inventory</h3>
+            </div>
+            <div class="modal-body" id="createBod">
+
+            </div>
+        </div>
+</div>
+
+
+<div class="page-init">
+    <h3></h3>
+    <div class="parent-sidebar">
+        <div class="sidebar" id="sideForm">
+            <a href="#"><img src="" /></a>
+            <div class="page-init">
+                <div class="row">
+                    <div class="form-group" style="padding-left:80px">
+                        <a href="#" onclick="addItem()" data-toggle="modal">Add New Item <i class="glyphicon glyphicon-pencil"></i></a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group categoryDrop" style="padding-left:15px">
+                        <input class="form-control mr-sm-2" type="text" placeholder="Search Inventory" />
+                    </div>
+                </div>
+
+                @* Dropdown menu starts here *@
+                <div class="row">
+                    <div class="form-group">
+                        <div class="btn-group categoryDrop" style="padding-left:30px">
+                            <div class="dropdown">
+                                <button class="btn btn-primary dropdown-toggle categoryButton" id="h" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Location</button>
+                                <div class="dropdown-menu">
+                                    <div class="form-body">
+                                        <div id="jstreeLoc">
+                                            @(Html.TreeViewController(Model.LocationsC)
+                                                                                                                                                                                                                                                                                                                                                                                      .EmptyContent("Locations")
+                                                                                                                                                                                                                                                                                                                                                                                          .Children(m => m.Childs)
+                                                                                                                                                                                                                                                                                                                                                                                          .HtmlAttributes(new { id = "tree" })
+                                                                                                                                                                                                                                                                                                                                                                                  .ChildrenHtmlAttributes(new { @class = "subItem" })
+                                                                                                                                                                                                                                                                                                                                                                                      .ItemText(m => m.LocationName)
+                                                                                                                                                                                                                                                                                                                                                                                      .ItemTemplate(
+                                                                                                                                                                                                                    @<text>
+                                                                                                                                                                                                                        <a href="@item.LocationName" desc="@item.LocationName">@item.LocationName</a>
+                                                                                                                                                                                                                    </text>)
+
+                                            )
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <div class="btn-group  categoryDrop" style="padding-left:30px">
+                            <div class="dropdown" id="h2">
+                                <button class="btn btn-primary dropdown-toggle categoryButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Type</button>
+                                <div class="dropdown-menu">
+                                    <div class="form-body">
+                                        <div id="jstree1">
+                                            @(Html.TreeViewController(Model.Types)
+                                                                                                                                                                                                                                                                                                                                                              .EmptyContent("Types")
+                                                                                                                                                                                                                                                                                                                                                              .Children(m => m.Childs)
+                                                                                                                                                                                                                                                                                                                                                              .HtmlAttributes(new { id = "tree" })
+                                                                                                                                                                                                                                                                                                                                                          .ChildrenHtmlAttributes(new { @class = "subItem" })
+                                                                                                                                                                                                                                                                                                                                                              .ItemText(m => m.TypeName)
+                                                                                                                                                                                                                                                                                                                                                              .ItemTemplate(
+                                                                                                                                                                                    @<text>
+                                                                                                                                                                                        <a href="@item.TypeName" desc="@item.TypeName">@item.TypeName</a>
+                                                                                                                                                                                    </text>)
+                                            )
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <div class="btn-group categoryDrop" style="padding-left:30px">
+                            <div class="dropdown" id="h3">
+                                <button class="btn btn-primary dropdown-toggle categoryButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Vendor</button>
+                                <div class="dropdown-menu">
+                                    <div class="form-body">
+                                        <div id="jstree2">
+                                            @(Html.TreeViewController(Model.Vendors)
+                                                                                                                                                                                                                                                                                                                                                                      .EmptyContent("Vendors")
+                                                                                                                                                                                                                                                                                                                                                                      .Children(m => m.Childs)
+                                                                                                                                                                                                                                                                                                                                                                      .HtmlAttributes(new { id = "tree" })
+                                                                                                                                                                                                                                                                                                                                                                  .ChildrenHtmlAttributes(new { @class = "subItem" })
+                                                                                                                                                                                                                                                                                                                                                                      .ItemText(m => m.VendorName)
+                                                                                                                                                                                                                                                                                                                                                                      .ItemTemplate(
+                                                                                                                                                                                    @<text>
+                                                                                                                                                                                        <a href="@item.VendorName" desc="@item.VendorName">@item.VendorName</a>
+                                                                                                                                                                                    </text>)
+                                            )
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <div class="btn-group categoryDrop" style="padding-left:30px">
+                            <div class="dropdown" id="h4">
+                                <button class="btn btn-primary dropdown-toggle categoryButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Owner</button>
+                                <div class="dropdown-menu">
+                                    <div class="form-body">
+                                        <div id="jstree3">
+                                            @(Html.TreeViewController(Model.Owners)
+                                                                                                                                                                                                                                                                                                                                                                              .EmptyContent("Owner")
+                                                                                                                                                                                                                                                                                                                                                                              .Children(m => m.Childs)
+                                                                                                                                                                                                                                                                                                                                                                              .HtmlAttributes(new { id = "tree" })
+                                                                                                                                                                                                                                                                                                                                                                          .ChildrenHtmlAttributes(new { @class = "subItem" })
+                                                                                                                                                                                                                                                                                                                                                                              .ItemText(m => m.OwnerName)
+                                                                                                                                                                                                                                                                                                                                                                              .ItemTemplate(
+                                                                                                                                                                                    @<text>
+                                                                                                                                                                                        <a href="@item.OwnerName" desc="@item.OwnerName">@item.OwnerName</a>
+                                                                                                                                                                                    </text>)
+                                            )
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @*Dropdown menu ends here*@
+            </div>
+            <a href="#" style="padding-top:10px;padding-right:20px" class="btn-link" onclick="location.href='@Url.Action("GetAllItems", "Item")'" id="clearchk">Start Over (Full List)</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+    <script src="~/Scripts/jstree.min.js"></script>
+    <script>
+        
+
+     
+
+        $(document).ready(function () {
+
+
+            var jstreeLocInst = $('#jstreeLoc').jstree({
+
+                "core": {
+                    "multiple": true,
+                    "check_callback": true,
+                    'themes': {
+                        "responsive": true,
+                        'variant': 'larg',
+                        'stripes': false,
+                        'dots': false
+                    }
+                },
+                "checkbox": {
+                    "two_state": false,
+                    "tie-selection": true,
+                    "state": { "checked": false }
+                },
+                "types": {
+                    "default": {
+                        "icon": "fa fa-folder icon-state-warning icon-lg"
+                    },
+                    "file": {
+                        "icon": "fa fa-file icon-state-warning icon-lg"
+                    }
+                },
+                "plugins": ["dnd", "state", "types", "sort", "checkbox", "ui", "json_data"]
+            });
+
+            var jstree1Inst = $('#jstree1').jstree({
+
+                "core": {
+                    "multiple": true,
+                    "check_callback": true,
+                    'themes': {
+                        "responsive": true,
+                        'variant': 'larg',
+                        'stripes': false,
+                        'dots': false
+                    }
+                },
+                "checkbox": {
+                    "two_state": false,
+                    "tie-selection": true,
+                    "state": { "checked": false }
+                },
+                "types": {
+                    "default": {
+                        "icon": "fa fa-folder icon-state-warning icon-lg"
+                    },
+                    "file": {
+                        "icon": "fa fa-file icon-state-warning icon-lg"
+                    }
+                },
+                "plugins": ["dnd", "state", "types", "sort", "checkbox", "ui", "json_data"]
+            });
+
+            var jstree2Inst = $('#jstree2').jstree({
+
+                "core": {
+                    "multiple": true,
+                    "check_callback": true,
+                    'themes': {
+                        "responsive": true,
+                        'variant': 'larg',
+                        'stripes': false,
+                        'dots': false
+                    }
+                },
+                "checkbox": {
+                    "two_state": false,
+                    "tie-selection": true,
+                    "state": { "checked": false }
+                },
+                "types": {
+                    "default": {
+                        "icon": "fa fa-folder icon-state-warning icon-lg"
+                    },
+                    "file": {
+                        "icon": "fa fa-file icon-state-warning icon-lg"
+                    }
+                },
+                "plugins": ["dnd", "state", "types", "sort", "checkbox", "ui", "json_data"]
+            });
+
+            var jstree3Inst = $('#jstree3').jstree({
+
+                "core": {
+                    "multiple": false,
+                    "check_callback": true,
+                    'themes': {
+                        "responsive": true,
+                        'variant': 'larg',
+                        'stripes': false,
+                        'dots': false
+                    }
+                },
+                "checkbox": {
+                    "two_state": true,
+                    "tie-selection": true,
+                    "state": { "checked": false }
+                },
+                "types": {
+                    "default": {
+                        "icon": "fa fa-folder icon-state-warning icon-lg"
+                    },
+                    "file": {
+                        "icon": "fa fa-file icon-state-warning icon-lg"
+                    }
+                },
+                "plugins": ["dnd", "state", "types", "sort", "checkbox", "ui", "json_data"]
+            });
+
+            function getNodes(arr, tree) {
+                var i, j, r = [];
+                var jsonNodes = tree.jstree(true).get_json('#', { flat: true });
+                if (arr.length > 0) {
+                    for (i = 0, j = arr.length; i < j; i++) {
+                        if (tree.jstree(true).get_node(arr[i]).id != -1) {
+                            r.push(tree.jstree(true).get_node(arr[i]));
+                        }
+                    }
+                }
+                else {
+                    for (i = 0, j = jsonNodes.length; i < j; i++) {
+                        if (tree.jstree(true).get_node(jsonNodes[i]).id != -1) {
+                            r.push(tree.jstree(true).get_node(jsonNodes[i]));
+                        }
+                    }
+                }
+                return r;
+            }
+
+            function getSelectedNodes(data, tree) {
+                var i, j, r = [];
+                var jsonNodes = tree.jstree(true).get_json('#', { flat: true });
+                if (data.selected.length > 0) {
+                    for (i = 0, j = data.selected.length; i < j; i++) {
+                        if (data.instance.get_node(data.selected[i]).id != -1) {
+                            r.push(data.instance.get_node(data.selected[i]));
+                        }
+                    }
+                }
+                else {
+                    for (i = 0, j = jsonNodes.length; i < j; i++) {
+                        if (data.instance.get_node(jsonNodes[i]).id != -1) {
+                            r.push(data.instance.get_node(jsonNodes[i]));
+                        }
+                    }
+                }
+                return r;
+            }
+
+            function getLocationNames(r){
+                var h = [], z = [], p, node, i, j;
+
+                for (i = 0, j = r.length; i < j; i++) {
+                    if (jstreeLocInst.jstree(true).is_leaf(r[i])) {
+                        h.push(r[i]);
+                    }
+                }
+
+                for (i = 0, j = h.length; i < j; i++) {
+                    p = h[i].parent;
+                    node = jstreeLocInst.jstree(true).get_node(p.toString());
+                    z.push(node.text);
+                    z.push(h[i].text);
+                }
+                return z;
+            }
+
+            function getTreeNames(selection) {
+                var k, p, names = [];
+                for (k = 0, p = selection.length; k < p; k++) {
+                    names.push(selection[k].text);
+                }
+                return names;
+            }
+
+            $('#jstreeLoc').on('changed.jstree', function (e, data) {
+                e.preventDefault();
+                var l = [], t = [], v = [], o = [];
+                if (data.event.type = "click") {
+                    var page = $("#pageNum").serialize();
+
+                    var locationAr = getSelectedNodes(data, jstreeLocInst);
+                    l = getLocationNames(locationAr);
+
+                    var selType = jstree1Inst.jstree("get_checked");
+                    if (selType.length > 0) {
+                        selType = getNodes(selType, jstree1Inst);
+                        t = getTreeNames(selType);
+                    }
+                    else {
+                        t = null;
+                    }
+
+                    var selVendor = jstree2Inst.jstree("get_checked");
+                    if (selVendor.length > 0) {
+                        selVendor = getNodes(selVendor, jstree2Inst);
+                        v = getTreeNames(selVendor);
+                    }
+                    else {
+                        v = null;
+                    }
+
+                    var selOwner = jstree3Inst.jstree("get_checked");
+                    if (selOwner.length > 0) {
+                        selOwner = getNodes(selOwner, jstree3Inst);
+                        o = getTreeNames(selOwner);
+                    }
+                    else {
+                        o = null;
+                    }
+
+                    $.ajax({
+                        url: '@Url.Action("GetItemList", "Item")/' + l + '/' + t + '/'  + v + '/' + o,
+                        type: "GET",
+                        cache: false,
+                        async: false,
+                        success: function (data) {
+                            $("#theTable").html(data);
+                        }
+                    });
+                }
+
+             });
+
+
+
+            $('#jstree1').on('changed.jstree', function (e, data) {
+                e.preventDefault();
+                var l = [], t = [], v = [], o = [];
+                if (data.event.type = "click") {
+                    var page = $("#pageNum").serialize();
+
+                    var locationAr = jstreeLocInst.jstree("get_checked");
+                    if (locationAr.length > 0) {
+                        locationAr = getNodes(locationAr, jstreeLocInst);
+                        l = getLocationNames(locationAr);
+                    }
+                    else {
+                        l = null;
+                    }
+
+                    var selType = getSelectedNodes(data, jstree1Inst);
+	                t = getTreeNames(selType);
+
+                    var selVendor = jstree2Inst.jstree("get_checked");
+                    if (selVendor.length > 0) {
+                        selVendor = getNodes(selVendor, jstree2Inst);
+                        v = getTreeNames(selVendor);
+                    }
+                    else {
+                        v = null;
+                    }
+
+                    var selOwner = jstree3Inst.jstree("get_checked");
+                    if (selOwner.length > 0) {
+                        selOwner = getNodes(selOwner, jstree3Inst);
+                        o = getTreeNames(selOwner);
+                    }
+                    else {
+                        o = null;
+                    }
+
+                    $.ajax({
+                        url: '@Url.Action("GetItemList", "Item")/' + l + '/' + t + '/' + v + '/' + o,
+                        type: "GET",
+                        cache: false,
+                        async: false,
+                        success: function (data) {
+                            $("#theTable").html(data);
+                        }
+                    });
+                }
+             });
+
+
+
+            $('#jstree2').on('changed.jstree', function (e, data) {
+                var l = [], t = [], v = [], o = [];
+                e.preventDefault();
+                if (data.event.type = "click") {
+                    var page = $("#pageNum").serialize();
+
+		            var locationAr = jstreeLocInst.jstree("get_checked");
+                    if (locationAr.length > 0) {
+                        locationAr = getNodes(locationAr, jstreeLocInst);
+                        l = getLocationNames(locationAr);
+                    }
+                    else {
+                        l = null;
+                    }
+
+                    var selVendor = getSelectedNodes(data, jstree2Inst);
+	                v = getTreeNames(selVendor);
+
+	                var selType = jstree1Inst.jstree("get_checked");
+                    if (selType.length > 0) {
+                        selType = getNodes(selType, jstree1Inst);
+                        t = getTreeNames(selType);
+                    }
+                    else {
+                        t = null;
+                    }
+
+		            var selOwner = jstree3Inst.jstree("get_checked");
+                    if (selOwner.length > 0) {
+                        selOwner = getNodes(selOwner, jstree3Inst);
+                        o = getTreeNames(selOwner);
+                    }
+                    else {
+                        o = null;
+                    }
+
+                    $.ajax({
+                        url: '@Url.Action("GetItemList", "Item")/' + l + '/' + t +  '/' + v + '/' + o,
+                        type: "GET",
+                        async: false,
+                        cache: false,
+                        success: function (data) {
+                            $("#theTable").html(data);
+                        }
+                    });
+                }
+             });
+
+
+            $('#jstree3').on('changed.jstree', function (e, data) {
+                var l = [], t = [], v = [], o = [];
+                e.preventDefault();
+                if (data.event.type = "click") {
+
+                   var locationAr = jstreeLocInst.jstree("get_checked");
+                    if (locationAr.length > 0) {
+                        locationAr = getNodes(locationAr, jstreeLocInst);
+                        l = getLocationNames(locationAr);
+                    }
+                    else {
+                        l = null;
+                    }
+
+		            var selType = jstree1Inst.jstree("get_checked");
+                    if (selType.length > 0) {
+                        selType = getNodes(selType, jstree1Inst);
+                        t = getTreeNames(selType);
+                    }
+                    else {
+                        t = null;
+                    }
+
+		            var selVendor = jstree2Inst.jstree("get_checked");
+                    if (selVendor.length > 0) {
+                        selVendor = getNodes(selVendor, jstree2Inst);
+                        v = getTreeNames(selVendor);
+                    }
+                    else {
+                        v = null;
+                    }
+
+		            var selOwner = getSelectedNodes(data, jstree3Inst);
+	                o = getTreeNames(selOwner);
+
+                    $.ajax({
+                        url: '@Url.Action("GetItemList", "Item")/' + l + '/' + t + '/' + v + '/' + o,
+                        type: "GET",
+                        async: false,
+                        cache: false,
+                        success: function (data) {
+                            $("#theTable").html(data);
+                        }
+                    });
+                }
+            });
+
+        });
+
+
+
+
+    </script>
+}

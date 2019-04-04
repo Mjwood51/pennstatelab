@@ -1,0 +1,50 @@
+﻿<div class="container-pos">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary overlap">
+        @Html.ActionLink("Physics Lab Inventory", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+        <button class="navbar-toggler" aria-expanded="false" aria-controls="navbarColor01" aria-label="Toggle navigation" type="button" data-target="#navbarColor01" data-toggle="collapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                @Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })
+            </li>
+            <li class="nav-item">
+                @Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })
+            </li>
+            <li class="nav-item">
+                @Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })
+            </li>
+            @if (HttpContext.Current.User.Identity.IsAuthenticated && HttpContext.Current.User.IsInRole("Admin"))
+            {
+                <li class="nav-item">
+                    @Html.ActionLink("Invite", "AddUser", "Account", new { area = "" }, new { @class = "nav-link" })
+                </li>
+                <li class="nav-item">
+                    @Html.ActionLink("Inventory", "GetAllItems", "Item", new { area = "" }, new { @class = "nav-link" })
+                </li>
+                <li class="nav-item" style="padding-left:1100px">
+                    @Html.ActionLink("Log out", "LogOut", "Account", new { area = "" }, new { @class = "nav-link" })
+                </li>
+                var identity = ((CustomPrincipal)HttpContext.Current.User);
+                <li class="nav-item" style="padding-left:10px">
+                    @Html.ActionLink(" Welcome " + identity.FirstName + "!", "", "", new { area = "" }, new { @class = "nav-link disabled" })
+                </li>
+
+            }
+            else
+            {
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="logIn()" data-target="#logInModal" data-toggle="modal">Login</a>
+                    @*@Html.ActionLink("Login", "#", new { area = "" }, new { @class = "nav-link", @onclick = "logIn()" })*@
+                </li>
+
+            }
+        </ul>
+        <form class="form-inline my-2 my-lg-0"></form>
+    </nav>
+</div>
+@*@if (HttpContext.Current.User.Identity.IsAuthenticated)
+    {
+
+        }*@
+

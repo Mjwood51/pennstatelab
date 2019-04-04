@@ -1,0 +1,336 @@
+﻿@model PennState.ViewModels.ItemViewModel
+<link href="~/Content/chosen.css" rel="stylesheet" />
+<div id="divEdit">
+    @using (Ajax.BeginForm("Edit", "Item", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divEdit" }, new { @onsubmit = "return validateEditForm()", @id = "editForm", enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+
+    <div class="form-horizontal" style="margin-left:60px">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Item.Id)
+
+        <div class="form-group" style="padding-bottom:10px">
+            @Html.LabelFor(model => model.Item.ItemName, htmlAttributes: new { @class = "control-label col-md-2", @style = "right:10px" })
+            <div class="col-md-10 padLeft">
+                @Html.EditorFor(model => model.Item.ItemName, new { htmlAttributes = new { @class = "form-control text-left", @autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.Item.ItemName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" style="padding-bottom:10px">
+            @Html.LabelFor(model => model.Item.AmountInStock, htmlAttributes: new { @class = "control-label col-md-2 align-left" })
+            <div class="col-md-10 padLeft">
+                @Html.EditorFor(model => model.Item.AmountInStock, new { htmlAttributes = new { @class = "form-control text-left", @autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.Item.AmountInStock, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" style="padding-bottom:10px">
+            @Html.LabelFor(model => model.Item.Manufacturer, htmlAttributes: new { @class = "control-label col-md-2 align-left" })
+            <div class="col-md-10 padLeft">
+                @Html.EditorFor(model => model.Item.Manufacturer, new { htmlAttributes = new { @class = "form-control text-left", @autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.Item.Manufacturer, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" style="padding-bottom:10px">
+            @Html.LabelFor(model => model.Item.CatalogNumber, htmlAttributes: new { @class = "control-label col-md-2 align-left" })
+            <div class="col-md-10 padLeft">
+                @Html.EditorFor(model => model.Item.CatalogNumber, new { htmlAttributes = new { @class = "form-control text-left", @autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.Item.CatalogNumber, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" style="padding-bottom:10px">
+            @Html.LabelFor(model => model.Item.WebAddress, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10 padLeft">
+                @Html.EditorFor(model => model.Item.WebAddress, new { htmlAttributes = new { @class = "form-control text-left", @autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.Item.WebAddress, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" style="padding-bottom:10px">
+            @Html.LabelFor(model => model.Item.Vendor, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10 padLeft">
+                @Html.EditorFor(model => model.Item.Vendor, new { htmlAttributes = new { @id = "autoVen2", @list = "dataListVen", @onchange = "comboVen2()", @class = "form-control text-left", @autocomplete = "off" } })
+                <datalist id="dataListVen"></datalist>
+                @Html.ValidationMessageFor(model => model.Item.Vendor, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" style="padding-bottom:10px">
+            @Html.LabelFor(model => model.Item.ContactInfo, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10 padLeft">
+                @Html.EditorFor(model => model.Item.ContactInfo, new { htmlAttributes = new { @class = "form-control text-left", @autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.Item.ContactInfo, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" style="padding-bottom:10px">
+            @Html.LabelFor(model => model.Item.PurchaseDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10 padLeft">
+                @Html.EditorFor(model => model.Item.PurchaseDate, new { htmlAttributes = new { @id = "datepicker2", @class = "form-control text-left", @autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.Item.PurchaseDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" style="padding-bottom:10px">
+            @Html.LabelFor(model => model.Item.FileUpload, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10" style="left:90px;top:10px">
+                @Html.TextBoxFor(model => model.Item.FileUpload, "", new { @multiple = "multiple", @type = "file", @autocomplete = "off" })
+                @Html.ValidationMessageFor(model => model.Item.FileUpload, "", new { @class = "text-danger" })
+                @Html.DropDownListFor(x => x.Files.FileList,
+                 Model.Files.GetFileList.Select(x => new SelectListItem { Text = x.ItemFileName, Value = x.Id.ToString()}),
+                 new { @class = "form-control chosen-select", @style = "width:200px", @multiple = true})
+                <div class="form-group">
+                    <div class="col-md-10" style="right:20px;top:10px">
+                        @{ if (Model.Item.Files != null)
+                            {
+                                foreach (var file in Model.Item.Files)
+                                {
+                                    <a href="#" id="f_@file.Id" onclick="confirmFileDel(@file.Id)"><i class="glyphicon glyphicon-trash"></i></a>
+                                    @Html.ActionLink(file.ItemFileName, "DownloadFile", new { id = file.Id }, new { @id = "file_" + file.Id })
+                                    <br />
+                                }
+                            }
+                        }
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
+
+        <div class="form-group" style="padding-bottom:10px">
+            @Html.LabelFor(model => model.Item.PhotoUpload, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10" style="left:90px;top:10px">
+                @Html.TextBoxFor(model => model.Item.PhotoUpload, "", new { @multiple = "multiple", @type = "file", @autocomplete = "off" })
+                @Html.ValidationMessageFor(model => model.Item.PhotoUpload, "", new { @class = "text-danger" })
+                @Html.DropDownListFor(x => x.Photos.PhotoList,
+                Model.Photos.GetPhotoList.Select(x => new SelectListItem { Text = x.PhotoName, Value = x.Id.ToString()}),
+                new { @class = "form-control chosen-select", @style = "width:200px", @multiple = true})
+                <div class="form-group">
+                    <div class="col-md-10" style="float:left;right:20px;top:10px">
+                        @{if (Model.Item.Files != null)
+                            {
+                                foreach (var photo in Model.Item.Photos)
+                                { 
+                                <div class="imgHolder">   
+                                    <span>@photo.PhotoName|<a href="#" id="p_@photo.Id" onclick="confirmPhotoDel(@photo.Id)"><i class="glyphicon glyphicon-trash"></i></a></span>
+                                    <img id="photo_@photo.Id" src="~/Images/Uploads/SubLocations/@Model.Item.SubId/Thumbs/@photo.PhotoName" style="padding-top:20px;height:150px;width:150px" />                                    
+                                </div>
+                                    <br />
+                                }
+                            }
+                        }
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
+        <div class="form-group" style="padding-bottom:10px">
+            @Html.LabelFor(model => model.Item.Added, htmlAttributes: new { @class = "control-label col-md-2", @style = "right:7px" })
+            <div class="col-md-10 padLeft">
+                @Html.EditorFor(model => model.Item.Added, new { htmlAttributes = new { @class = "form-control text-left", @readonly = "readonly" } })
+                <div class="col-md-10">
+                    <p class="thick">&emsp;&emsp;&emsp;&emsp;&emsp;By @Model.Item.User.FirstName @Model.Item.User.LastName</p>
+                </div>
+                @Html.ValidationMessageFor(model => model.Item.Added, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        @if (Model.Item.UpdatedBy != null)
+        {
+            <div class="form-group" style="padding-bottom:10px">
+                @Html.LabelFor(model => model.Item.Updated, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10 padLeft">
+                    @Html.EditorFor(model => model.Item.Updated, new { htmlAttributes = new { @class = "form-control text-left", @readonly = "readonly" } })
+
+                    <div class="col-md-10">
+                        <p class="thick">&emsp;&emsp;&emsp;&emsp;&emsp;By @Model.Item.UpdatedBy </p>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Item.Updated, "", new { @class = "text-danger" })
+                </div>
+
+            </div>
+        }
+
+        <div class="form-group" style="padding-bottom:10px">
+            @Html.LabelFor(model => model.Item.PurchasePrice, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10 padLeft">
+                @Html.EditorFor(model => model.Item.PurchasePrice, new { htmlAttributes = new { @class = "form-control text-left", @autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.Item.PurchasePrice, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" style="padding-bottom:10px">
+            @Html.LabelFor(model => model.Item.ItemType, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10 padLeft">
+                @Html.EditorFor(model => model.Item.ItemType, new { htmlAttributes = new { @class = "form-control text-left", @id = "autoType2", @list = "dataListType", @onchange = "comboType2()", @autocomplete = "off" } })
+                <datalist id="dataListType"></datalist>
+                @Html.ValidationMessageFor(model => model.Item.ItemType, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" style="padding-bottom:10px">
+            @Html.LabelFor(model => model.Item.Location.LocationName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10 padLeft">
+                @Html.EditorFor(model => model.Item.Location.LocationName, new { htmlAttributes = new { @class = "form-control text-left", @id = "autoLoc2", @list = "dataListLoc", @onchange = "comboLoc2()", @autocomplete = "off" } })
+                <datalist id="dataListLoc"></datalist>
+                @Html.ValidationMessageFor(model => model.Item.Location.LocationName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" style="padding-bottom:10px">
+            @Html.LabelFor(model => model.Item.SubLocation.SubLocationName, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10 padLeft">
+                @Html.EditorFor(model => model.Item.SubLocation.SubLocationName, new { htmlAttributes = new { @class = "form-control text-left", @id = "autoSub2", @list = "dataListSub", @onchange = "comboSub2()", @autocomplete = "off" } })
+                <datalist id="dataListSub"></datalist>
+                @Html.ValidationMessageFor(model => model.Item.SubLocation.SubLocationName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" style="padding-bottom:10px">
+            @Html.LabelFor(model => model.Item.LocationComments, htmlAttributes: new { @class = "control-label col-md-2 align-left" })
+            <div class="col-md-10 padLeft">
+                @Html.EditorFor(model => model.Item.LocationComments, new { htmlAttributes = new { @class = "form-control text-left", @autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.Item.LocationComments, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" style="padding-bottom:10px">
+            @Html.LabelFor(model => model.Item.ItemNotes, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10 padLeft">
+                @Html.EditorFor(model => model.Item.ItemNotes, new { htmlAttributes = new { @class = "form-control text-left", @autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.Item.ItemNotes, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" id="editSubmit" style="width:100px;margin-bottom:10px" value="Update" class="btn btn-primary" />
+                <input type="button" onclick="closeEdit()" style="width:100px;margin-bottom:10px" value="Cancel" class="btn btn-danger" />
+            </div>
+        </div>
+    </div>
+    }
+</div>
+<script src="~/Scripts/jquery.validate.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
+<script>
+
+
+
+    var confirmPhotoDel = function(photoid){
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("DeletePhoto", "Item")/' + photoid,
+                beforeSend: function () {
+                    return confirm("Are you sure you want to delete this photo?");
+                }
+            }).done(function (data) {
+                $("#p_" + photoid).remove();
+                $("#photo_" + photoid).remove();
+                $.notify("Photo Deleted", {
+                    style: 'happygreen'
+                });
+            });
+        }
+
+    var confirmFileDel = function(fileid){
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("DeleteFile", "Item")/' + fileid,
+            beforeSend: function () {
+                return confirm("Are you sure you want to delete this file?");
+            }
+        }).done(function (data) {
+            $("#f_" + fileid).remove();
+            $("#file_" + fileid).remove();
+            $.notify("File Deleted", {
+                style: 'happygreen'
+            });
+        });
+    }
+
+    $(function () {
+        $("#datepicker2").datepicker({ maxDate: '0' });
+    });
+
+    $(document).ready(function () {
+        $("#autoType2").click("input", function comboType2() {
+            var options = {};
+            options.url = "/item/getterm";
+            options.type = "GET";
+            options.data = { "text": $("#autoType2").val() };
+            options.dataType = "json";
+            options.success = function (data) {
+                $("#dataListType").empty();
+                for (var i = 0; i < data.length; i++) {
+                    $("#dataListType").append("<option value='" +
+                        data[i].ItemType + "'></option>");
+                }
+            };
+            $.ajax(options);
+        });
+
+    });
+
+    $(document).ready(function () {
+        $("#autoLoc2").click("input", function comboLoc2() {
+            var options = {};
+            options.url = "/item/getloc";
+            options.type = "GET";
+            options.data = { "text": $("#autoLoc2").val() };
+            options.dataType = "json";
+            options.success = function (data) {
+                $("#dataListLoc").empty();
+                for (var i = 0; i < data.length; i++) {
+                    $("#dataListLoc").append("<option value='" +
+                        data[i].LocationName + "'></option>");
+                }
+            };
+            $.ajax(options);
+        });
+
+    });
+
+    $(document).ready(function () {
+        $("#autoVen2").click("input", function comboVen2() {
+            var options = {};
+            options.url = "/item/getven";
+            options.type = "GET";
+            options.data = { "text": $("#autoVen2").val() };
+            options.dataType = "json";
+            options.success = function (data) {
+                $("#dataListVen").empty();
+                for (var i = 0; i < data.length; i++) {
+                    $("#dataListVen").append("<option value='" +
+                        data[i].Vendor + "'></option>");
+                }
+            };
+            $.ajax(options);
+        });
+
+    });
+
+    $(document).ready(function () {
+        $("#autoSub2").click("input", function comboSub2() {
+            var options = {};
+            options.url = "/item/getsub";
+            options.type = "GET";
+            options.data = { "text": $("#autoSub2").val() };
+            options.dataType = "json";
+            options.success = function (data) {
+                $("#dataListSub").empty();
+                for (var i = 0; i < data.length; i++) {
+                    $("#dataListSub").append("<option value='" +
+                        data[i].SubLocationName + "'></option>");
+                }
+            };
+            $.ajax(options);
+        });
+
+    });
+</script>

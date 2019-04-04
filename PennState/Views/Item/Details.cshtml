@@ -1,0 +1,28 @@
+﻿@using PennState.Models;
+@model ProductCategoryLevel
+@{
+    ViewBag.Title = "Product Category Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Product Category Details</h2>
+<div class="panel">
+    <div class="panel-head">
+        
+    </div>
+    <div class="panel-body">
+        <p>
+        <b>Details of Product Category</b>
+        <br />
+        Name:&nbsp;@Model.ProductCategory.ProductCategoryName
+        <br />
+        </p>
+        <br />
+        <p>
+        <b>Parent Product Category</b>
+        <br />
+        Name:&nbsp;@Model.ParentProductCategory.ProductCategoryName
+        <br />
+        </p>
+    </div>
+</div>
