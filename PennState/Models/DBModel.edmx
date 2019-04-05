@@ -412,7 +412,7 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ItemFileName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="DataStream" Type="Binary" MaxLength="Max" FixedLength="false" />
-          <NavigationProperty Name="Tbl_Items" Relationship="Self.Tbl_ItemFiles" FromRole="Tbl_File" ToRole="Tbl_Items" />
+          <NavigationProperty Name="Items" Relationship="Self.Tbl_ItemFiles" FromRole="Tbl_File" ToRole="Tbl_Items" />
         </EntityType>
         <EntityType Name="Tbl_Items">
           <Key>
@@ -450,8 +450,8 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="LocationName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Tbl_Items" Relationship="Self.FK_dbo_Tbl_Items_dbo_Tbl_Locations_LocId" FromRole="Tbl_Locations" ToRole="Tbl_Items" />
-          <NavigationProperty Name="Tbl_SubLocations" Relationship="Self.FK_dbo_Tbl_SubLocations_dbo_Tbl_Locations_LocId" FromRole="Tbl_Locations" ToRole="Tbl_SubLocations" />
+          <NavigationProperty Name="Items" Relationship="Self.FK_dbo_Tbl_Items_dbo_Tbl_Locations_LocId" FromRole="Tbl_Locations" ToRole="Tbl_Items" />
+          <NavigationProperty Name="SubLocations" Relationship="Self.FK_dbo_Tbl_SubLocations_dbo_Tbl_Locations_LocId" FromRole="Tbl_Locations" ToRole="Tbl_SubLocations" />
         </EntityType>
         <EntityType Name="Tbl_Photo">
           <Key>
@@ -477,7 +477,7 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="SubLocationName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="LocId" Type="Int32" />
-          <NavigationProperty Name="Tbl_Items" Relationship="Self.FK_dbo_Tbl_Items_dbo_Tbl_SubLocations_SubId" FromRole="Tbl_SubLocations" ToRole="Tbl_Items" />
+          <NavigationProperty Name="Items" Relationship="Self.FK_dbo_Tbl_Items_dbo_Tbl_SubLocations_SubId" FromRole="Tbl_SubLocations" ToRole="Tbl_Items" />
           <NavigationProperty Name="Location" Relationship="Self.FK_dbo_Tbl_SubLocations_dbo_Tbl_Locations_LocId" FromRole="Tbl_SubLocations" ToRole="Tbl_Locations" />
         </EntityType>
         <EntityType Name="Tbl_Users">

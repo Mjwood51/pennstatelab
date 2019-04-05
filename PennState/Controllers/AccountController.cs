@@ -106,7 +106,7 @@ namespace PennState.Controllers
                 {
                     using (ContextModel _context = new ContextModel())
                     {
-                        var user = Mapper.Map<User>(_context.Tbl_Users.Where(x => x.UserName == loginView.UserName).FirstOrDefault());
+                        var user = Mapper.Map<Tbl_Users, User>(_context.Tbl_Users.Where(x => x.UserName == loginView.UserName).FirstOrDefault());
                         if (user != null)
                         {
                             CustomSerializeModel userModel = new CustomSerializeModel()

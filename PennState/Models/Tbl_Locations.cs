@@ -17,16 +17,16 @@ namespace PennState.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Tbl_Locations()
         {
-            this.Tbl_Items = new HashSet<Tbl_Items>();
-            this.Tbl_SubLocations = new HashSet<Tbl_SubLocations>();
+            this.Items = new HashSet<Tbl_Items>();
+            this.SubLocations = new HashSet<Tbl_SubLocations>();
         }
     
         public int Id { get; set; }
         public string LocationName { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Tbl_Items> Tbl_Items { get; set; }
+        public virtual ICollection<Tbl_Items> Items { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Tbl_SubLocations> Tbl_SubLocations { get; set; }
+        public virtual ICollection<Tbl_SubLocations> SubLocations { get; set; }
     }
 }

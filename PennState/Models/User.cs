@@ -8,9 +8,14 @@ using System.Web;
 
 namespace PennState.Models
 {
+
     [JsonObject(IsReference = true)]
     public class User
     {
+        public User()
+        {
+            this.Items = new HashSet<Item>();
+        }
 
         [Key]
         public int Id { get; set; }

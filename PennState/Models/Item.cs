@@ -9,6 +9,7 @@ using System.Web;
 
 namespace PennState.Models
 {
+    [Table("Tbl_Items")]
     [JsonObject(IsReference = true)]
     public class Item
     {
