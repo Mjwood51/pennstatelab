@@ -30,6 +30,8 @@ namespace PennState.Controllers
 {
     public class ItemController : Controller
     {
+        private SqlConnection con;
+        private string constr;
         private ContextModel _context;
         private List<Tbl_File> files;
         private List<Tbl_Photo> photos;
@@ -41,6 +43,7 @@ namespace PennState.Controllers
             files = new List<Tbl_File>();
             photos = new List<Tbl_Photo>();
             catLoc2 = new Tbl_CatagoryLocations();
+
         }
         // GET: Item
         public ActionResult Index()
@@ -64,30 +67,56 @@ namespace PennState.Controllers
         [HttpGet]
         public ActionResult Edit(int cid)
         {
-            var model = new ItemViewModel();
-            Files objFile = new Files();
-            Photos objPhoto = new Photos();
+            var model = new EditItemViewModel();
+            //Files objFile = new Files();
+            //Photos objPhoto = new Photos();
             using (ContextModel db = new ContextModel())
             {
-                objFile.GetFileList = db.Tbl_File.Select(x => new Files { Id = x.Id, ItemFileName = x.ItemFileName }).ToList();
-                objPhoto.GetPhotoList = db.Tbl_Photo.Select(x => new Photos { Id = x.Id, PhotoName = x.PhotoName }).ToList();
+                model.Files.GetFileList = db.Tbl_File.Select(x => new Files { Id = x.Id, ItemFileName = x.ItemFileName }).ToList();
+                model.Photos.GetPhotoList = db.Tbl_Photo.Select(x => new Photos { Id = x.Id, PhotoName = x.PhotoName }).ToList();
                 model.Item = Mapper.Map<Tbl_Items, Item>(db.Tbl_Items.Where(x => x.Id == cid).Include(i => i.Photos).Include(i => i.Files).FirstOrDefault());
             }
-            model.Files = objFile;
-            model.Photos = objPhoto;
+            //model.Files = objFile;
+            //model.Photos = objPhoto;
             return PartialView("Edit", model);
         }
 
         [HttpPost]
-        public ActionResult Edit(ItemViewModel model)
-        {
-            List<Image> images = null;
-            List<byte[]> photoDatas = null;
-            if (ModelState.IsValid)
-            {
-                if (model.Item.FileUpload != null)
+        public ActionResult Edit(EditItemViewModel model)
+        {        
+                Tbl_Items modelItem = _context.Tbl_Items.Find(model.Item.Id);
+                List<Image> images = null;
+                List<byte[]> photoDatas = null;
+
+                if (model.Files != null)
                 {
-                    foreach (HttpPostedFileBase file in model.Item.FileUpload)
+                    if (model.Files.FileList != null)
+                    {
+                        foreach (var fileId in model.Files.FileList)
+                        {
+                            var fId = Convert.ToInt32(fileId);
+                            var existingfile = _context.Tbl_File.Where(x => x.Id == fId).FirstOrDefault();
+                            modelItem.Files.Add(existingfile);
+                        }
+                    }
+                }
+
+                if (model.Photos != null)
+                {
+                    if (model.Photos.PhotoList != null)
+                    {
+                        foreach (var photoId in model.Photos.PhotoList)
+                        {
+                            var pId = Convert.ToInt32(photoId);
+                            var existingPhoto = _context.Tbl_Photo.Where(x => x.Id == pId).FirstOrDefault();
+                            modelItem.Photos.Add(existingPhoto);
+                        }
+                    }
+                }
+
+                if (model.FileUpload != null)
+                {
+                    foreach (HttpPostedFileBase file in model.FileUpload)
                     {
                         if (file != null && file.ContentLength > 0)
                         {
@@ -107,9 +136,11 @@ namespace PennState.Controllers
                     }
                 }
 
-                if (model.Item.PhotoUpload != null)
+                if (model.PhotoUpload != null)
                 {
-                    foreach (HttpPostedFileBase photo in model.Item.PhotoUpload)
+                    images = new List<Image>();
+                    photoDatas = new List<byte[]>();
+                    foreach (HttpPostedFileBase photo in model.PhotoUpload)
                     {
                         if (photo != null && photo.ContentLength > 0)
                         {
@@ -133,423 +164,426 @@ namespace PennState.Controllers
                     }
                 }
                 var id = new Tbl_Users();
-                    id = _context.Tbl_Users.Where(x => x.UserName == User.Identity.Name).FirstOrDefault();
-                    if (model.Item.Id > 0)
-                    {
-                        Tbl_Items item = _context.Tbl_Items.SingleOrDefault(x => x.Id == model.Item.Id);
-                        item.Added = model.Item.Added;
-                        item.AmountInStock = model.Item.AmountInStock;
-                        item.CatalogNumber = model.Item.CatalogNumber;
-                        item.ContactInfo = model.Item.ContactInfo;
+                id = _context.Tbl_Users.Where(x => x.UserName == User.Identity.Name).FirstOrDefault();
 
-
-                        //Create new stream for any new files
-                        foreach (var file in files)
-                            item.Files.Add(file);
-
-                        foreach (var photo in photos)
-                            item.Photos.Add(photo);
-
-                        item.ItemNotes = model.Item.ItemNotes;
-                        item.ItemType = model.Item.ItemType;
-                        Tbl_Locations location = null;
-                        Tbl_SubLocations sublocation = null;
-                        //Check for new location input
-                        if (_context.Tbl_Locations.Where(x => x.LocationName == model.Item.Location.LocationName).Any())
-                        {
-                            //if this item has an existing location and sublocation get the location object
-                            var loc = _context.Tbl_Locations.Where(x => x.LocationName == model.Item.Location.LocationName).FirstOrDefault();
-                            var sub = _context.Tbl_SubLocations.Where(x => x.SubLocationName == model.Item.SubLocation.SubLocationName).FirstOrDefault();
-                            //assign the changed location name to the item
-                            item.Location = loc;
-                            item.LocId = loc.Id;
-                            //if there are any sublocations that have the same location name in the database
-                            if (sub != null)
-                            {
-                                item.SubLocation = sub;
-                                item.SubId = sub.Id;
-                            }
-                            else
-                            {
-                                sublocation = new Tbl_SubLocations()
-                                {
-                                    SubLocationName = model.Item.SubLocation.SubLocationName,
-                                    Location = loc
-                                };
-                                item.SubLocation = sublocation;
-                            }
-                        }
-                        //else if neither location and sublocation exist
-                        else
-                        {
-                            //create a new location
-                            location = new Tbl_Locations()
-                            {
-                                LocationName = model.Item.Location.LocationName    //Create new location and assign it to the new location name
-                            };
-
-                            //create a new sublocation for the location
-                            sublocation = new Tbl_SubLocations()
-                            {
-                                SubLocationName = model.Item.SubLocation.SubLocationName,     //Take the sublocation name and assign it to a new sublocation
-                                Location = location
-                            };
-
-                            //add these to the item
-                            item.Location = location;
-                            item.SubLocation = sublocation;
-                        }
-
-
-                        item.LocationComments = model.Item.LocationComments;
-                        item.Manufacturer = model.Item.Manufacturer;
-                        item.ItemName = model.Item.ItemName;
-
-                        item.PurchaseDate = model.Item.PurchaseDate;
-                        item.PurchasePrice = model.Item.PurchasePrice;
-
-
-                        item.Updated = DateTime.Now;
-                        item.UpdatedBy = id.FirstName + " " + id.LastName;
-                        item.WebAddress = model.Item.WebAddress;
-                        item.Vendor = model.Item.Vendor;
-
-                        _context.SaveChanges();
-
-                        item.SubId = _context.Tbl_SubLocations.Where(x => x.SubLocationName == model.Item.SubLocation.SubLocationName).FirstOrDefault().Id;
-                        item.LocId = _context.Tbl_Locations.Where(x => x.LocationName == model.Item.Location.LocationName).FirstOrDefault().Id;
-
-                        _context.SaveChanges();
-                    }
-
-
-                var itemId = model.Item.Id;
-                //Create necessary directories
-                var originalDir = new DirectoryInfo(string.Format("{0}Images\\Uploads", Server.MapPath(@"\")));
-
-                //Check if file was uploaded
-                var pathString1 = Path.Combine(originalDir.ToString(), "Items");
-                var pathString2 = Path.Combine(originalDir.ToString(), "Items\\" + itemId.ToString());
-                var pathString3 = Path.Combine(originalDir.ToString(), "Items\\" + itemId.ToString() + "\\Thumbs");
-                var pathString4 = Path.Combine(originalDir.ToString(), "Items\\" + itemId.ToString() + "\\Gallery");
-                var pathString5 = Path.Combine(originalDir.ToString(), "Items\\" + itemId.ToString() + "\\Gallery\\Thumbs");
-
-                if (!Directory.Exists(pathString1))
-                    Directory.CreateDirectory(pathString1);
-
-                if (!Directory.Exists(pathString2))
-                    Directory.CreateDirectory(pathString2);
-
-                if (!Directory.Exists(pathString3))
-                    Directory.CreateDirectory(pathString3);
-
-                if (!Directory.Exists(pathString4))
-                    Directory.CreateDirectory(pathString4);
-
-                if (!Directory.Exists(pathString5))
-                    Directory.CreateDirectory(pathString5);
-
-                var path = "";
-                var path2 = "";
-                int i = 0;
-                if (model.Item.PhotoUpload != null)
+                Tbl_Locations location = null;
+                Tbl_SubLocations sublocation = null;
+                if (_context.Tbl_Locations.Where(x => x.LocationName == model.Item.Location.LocationName).Any())
                 {
-                    foreach (HttpPostedFileBase photo in model.Item.PhotoUpload)
+                    //if this item has an existing location and sublocation get the location object
+                    var loc = _context.Tbl_Locations.Where(x => x.LocationName == model.Item.Location.LocationName).FirstOrDefault();
+                    var sub = _context.Tbl_SubLocations.Where(x => x.SubLocationName == model.Item.SubLocation.SubLocationName && x.Location.LocationName == model.Item.Location.LocationName).FirstOrDefault();
+                    //assign the changed location name to the item
+                    modelItem.Location = loc;
+                    modelItem.LocId = loc.Id;
+                    //if there are any sublocations that have the same location name in the database
+                    if (sub != null)
                     {
-                        if (photo != null)
+                        modelItem.SubLocation = sub;
+                        modelItem.SubId = sub.Id;
+                    }
+                    else
+                    {
+                        sublocation = new Tbl_SubLocations()
                         {
-                            string ext = photo.ContentType.ToLower();
-                            if (ext != "image/jpg" &&
-                               ext != "image/jpeg" &&
-                               ext != "image/pjpeg" &&
-                               ext != "image/gif" &&
-                               ext != "image/x-png" &&
+                            SubLocationName = model.Item.SubLocation.SubLocationName,
+                            Location = loc
+                        };
+                        modelItem.SubLocation = sublocation;
+                    }
+                }
+                //else if neither location and sublocation exist
+                else
+                {
+                    //create a new location
+                    location = new Tbl_Locations()
+                    {
+                        LocationName = model.Item.Location.LocationName    //Create new location and assign it to the new location name
+                    };
 
-                               ext != "image/png")
-                            {
-                                var modelItem = new ItemViewModel()
-                                {
-                                    Item = model.Item
-                                };
-                                ModelState.AddModelError("", "The image was not uploaded - wrong image format.");
-                                return View(model);
-                            }
-                            string imageName = "";
-                            imageName = photo.FileName;
+                    //create a new sublocation for the location
+                    sublocation = new Tbl_SubLocations()
+                    {
+                        SubLocationName = model.Item.SubLocation.SubLocationName,     //Take the sublocation name and assign it to a new sublocation
+                        Location = location
+                    };
+
+                    //add these to the item
+                    modelItem.Location = location;
+                    modelItem.SubLocation = sublocation;
+                }
 
 
-                            path = string.Format("{0}\\{1}", pathString2, imageName);
-                            path2 = string.Format("{0}\\{1}", pathString3, imageName);
 
-                            ImageConverter imageConverter = new System.Drawing.ImageConverter();
-                            System.Drawing.Image image = imageConverter.ConvertFrom(photoDatas.ElementAt(i)) as System.Drawing.Image;
-                            image.Save(path, System.Drawing.Imaging.ImageFormat.Jpeg);
-
-                            var img = images.ElementAt(i);
-                            img = resizeImage(img, new Size(200, 200));
-                            img.Save(path2);
-                            i++;
+                if (files.Count > 0)
+                {
+                    if (modelItem.Files.Count > 0)
+                    {
+                        modelItem.Files = modelItem.Files.Concat(files).ToList();
+                    }
+                    else
+                    {
+                        if (model.Item.Files != null)
+                            modelItem.Files = modelItem.Files.Concat(Mapper.Map<IEnumerable<Tbl_File>>(model.Item.Files)).Concat(files).ToList();
+                        else
+                            modelItem.Files = files;
+                    }
+                }
+                if (photos.Count > 0)
+                {
+                    if (modelItem.Photos.Count > 0)
+                    {
+                        modelItem.Photos = modelItem.Photos.Concat(photos).ToList();
+                    }
+                    else
+                    {
+                        if (model.Item.Photos != null)
+                            modelItem.Photos = modelItem.Photos.Concat(Mapper.Map<IEnumerable<Tbl_Photo>>(model.Item.Photos)).Concat(photos).ToList();
+                        else
+                            modelItem.Photos = photos;
+                    }
+                }
+                modelItem.Id = model.Item.Id;
+                modelItem.ItemNotes = model.Item.ItemNotes;
+                modelItem.Manufacturer = modelItem.Manufacturer;
+                modelItem.UsrId = id.Id;
+                modelItem.Added = DateTime.Now;
+                modelItem.Updated = DateTime.Now;
+                modelItem.AmountInStock = model.Item.AmountInStock;
+                modelItem.CatalogNumber = model.Item.CatalogNumber;
+                modelItem.ItemName = model.Item.ItemName;
+                modelItem.ItemType = model.Item.ItemType;
+                modelItem.LocationComments = model.Item.LocationComments;
+                modelItem.PurchaseDate = model.Item.PurchaseDate;
+                modelItem.PurchasePrice = model.Item.PurchasePrice;
+                modelItem.Vendor = model.Item.Vendor;
+                modelItem.WebAddress = model.Item.WebAddress;
+                try
+                {
+                    _context.SaveChanges();
+                }
+                catch (DbEntityValidationException dbEx)
+                {
+                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    {
+                        foreach (var validationError in validationErrors.ValidationErrors)
+                        {
+                            System.Console.WriteLine("Property: {0} Error: {1}", validationError.PropertyName, validationError.ErrorMessage);
                         }
                     }
                 }
 
-                    var testLoc = _context.Tbl_CatagoryLocations.Where(x => x.LocationName == model.Item.Location.LocationName).FirstOrDefault();
-                    var catLoc = new Tbl_CatagoryLocations();
-                    if (testLoc == null)
+
+                var pathString1 = "";
+                var pathString2 = "";
+                var pathString3 = "";
+                var pathString4 = "";
+                var pathString5 = "";
+                var path = "";
+                var path2 = "";
+                int i = 0;
+                if (model.PhotoUpload != null)
+                {
+                    foreach (var photoObj in model.PhotoUpload)
                     {
-                        if (model.Item.SubLocation.SubLocationName != null)
-                        {
-                            catLoc.LocationName = model.Item.Location.LocationName;
-                            catLoc.Pid = null;
-                            catLoc.HasChildren = true;
-                        }
-                        else
-                        {
-                            catLoc.LocationName = model.Item.Location.LocationName;
-                            catLoc.Pid = null;
-                            catLoc.HasChildren = false;
-                        }
+                        //Create necessary directories
+                        var originalDir = new DirectoryInfo(string.Format("{0}Images\\Uploads", Server.MapPath(@"\")));
 
-                        _context.Tbl_CatagoryLocations.Add(catLoc);
-                        _context.SaveChanges();
+                        var imageName = photoObj.FileName;
+
+                        var subLocId = (from s in _context.Tbl_SubLocations
+                                        join it in _context.Tbl_Items on s.Id equals it.SubId
+                                        where it.Id == modelItem.Id
+                                        select s).FirstOrDefault();
+
+                        //Check if file was uploaded
+                        pathString1 = Path.Combine(originalDir.ToString(), "SubLocations");
+                        pathString2 = Path.Combine(originalDir.ToString(), "SubLocations\\" + subLocId.Id.ToString());
+                        pathString3 = Path.Combine(originalDir.ToString(), "SubLocations\\" + subLocId.Id.ToString() + "\\Thumbs");
+                        pathString4 = Path.Combine(originalDir.ToString(), "SubLocations\\" + subLocId.Id.ToString() + "\\Gallery");
+                        pathString5 = Path.Combine(originalDir.ToString(), "SubLocations\\" + subLocId.Id.ToString() + "\\Gallery\\Thumbs");
+
+                        if (!Directory.Exists(pathString1))
+                            Directory.CreateDirectory(pathString1);
+
+                        if (!Directory.Exists(pathString2))
+                            Directory.CreateDirectory(pathString2);
+
+                        if (!Directory.Exists(pathString3))
+                            Directory.CreateDirectory(pathString3);
+
+                        if (!Directory.Exists(pathString4))
+                            Directory.CreateDirectory(pathString4);
+
+                        if (!Directory.Exists(pathString5))
+                            Directory.CreateDirectory(pathString5);
+
+                        path = string.Format("{0}\\{1}", pathString2, imageName);
+                        ImageConverter imageConverter = new System.Drawing.ImageConverter();
+                        System.Drawing.Image image = imageConverter.ConvertFrom(photoDatas.ElementAt(i)) as System.Drawing.Image;
+                        image.Save(path, System.Drawing.Imaging.ImageFormat.Jpeg);
+
+                        path2 = string.Format("{0}\\{1}", pathString3, imageName);
+                        var img = images.ElementAt(i);
+                        img = resizeImage(img, new Size(200, 200));
+                        img.Save(path2);
+                        i++;
                     }
-                    //Get Parent Locations that Equal the current model's Location Name
-                    var parentId = _context.Tbl_CatagoryLocations.Where(x => x.LocationName == model.Item.Location.LocationName).FirstOrDefault().Id;
+                }
 
-                    //Determine if there are any sublocations that 
-                    //1) have a parent 
-                    //2) have the sublocation name as the model 
-                    //3) have a parent Id that is not equal to the current model's Id
-                    //4) where the parent referenced from the database is not equal to null
-                    bool noLocations = _context.Tbl_CatagoryLocations.Where(x => x.LocationName == model.Item.SubLocation.SubLocationName && x.Pid == parentId).Any();
-
-
-                    if (noLocations == false)
+                var testLoc = _context.Tbl_CatagoryLocations.Where(x => x.LocationName == model.Item.Location.LocationName).FirstOrDefault();
+                var catLoc = new Tbl_CatagoryLocations();
+                if (testLoc == null)
+                {
+                    if (model.Item.SubLocation.SubLocationName != null)
                     {
-                        var catLoc2 = new Tbl_CatagoryLocations
-                        {
-                            LocationName = model.Item.SubLocation.SubLocationName,
-                            Pid = parentId
-                        };
-                        _context.Tbl_CatagoryLocations.Add(catLoc2);
-                        _context.SaveChanges();
+                        catLoc.LocationName = model.Item.Location.LocationName;
+                        catLoc.Pid = null;
+                        catLoc.HasChildren = true;
+                    }
+                    else
+                    {
+                        catLoc.LocationName = model.Item.Location.LocationName;
+                        catLoc.Pid = null;
+                        catLoc.HasChildren = false;
                     }
 
-                    var owners = _context.Tbl_CatagoryOwners.Where(x => x.OwnerName == id.FirstName + " " + id.LastName).FirstOrDefault();
-                    if (owners == null)
-                    {
-                        var owner = new Tbl_CatagoryOwners
-                        {
-                            OwnerName = id.FirstName + " " + id.LastName,
-                            Pid = null,
-                            HasChildren = false
-                        };
-                        _context.Tbl_CatagoryOwners.Add(owner);
-                        _context.SaveChanges();
-                    }
+                    _context.Tbl_CatagoryLocations.Add(catLoc);
+                    _context.SaveChanges();
+                }
+                //Get Parent Locations that Equal the current model's Location Name
+                var parentId = _context.Tbl_CatagoryLocations.Where(x => x.LocationName == model.Item.Location.LocationName).FirstOrDefault().Id;
 
-                    var types = _context.Tbl_CatagoryTypes.Where(x => x.TypeName == model.Item.ItemType).FirstOrDefault();
-                    if (types == null)
-                    {
-                        var type = new Tbl_CatagoryTypes
-                        {
-                            TypeName = model.Item.ItemType,
-                            Pid = null,
-                            HasChildren = false
-                        };
-                        _context.Tbl_CatagoryTypes.Add(type);
-                        _context.SaveChanges();
-                    }
+                //Determine if there are any sublocations that 
+                //1) have a parent 
+                //2) have the sublocation name as the model 
+                //3) have a parent Id that is not equal to the current model's Id
+                //4) where the parent referenced from the database is not equal to null
+                bool noLocations = _context.Tbl_CatagoryLocations.Where(x => x.LocationName == model.Item.SubLocation.SubLocationName && x.Pid == parentId).Any();
 
-                    var vendors = _context.Tbl_CatagoryVendors.Where(x => x.VendorName == model.Item.Vendor).FirstOrDefault();
-                    if (vendors == null)
+
+                if (noLocations == false)
+                {
+                    var catLoc2 = new Tbl_CatagoryLocations
                     {
-                        var vendor = new Tbl_CatagoryVendors
-                        {
-                            VendorName = model.Item.Vendor,
-                            Pid = null,
-                            HasChildren = false
-                        };
-                        _context.Tbl_CatagoryVendors.Add(vendor);
-                        _context.SaveChanges();
-                    }
-  
-            }
+                        LocationName = model.Item.SubLocation.SubLocationName,
+                        Pid = parentId
+                    };
+                    _context.Tbl_CatagoryLocations.Add(catLoc2);
+                    _context.SaveChanges();
+                }
+
+                var owners = _context.Tbl_CatagoryOwners.Where(x => x.OwnerName == id.FirstName + " " + id.LastName).FirstOrDefault();
+                if (owners == null)
+                {
+                    var owner = new Tbl_CatagoryOwners
+                    {
+                        OwnerName = id.FirstName + " " + id.LastName,
+                        Pid = null,
+                        HasChildren = false
+                    };
+                    _context.Tbl_CatagoryOwners.Add(owner);
+                    _context.SaveChanges();
+                }
+
+                var types = _context.Tbl_CatagoryTypes.Where(x => x.TypeName == model.Item.ItemType).FirstOrDefault();
+                if (types == null)
+                {
+                    var type = new Tbl_CatagoryTypes
+                    {
+                        TypeName = model.Item.ItemType,
+                        Pid = null,
+                        HasChildren = false
+                    };
+                    _context.Tbl_CatagoryTypes.Add(type);
+                    _context.SaveChanges();
+                }
+
+                var vendors = _context.Tbl_CatagoryVendors.Where(x => x.VendorName == model.Item.Vendor).FirstOrDefault();
+                if (vendors == null)
+                {
+                    var vendor = new Tbl_CatagoryVendors
+                    {
+                        VendorName = model.Item.Vendor,
+                        Pid = null,
+                        HasChildren = false
+                    };
+                    _context.Tbl_CatagoryVendors.Add(vendor);
+                    _context.SaveChanges();
+                }
+
+            
             return RedirectToAction("GetAllItems", "Item");
         }
 
         [HttpGet]
         public ActionResult AddItem()
         {
+            AddItemViewModel model = new AddItemViewModel();
 
-            Item item = new Item();
-            Files objFile = new Files();
-            Photos objPhoto = new Photos();
             using (ContextModel db = new ContextModel())
             {
-                objFile.GetFileList = db.Tbl_File.Select(x => new Files { Id = x.Id, ItemFileName = x.ItemFileName }).ToList();
-                objPhoto.GetPhotoList = db.Tbl_Photo.Select(x => new Photos { Id = x.Id, PhotoName = x.PhotoName }).ToList();
+                model.Files.GetFileList = db.Tbl_File.Select(x => new Files { Id = x.Id, ItemFileName = x.ItemFileName }).ToList();
+                model.Photos.GetPhotoList = db.Tbl_Photo.Select(x => new Photos { Id = x.Id, PhotoName = x.PhotoName }).ToList();
             }
-            ItemViewModel model = new ItemViewModel();
-            model.Files = objFile;
-            model.Photos = objPhoto;
-            model.Item = item;
+            
             return PartialView(model);
         }
 
         [HttpPost]
-        public ActionResult AddItem(ItemViewModel model)
+        public ActionResult AddItem(AddItemViewModel model)
         {
-            var modelItem = new Tbl_Items();
-            List<Image> images = null;
-            List<byte[]> photoDatas = null;
-            if (model.Files != null)
-            {
-                foreach (var fileId in model.Files.FileList)
-                {
-                    var fId = Convert.ToInt32(fileId);
-                    var existingfile = _context.Tbl_File.Where(x => x.Id == fId).FirstOrDefault();
-                    modelItem.Files.Add(existingfile);
-                }
-            }
 
-            if (model.Photos != null)
-            {
-                foreach (var photoId in model.Photos.PhotoList)
+                var modelItem = new Tbl_Items();
+                List<Image> images = null;
+                List<byte[]> photoDatas = null;
+                if (model.Files != null)
                 {
-                    var pId = Convert.ToInt32(photoId);
-                    var existingPhoto = _context.Tbl_Photo.Where(x => x.Id == pId).FirstOrDefault();
-                    modelItem.Photos.Add(existingPhoto);
-                }
-            }
-
-            if (model.Item.FileUpload != null)
-            {
-                foreach (HttpPostedFileBase file in model.Item.FileUpload)
-                {
-                    if (file != null && file.ContentLength > 0)
+                    foreach (var fileId in model.Files.FileList)
                     {
-
-                        var varFile = new Tbl_File()
-                        {
-                            ItemFileName = System.IO.Path.GetFileName(file.FileName)
-                        };
-
-                        using (var reader = new System.IO.BinaryReader(file.InputStream))
-                        {
-                            varFile.DataStream = reader.ReadBytes(file.ContentLength);
-                        }
-
-                        files.Add(varFile);
+                        var fId = Convert.ToInt32(fileId);
+                        var existingfile = _context.Tbl_File.Where(x => x.Id == fId).FirstOrDefault();
+                        modelItem.Files.Add(existingfile);
                     }
                 }
-            }
 
-            if (model.Item.PhotoUpload != null)
-            {
-                images = new List<Image>();
-                photoDatas = new List<byte[]>();
-                foreach (HttpPostedFileBase photo in model.Item.PhotoUpload)
+                if (model.Photos != null)
                 {
-                    if (photo != null && photo.ContentLength > 0)
+                    foreach (var photoId in model.Photos.PhotoList)
                     {
-                        var varPhoto = new Tbl_Photo()
-                        {
-                            PhotoName = System.IO.Path.GetFileName(photo.FileName)
-                        };
+                        var pId = Convert.ToInt32(photoId);
+                        var existingPhoto = _context.Tbl_Photo.Where(x => x.Id == pId).FirstOrDefault();
+                        modelItem.Photos.Add(existingPhoto);
+                    }
+                }
 
-                        using (var preader = new System.IO.BinaryReader(photo.InputStream))
+                if (model.FileUpload != null)
+                {
+                    foreach (HttpPostedFileBase file in model.FileUpload)
+                    {
+                        if (file != null && file.ContentLength > 0)
                         {
-                            var byteArray = preader.ReadBytes(photo.ContentLength);
-                            photoDatas.Add(byteArray);
-                            varPhoto.DataStream = byteArray;
-                            using (var ms = new MemoryStream(byteArray))
+
+                            var varFile = new Tbl_File()
                             {
-                                images.Add(Image.FromStream(ms));
+                                ItemFileName = System.IO.Path.GetFileName(file.FileName)
+                            };
+
+                            using (var reader = new System.IO.BinaryReader(file.InputStream))
+                            {
+                                varFile.DataStream = reader.ReadBytes(file.ContentLength);
                             }
+
+                            files.Add(varFile);
                         }
-                        photos.Add(varPhoto);
                     }
                 }
-            }
 
-            var id = new Tbl_Users();
-
-            id = _context.Tbl_Users.Where(x => x.UserName == User.Identity.Name).FirstOrDefault();
-
-            //var item = new Item();
-            Tbl_Locations location = null;
-            Tbl_SubLocations sublocation = null;
-            //Check for new location input
-            if (_context.Tbl_Locations.Where(x => x.LocationName == model.Item.Location.LocationName).Any())
-            {
-                //if this item has an existing location and sublocation get the location object
-                var loc = _context.Tbl_Locations.Where(x => x.LocationName == model.Item.Location.LocationName).FirstOrDefault();
-                var sub = _context.Tbl_SubLocations.Where(x => x.SubLocationName == model.Item.SubLocation.SubLocationName && x.Location.LocationName == model.Item.Location.LocationName).FirstOrDefault();
-                //assign the changed location name to the item
-                modelItem.Location = loc;
-                modelItem.LocId = loc.Id;
-                //if there are any sublocations that have the same location name in the database
-                if (sub != null)
+                if (model.PhotoUpload != null)
                 {
-                    modelItem.SubLocation = sub;
-                    modelItem.SubId = sub.Id;
+                    images = new List<Image>();
+                    photoDatas = new List<byte[]>();
+                    foreach (HttpPostedFileBase photo in model.PhotoUpload)
+                    {
+                        if (photo != null && photo.ContentLength > 0)
+                        {
+                            var varPhoto = new Tbl_Photo()
+                            {
+                                PhotoName = System.IO.Path.GetFileName(photo.FileName)
+                            };
+
+                            using (var preader = new System.IO.BinaryReader(photo.InputStream))
+                            {
+                                var byteArray = preader.ReadBytes(photo.ContentLength);
+                                photoDatas.Add(byteArray);
+                                varPhoto.DataStream = byteArray;
+                                using (var ms = new MemoryStream(byteArray))
+                                {
+                                    images.Add(Image.FromStream(ms));
+                                }
+                            }
+                            photos.Add(varPhoto);
+                        }
+                    }
                 }
+
+                var id = new Tbl_Users();
+
+                id = _context.Tbl_Users.Where(x => x.UserName == User.Identity.Name).FirstOrDefault();
+
+                //var item = new Item();
+                Tbl_Locations location = null;
+                Tbl_SubLocations sublocation = null;
+                //Check for new location input
+                if (_context.Tbl_Locations.Where(x => x.LocationName == model.Item.Location.LocationName).Any())
+                {
+                    //if this item has an existing location and sublocation get the location object
+                    var loc = _context.Tbl_Locations.Where(x => x.LocationName == model.Item.Location.LocationName).FirstOrDefault();
+                    var sub = _context.Tbl_SubLocations.Where(x => x.SubLocationName == model.Item.SubLocation.SubLocationName && x.Location.LocationName == model.Item.Location.LocationName).FirstOrDefault();
+                    //assign the changed location name to the item
+                    modelItem.Location = loc;
+                    modelItem.LocId = loc.Id;
+                    //if there are any sublocations that have the same location name in the database
+                    if (sub != null)
+                    {
+                        modelItem.SubLocation = sub;
+                        modelItem.SubId = sub.Id;
+                    }
+                    else
+                    {
+                        sublocation = new Tbl_SubLocations()
+                        {
+                            SubLocationName = model.Item.SubLocation.SubLocationName,
+                            Location = loc
+                        };
+                        modelItem.SubLocation = sublocation;
+                    }
+                }
+                //else if neither location and sublocation exist
                 else
                 {
+                    //create a new location
+                    location = new Tbl_Locations()
+                    {
+                        LocationName = model.Item.Location.LocationName    //Create new location and assign it to the new location name
+                    };
+
+                    //create a new sublocation for the location
                     sublocation = new Tbl_SubLocations()
                     {
-                        SubLocationName = model.Item.SubLocation.SubLocationName,
-                        Location = loc
+                        SubLocationName = model.Item.SubLocation.SubLocationName,     //Take the sublocation name and assign it to a new sublocation
+                        Location = location
                     };
+
+                    //add these to the item
+                    modelItem.Location = location;
                     modelItem.SubLocation = sublocation;
                 }
-            }
-            //else if neither location and sublocation exist
-            else
-            {
-                //create a new location
-                location = new Tbl_Locations()
+
+
+
+                if (files.Count > 0)
                 {
-                    LocationName = model.Item.Location.LocationName    //Create new location and assign it to the new location name
-                };
-
-                //create a new sublocation for the location
-                sublocation = new Tbl_SubLocations()
-                {
-                    SubLocationName = model.Item.SubLocation.SubLocationName,     //Take the sublocation name and assign it to a new sublocation
-                    Location = location
-                };
-
-                //add these to the item
-                modelItem.Location = location;
-                modelItem.SubLocation = sublocation;
-            }
-
-
-
-            if (files.Count > 0)
-            { 
-                if (modelItem.Files.Count > 0)
-                {
-                    modelItem.Files = modelItem.Files.Concat(files).ToList();
+                    if (modelItem.Files.Count > 0)
+                    {
+                        modelItem.Files = modelItem.Files.Concat(files).ToList();
+                    }
+                    else
+                    {
+                        modelItem.Files = files;
+                    }
                 }
-                else
+                if (photos.Count > 0)
                 {
-                    modelItem.Files = files;
+                    if (modelItem.Photos.Count > 0)
+                    {
+                        modelItem.Photos = modelItem.Photos.Concat(photos).ToList();
+                    }
+                    else
+                    {
+                        modelItem.Photos = photos;
+                    }
                 }
-            }
-            if (photos.Count > 0)
-            {
-                if (modelItem.Photos.Count > 0)
-                {
-                    modelItem.Photos = modelItem.Photos.Concat(photos).ToList();
-                }
-                else
-                {
-                    modelItem.Photos = photos;
-                }
-            }
 
                 modelItem.UsrId = id.Id;
                 modelItem.Added = DateTime.Now;
@@ -578,62 +612,62 @@ namespace PennState.Controllers
                         }
                     }
                 }
-            var pathString1 = "";
-            var pathString2 = "";
-            var pathString3 = "";
-            var pathString4 = "";
-            var pathString5 = "";
-            var path = "";
-            var path2 = "";
-            int i = 0;
-            if (model.Item.PhotoUpload.Count() > 0)
-            {
-                foreach (var photoObj in model.Item.PhotoUpload)
+                var pathString1 = "";
+                var pathString2 = "";
+                var pathString3 = "";
+                var pathString4 = "";
+                var pathString5 = "";
+                var path = "";
+                var path2 = "";
+                int i = 0;
+                if (model.PhotoUpload != null)
                 {
-                    //Create necessary directories
-                    var originalDir = new DirectoryInfo(string.Format("{0}Images\\Uploads", Server.MapPath(@"\")));
+                    foreach (var photoObj in model.PhotoUpload)
+                    {
+                        //Create necessary directories
+                        var originalDir = new DirectoryInfo(string.Format("{0}Images\\Uploads", Server.MapPath(@"\")));
 
-                    var imageName = photoObj.FileName;
+                        var imageName = photoObj.FileName;
 
-                    var subLocId = (from s in _context.Tbl_SubLocations
-                                   join it in _context.Tbl_Items on s.Id equals it.SubId
-                                   where it.Id == modelItem.Id
-                                   select s).FirstOrDefault();
+                        var subLocId = (from s in _context.Tbl_SubLocations
+                                        join it in _context.Tbl_Items on s.Id equals it.SubId
+                                        where it.Id == modelItem.Id
+                                        select s).FirstOrDefault();
 
-                    //Check if file was uploaded
-                    pathString1 = Path.Combine(originalDir.ToString(), "SubLocations");
-                    pathString2 = Path.Combine(originalDir.ToString(), "SubLocations\\" + subLocId.Id.ToString());
-                    pathString3 = Path.Combine(originalDir.ToString(), "SubLocations\\" + subLocId.Id.ToString() + "\\Thumbs");
-                    pathString4 = Path.Combine(originalDir.ToString(), "SubLocations\\" + subLocId.Id.ToString() + "\\Gallery");
-                    pathString5 = Path.Combine(originalDir.ToString(), "SubLocations\\" + subLocId.Id.ToString() + "\\Gallery\\Thumbs");                    
+                        //Check if file was uploaded
+                        pathString1 = Path.Combine(originalDir.ToString(), "SubLocations");
+                        pathString2 = Path.Combine(originalDir.ToString(), "SubLocations\\" + subLocId.Id.ToString());
+                        pathString3 = Path.Combine(originalDir.ToString(), "SubLocations\\" + subLocId.Id.ToString() + "\\Thumbs");
+                        pathString4 = Path.Combine(originalDir.ToString(), "SubLocations\\" + subLocId.Id.ToString() + "\\Gallery");
+                        pathString5 = Path.Combine(originalDir.ToString(), "SubLocations\\" + subLocId.Id.ToString() + "\\Gallery\\Thumbs");
 
-                    if (!Directory.Exists(pathString1))
-                        Directory.CreateDirectory(pathString1);
+                        if (!Directory.Exists(pathString1))
+                            Directory.CreateDirectory(pathString1);
 
-                    if (!Directory.Exists(pathString2))
-                        Directory.CreateDirectory(pathString2);
+                        if (!Directory.Exists(pathString2))
+                            Directory.CreateDirectory(pathString2);
 
-                    if (!Directory.Exists(pathString3))
-                        Directory.CreateDirectory(pathString3);                       
+                        if (!Directory.Exists(pathString3))
+                            Directory.CreateDirectory(pathString3);
 
-                    if (!Directory.Exists(pathString4))
-                        Directory.CreateDirectory(pathString4);
+                        if (!Directory.Exists(pathString4))
+                            Directory.CreateDirectory(pathString4);
 
-                    if (!Directory.Exists(pathString5))
-                        Directory.CreateDirectory(pathString5);
+                        if (!Directory.Exists(pathString5))
+                            Directory.CreateDirectory(pathString5);
 
-                    path = string.Format("{0}\\{1}", pathString2, imageName);
-                    ImageConverter imageConverter = new System.Drawing.ImageConverter();
-                    System.Drawing.Image image = imageConverter.ConvertFrom(photoDatas.ElementAt(i)) as System.Drawing.Image;
-                    image.Save(path, System.Drawing.Imaging.ImageFormat.Jpeg);
-                    
-                    path2 = string.Format("{0}\\{1}", pathString3, imageName);
-                    var img = images.ElementAt(i);
-                    img = resizeImage(img, new Size(200, 200));
-                    img.Save(path2);
-                    i++;
+                        path = string.Format("{0}\\{1}", pathString2, imageName);
+                        ImageConverter imageConverter = new System.Drawing.ImageConverter();
+                        System.Drawing.Image image = imageConverter.ConvertFrom(photoDatas.ElementAt(i)) as System.Drawing.Image;
+                        image.Save(path, System.Drawing.Imaging.ImageFormat.Jpeg);
+
+                        path2 = string.Format("{0}\\{1}", pathString3, imageName);
+                        var img = images.ElementAt(i);
+                        img = resizeImage(img, new Size(200, 200));
+                        img.Save(path2);
+                        i++;
+                    }
                 }
-            }
 
                 var testLoc = _context.Tbl_CatagoryLocations.Where(x => x.LocationName == model.Item.Location.LocationName).FirstOrDefault();
                 var catLoc = new Tbl_CatagoryLocations();
@@ -693,32 +727,32 @@ namespace PennState.Controllers
                 }
 
                 var types = _context.Tbl_CatagoryTypes.Where(x => x.TypeName == model.Item.ItemType).FirstOrDefault();
-            if (types == null)
-            {
-                var type = new Tbl_CatagoryTypes
+                if (types == null)
                 {
-                    TypeName = modelItem.ItemType,
-                    Pid = null,
-                    HasChildren = false
-                };
-                try
-                {
-                    _context.Tbl_CatagoryTypes.Add(type);
-                    _context.SaveChanges();
-                }
-                catch (DbEntityValidationException dbEx)
-                {
-
-                    foreach (var validationErrors in dbEx.EntityValidationErrors)
+                    var type = new Tbl_CatagoryTypes
                     {
-                        foreach (var validationError in validationErrors.ValidationErrors)
-                        {
-                            System.Console.WriteLine("Property: {0} Error: {1}", validationError.PropertyName, validationError.ErrorMessage);
-                        }
+                        TypeName = modelItem.ItemType,
+                        Pid = null,
+                        HasChildren = false
+                    };
+                    try
+                    {
+                        _context.Tbl_CatagoryTypes.Add(type);
+                        _context.SaveChanges();
                     }
+                    catch (DbEntityValidationException dbEx)
+                    {
 
+                        foreach (var validationErrors in dbEx.EntityValidationErrors)
+                        {
+                            foreach (var validationError in validationErrors.ValidationErrors)
+                            {
+                                System.Console.WriteLine("Property: {0} Error: {1}", validationError.PropertyName, validationError.ErrorMessage);
+                            }
+                        }
+
+                    }
                 }
-            }
 
                 var vendors = _context.Tbl_CatagoryVendors.Where(x => x.VendorName == model.Item.Vendor).FirstOrDefault();
                 if (vendors == null)
@@ -733,14 +767,14 @@ namespace PennState.Controllers
                     _context.SaveChanges();
                 }
                 catLoc = null;
+
+                files = null;
+                photos = null;
+                modelItem = null;
+
+
+                //Get file extension
             
-            files = null;
-            photos = null;
-            modelItem = null;
-
-
-            //Get file extension
-
             //verify extension
             return RedirectToAction("GetAllItems", "Item");
         }
@@ -1095,8 +1129,7 @@ namespace PennState.Controllers
             return DetList;
         }
 
-        private SqlConnection con;
-        private string constr;
+
         private void DbConnection()
         {
             constr = ConfigurationManager.ConnectionStrings["ContextModel"].ToString();
@@ -1108,5 +1141,52 @@ namespace PennState.Controllers
             con = new SqlConnection(constr);
 
         }
+
+        //public void SaveItem(Tbl_Items item)
+        //{
+        //    DbConnection();
+        //    SqlCommand cmd = new SqlCommand("spSaveItem", con);
+        //    cmd.CommandType = CommandType.StoredProcedure;
+
+        //    SqlParameter paramId = new SqlParameter();
+        //    paramId.ParameterName = "@Id";
+        //    paramId.Value = item.Id;
+        //    cmd.Parameters.Add(paramId);
+
+        //    SqlParameter paramName = new SqlParameter();
+        //    paramName.ParameterName = "@ItemName";
+        //    paramName.Value = item.ItemName;
+        //    cmd.Parameters.Add(paramName);
+
+        //    SqlParameter paramStock = new SqlParameter();
+        //    paramStock.ParameterName = "@AmountInStock";
+        //    paramStock.Value = item.AmountInStock;
+        //    cmd.Parameters.Add(paramStock);
+
+        //    SqlParameter paramLocCom = new SqlParameter();
+        //    paramLocCom.ParameterName = "@LocationComments";
+        //    paramLocCom.Value = item.LocationComments;
+        //    cmd.Parameters.Add(paramLocCom);
+
+        //    SqlParameter paramMan = new SqlParameter();
+        //    paramMan.ParameterName = "@Manufacturer";
+        //    paramMan.Value = item.Manufacturer;
+        //    cmd.Parameters.Add(paramMan);
+
+        //    SqlParameter paramCat = new SqlParameter();
+        //    paramCat.ParameterName = "@CatalogNumber";
+        //    paramCat.Value = item.CatalogNumber;
+        //    cmd.Parameters.Add(paramCat);
+
+        //    SqlParameter paramWeb = new SqlParameter();
+        //    paramWeb.ParameterName = "@WebAddress";
+        //    paramWeb.Value = item.WebAddress;
+        //    cmd.Parameters.Add(paramWeb);
+
+        //    SqlParameter paramId = new SqlParameter();
+        //    paramId.ParameterName = "@Id";
+        //    paramId.Value = item.Id;
+        //    cmd.Parameters.Add(paramId);
+        //}
     }
 }

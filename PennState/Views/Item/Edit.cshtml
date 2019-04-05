@@ -1,7 +1,7 @@
-﻿@model PennState.ViewModels.ItemViewModel
+﻿@model PennState.ViewModels.EditItemViewModel
 <link href="~/Content/chosen.css" rel="stylesheet" />
 <div id="divEdit">
-    @using (Ajax.BeginForm("Edit", "Item", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divEdit" }, new { @onsubmit = "return validateEditForm()", @id = "editForm", enctype = "multipart/form-data" }))
+    @using (Ajax.BeginForm("Edit", "Item", FormMethod.Post, new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divEdit" }, new { @onsubmit = "return validateEditForm()", @id = "editForm", enctype = "multipart/form-data" }))
     {
         @Html.AntiForgeryToken()
 
@@ -75,10 +75,10 @@
         </div>
 
         <div class="form-group" style="padding-bottom:10px">
-            @Html.LabelFor(model => model.Item.FileUpload, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.FileUpload, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10" style="left:90px;top:10px">
-                @Html.TextBoxFor(model => model.Item.FileUpload, "", new { @multiple = "multiple", @type = "file", @autocomplete = "off" })
-                @Html.ValidationMessageFor(model => model.Item.FileUpload, "", new { @class = "text-danger" })
+                @Html.TextBoxFor(model => model.FileUpload, "", new { @multiple = "multiple", @type = "file", @autocomplete = "off" })
+                @Html.ValidationMessageFor(model => model.FileUpload, "", new { @class = "text-danger" })
                 @Html.DropDownListFor(x => x.Files.FileList,
                  Model.Files.GetFileList.Select(x => new SelectListItem { Text = x.ItemFileName, Value = x.Id.ToString()}),
                  new { @class = "form-control chosen-select", @style = "width:200px", @multiple = true})
@@ -102,22 +102,22 @@
         
 
         <div class="form-group" style="padding-bottom:10px">
-            @Html.LabelFor(model => model.Item.PhotoUpload, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.PhotoUpload, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10" style="left:90px;top:10px">
-                @Html.TextBoxFor(model => model.Item.PhotoUpload, "", new { @multiple = "multiple", @type = "file", @autocomplete = "off" })
-                @Html.ValidationMessageFor(model => model.Item.PhotoUpload, "", new { @class = "text-danger" })
+                @Html.TextBoxFor(model => model.PhotoUpload, "", new { @multiple = "multiple", @type = "file", @autocomplete = "off" })
+                @Html.ValidationMessageFor(model => model.PhotoUpload, "", new { @class = "text-danger" })
                 @Html.DropDownListFor(x => x.Photos.PhotoList,
                 Model.Photos.GetPhotoList.Select(x => new SelectListItem { Text = x.PhotoName, Value = x.Id.ToString()}),
                 new { @class = "form-control chosen-select", @style = "width:200px", @multiple = true})
                 <div class="form-group">
                     <div class="col-md-10" style="float:left;right:20px;top:10px">
-                        @{if (Model.Item.Files != null)
+                        @{if (Model.Item.Photos != null)
                             {
                                 foreach (var photo in Model.Item.Photos)
                                 { 
                                 <div class="imgHolder">   
                                     <span>@photo.PhotoName|<a href="#" id="p_@photo.Id" onclick="confirmPhotoDel(@photo.Id)"><i class="glyphicon glyphicon-trash"></i></a></span>
-                                    <img id="photo_@photo.Id" src="~/Images/Uploads/SubLocations/@Model.Item.SubId/Thumbs/@photo.PhotoName" style="padding-top:20px;height:150px;width:150px" />                                    
+                                    <img id="photo_@photo.Id" src="~/Images/Uploads/SubLocations/@Model.Item.SubId/Thumbs/@photo.PhotoName" style="padding-top:40px;height:150px;width:150px" />                                    
                                 </div>
                                     <br />
                                 }

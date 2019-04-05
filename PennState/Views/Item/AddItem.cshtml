@@ -1,190 +1,193 @@
-﻿@model PennState.ViewModels.ItemViewModel
+﻿@model PennState.ViewModels.AddItemViewModel
 <link href="~/Content/chosen.css" rel="stylesheet" />
-@using (Html.BeginForm("AddItem", "Item", FormMethod.Post, new { @id = "createForm", enctype = "multipart/form-data", @onsubmit = "return validateAddForm()" }))
-{
-    @Html.AntiForgeryToken()
+<div id="divCreate">
+    @using (Ajax.BeginForm("AddItem", "Item", FormMethod.Post, new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divCreate", OnSuccess="closeAdd()" }, new { @id = "createForm", enctype = "multipart/form-data", @onsubmit = "return validateAddForm()" }))
+    {
+        @Html.AntiForgeryToken()
 
-    <div class="form-horizontal" style="margin-left:138px; margin-top:50px">
-        <div class="form-group">
-            @Html.LabelFor(m => m.Item.Vendor, new { @class = "control-label col-md-2 padRight" })
-            @Html.TextBoxFor(m => m.Item.Vendor, "", new
-       {
-           @name = "vendor",
-           @class = "form-control text-box",
-           @id = "autoVen",
-           @list = "dataList4",
-           @onchange = "comboVen()", @autocomplete = "off"})
-            @Html.ValidationMessageFor(m => m.Item.Vendor, "", new { @class = "text-danger" })
-            <datalist id="dataList4"></datalist>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(m => m.Item.CatalogNumber, new { @class = "control-label col-md-2 padRight" })
-            @Html.TextBoxFor(m => m.Item.CatalogNumber, new
-       {
-           @name = "catnumber",
-           @id = "catNum",
-           @class = "form-control text-box", @autocomplete = "off"})
-            @Html.ValidationMessageFor(m => m.Item.CatalogNumber, "", new { @class = "text-danger" })
-        </div>
-
-
-
-        <div class="form-group">
-            @Html.LabelFor(m => m.Item.ItemName, new { @class = "control-label col-md-2 padRight" })
-            @Html.TextBoxFor(m => m.Item.ItemName, new
-       {
-           @name = "itemname",
-           @id = "itemName",
-           @class = "form-control text-box input-mysize", @autocomplete = "off"})
-            @Html.ValidationMessageFor(m => m.Item.ItemName, "", new { @class = "text-danger" })
-        </div>
-
-
-
-        <div class="form-group">
-            @Html.LabelFor(m => m.Item.PurchasePrice, new { @class = "control-label col-md-2 padRight" })
-            @Html.TextBoxFor(m => m.Item.PurchasePrice, new
-       {
-           @name = "purchaseprice",
-           @id = "pPrice",
-           @class = "form-control text-box", @autocomplete = "off"})
-            @Html.ValidationMessageFor(m => m.Item.PurchasePrice, "", new { @class = "text-danger" })
-        </div>
-
-        <div class="form-group">
-            <div class="inner-addon left-addon">
-                <i class="glyphicon glyphicon-calendar" style="position:absolute;padding-left:170px"></i>
-                @Html.LabelFor(m => m.Item.PurchaseDate, new { @style = "position:relative", @class = "control-label col-md-2 padRight" })
-
-                @Html.TextBoxFor(m => m.Item.PurchaseDate, "", new
+        <div class="form-horizontal" style="margin-left:138px; margin-top:50px">
+            <div class="form-group">
+                @Html.LabelFor(m => m.Item.Vendor, new { @class = "control-label col-md-2 padRight" })
+                @Html.TextBoxFor(m => m.Item.Vendor, "", new
            {
-               @name = "purchasedate",
+               @name = "vendor",
                @class = "form-control text-box",
-               @id = "datepicker", @autocomplete = "off"})
+               @id = "autoVen",
+               @list = "dataList4",
+               @onchange = "comboVen()", @autocomplete = "off"})
+                @Html.ValidationMessageFor(m => m.Item.Vendor, "", new { @class = "text-danger" })
+                <datalist id="dataList4"></datalist>
             </div>
-            @Html.ValidationMessageFor(m => m.Item.PurchaseDate, "", new { @class = "text-danger" })
 
+            <div class="form-group">
+                @Html.LabelFor(m => m.Item.CatalogNumber, new { @class = "control-label col-md-2 padRight" })
+                @Html.TextBoxFor(m => m.Item.CatalogNumber, new
+           {
+               @name = "catnumber",
+               @id = "catNum",
+               @class = "form-control text-box", @autocomplete = "off"})
+                @Html.ValidationMessageFor(m => m.Item.CatalogNumber, "", new { @class = "text-danger" })
+            </div>
+
+
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Item.ItemName, new { @class = "control-label col-md-2 padRight" })
+                @Html.TextBoxFor(m => m.Item.ItemName, new
+           {
+               @name = "itemname",
+               @id = "itemName",
+               @class = "form-control text-box input-mysize", @autocomplete = "off"})
+                @Html.ValidationMessageFor(m => m.Item.ItemName, "", new { @class = "text-danger" })
+            </div>
+
+
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Item.PurchasePrice, new { @class = "control-label col-md-2 padRight" })
+                @Html.TextBoxFor(m => m.Item.PurchasePrice, new
+           {
+               @name = "purchaseprice",
+               @id = "pPrice",
+               @class = "form-control text-box", @autocomplete = "off"})
+                @Html.ValidationMessageFor(m => m.Item.PurchasePrice, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                <div class="inner-addon left-addon">
+                    <i class="glyphicon glyphicon-calendar" style="position:absolute;padding-left:170px"></i>
+                    @Html.LabelFor(m => m.Item.PurchaseDate, new { @style = "position:relative", @class = "control-label col-md-2 padRight" })
+
+                    @Html.TextBoxFor(m => m.Item.PurchaseDate, "", new
+               {
+                   @name = "purchasedate",
+                   @class = "form-control text-box",
+                   @id = "datepicker", @autocomplete = "off"})
+                </div>
+                @Html.ValidationMessageFor(m => m.Item.PurchaseDate, "", new { @class = "text-danger" })
+
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Item.AmountInStock, new
+           {
+               @style = "position:relative",
+               @class = "control-label col-md-2 padRight", @autocomplete = "off"})
+                @Html.TextBoxFor(m => m.Item.AmountInStock, new
+           {
+               @name = "amountinstock",
+               @id = "inStock",
+               @class = "form-control text-box", @autocomplete = "off"})
+                @Html.ValidationMessageFor(m => m.Item.AmountInStock, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Item.WebAddress, new
+           {
+               @style = "position:relative",
+               @class = "control-label col-md-2 padRight", @autocomplete = "off"})
+                @Html.TextBoxFor(m => m.Item.WebAddress, new
+           {
+               @name = "url",
+               @id = "urlAddress",
+               @class = "form-control text-box", @autocomplete = "off"})
+                @Html.ValidationMessageFor(m => m.Item.WebAddress, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.FileUpload, new { @style = "position:relative", @class = "control-label col-md-2 padRight" })
+                @Html.TextBoxFor(m => m.FileUpload, "Placeholder", new
+           {
+               @type = "file",
+               @style = "top:20px",
+               @id = "fileId",
+               @multiple = "multiple",
+               @name = "files", @autocomplete = "off"})
+                @Html.ValidationMessageFor(m => m.FileUpload, "", new { @class = "text-danger" })
+                @Html.DropDownListFor(x => x.Files.FileList,
+                 Model.Files.GetFileList.Select(x => new SelectListItem { Text = x.ItemFileName, Value = x.Id.ToString()}),
+                 new { @class = "form-control chosen-select", @style = "width:200px", @multiple = true})
+
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.PhotoUpload, new { @style = "position:relative", @class = "control-label col-md-2 padRight" })
+                @Html.TextBoxFor(m => m.PhotoUpload, "", new
+           {
+               @type = "file",
+               @id = "photoId",
+               @style = "top:20px",
+               @multiple = "multiple",
+               @name = "photos", @autocomplete = "off"})
+                @Html.ValidationMessageFor(m => m.PhotoUpload, "", new { @class = "text-danger" })
+                @Html.DropDownListFor(x => x.Photos.PhotoList,
+            Model.Photos.GetPhotoList.Select(x => new SelectListItem { Text = x.PhotoName, Value = x.Id.ToString()}),
+            new { @class = "form-control chosen-select", @style = "width:200px", @multiple = true})
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Item.ItemType, new { @style = "position:relative", @class = "control-label col-md-2 padRight" })
+                @Html.TextBoxFor(m => m.Item.ItemType, "", new
+           {
+               @name = "type",
+               @class = "form-control text-box",
+               @id = "autoType",
+               @placeholder = "Type/Click For Existing",
+               @list = "dataList",
+               @onchange = "comboType()", @autocomplete = "off"})
+                @Html.ValidationMessageFor(m => m.Item.ItemType, "", new { @class = "text-danger" })
+                <datalist id="dataList"></datalist>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Item.Location.LocationName, new { @style = "position:relative", @class = "control-label col-md-2 padRight" })
+                @Html.TextBoxFor(m => m.Item.Location.LocationName, "", new
+           {
+               @name = "location",
+               @class = "form-control text-box",
+               @id = "autoLoc",
+               @placeholder = "Type/Click For Existing",
+               @list = "dataList2",
+               @onchange = "comboLoc()", @autocomplete = "off"})
+                @Html.ValidationMessageFor(m => m.Item.Location.LocationName, "", new { @class = "text-danger" })
+                <datalist id="dataList2"></datalist>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Item.SubLocation.SubLocationName, new { @style = "position:relative", @class = "control-label col-md-2 padRight" })
+                @Html.TextBoxFor(m => m.Item.SubLocation.SubLocationName, "", new
+           {
+               @name = "sublocation",
+               @class = "form-control text-box",
+               @id = "autoSub",
+               @list = "dataList3",
+               @placeholder = "Type/Click For Existing",
+               @onchange = "comboSub()", @autocomplete = "off"})
+                @Html.ValidationMessageFor(m => m.Item.SubLocation.SubLocationName, "", new { @class = "text-danger" })
+                <datalist id="dataList3"></datalist>
+            </div>
+
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Item.LocationComments, new { @style = "position:relative", @class = "control-label col-md-2 padRight" })
+                @Html.TextBoxFor(m => m.Item.LocationComments, new
+           {
+               @name = "locCom",
+               @id = "locComments",
+               @class = "form-control text-box", @autocomplete = "off"})
+                @Html.ValidationMessageFor(m => m.Item.LocationComments, "", new { @class = "text-danger" })
+            </div>
+
+
+            <input type="submit" style="width:200px;margin-top:20px;margin-left:-25px" class="btn btn-primary" name="name" value="Submit" />
+            <input type="button" value="Cancel" style="width:200px;margin-top:20px;" onclick="closeAdd()" class="btn btn-danger" />
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(m => m.Item.AmountInStock, new
-       {
-           @style = "position:relative",
-           @class = "control-label col-md-2 padRight", @autocomplete = "off"})
-            @Html.TextBoxFor(m => m.Item.AmountInStock, new
-       {
-           @name = "amountinstock",
-           @id = "inStock",
-           @class = "form-control text-box", @autocomplete = "off"})
-            @Html.ValidationMessageFor(m => m.Item.AmountInStock, "", new { @class = "text-danger" })
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(m => m.Item.WebAddress, new
-       {
-           @style = "position:relative",
-           @class = "control-label col-md-2 padRight", @autocomplete = "off"})
-            @Html.TextBoxFor(m => m.Item.WebAddress, new
-       {
-           @name = "url",
-           @id = "urlAddress",
-           @class = "form-control text-box", @autocomplete = "off"})
-            @Html.ValidationMessageFor(m => m.Item.WebAddress, "", new { @class = "text-danger" })
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(m => m.Item.FileUpload, new { @style = "position:relative", @class = "control-label col-md-2 padRight" })
-            @Html.TextBoxFor(m => m.Item.FileUpload, "Placeholder", new
-       {
-           @type = "file",
-           @style = "top:20px",
-           @id = "fileId",
-           @multiple = "multiple",
-           @name = "files", @autocomplete = "off"})
-            @Html.ValidationMessageFor(m => m.Item.FileUpload, "", new { @class = "text-danger" })
-            @Html.DropDownListFor(x => x.Files.FileList,
-             Model.Files.GetFileList.Select(x => new SelectListItem { Text = x.ItemFileName, Value = x.Id.ToString()}),
-             new { @class = "form-control chosen-select", @style = "width:200px", @multiple = true})
-
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(m => m.Item.PhotoUpload, new { @style = "position:relative", @class = "control-label col-md-2 padRight" })
-            @Html.TextBoxFor(m => m.Item.PhotoUpload, "", new
-       {
-           @type = "file",
-           @id = "photoId",
-           @style = "top:20px",
-           @multiple = "multiple",
-           @name = "photos", @autocomplete = "off"})
-            @Html.ValidationMessageFor(m => m.Item.PhotoUpload, "", new { @class = "text-danger" })
-            @Html.DropDownListFor(x => x.Photos.PhotoList,
-        Model.Photos.GetPhotoList.Select(x => new SelectListItem { Text = x.PhotoName, Value = x.Id.ToString()}),
-        new { @class = "form-control chosen-select", @style = "width:200px", @multiple = true})
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(m => m.Item.ItemType, new { @style = "position:relative", @class = "control-label col-md-2 padRight" })
-            @Html.TextBoxFor(m => m.Item.ItemType, "", new
-       {
-           @name = "type",
-           @class = "form-control text-box",
-           @id = "autoType",
-           @placeholder = "Type/Click For Existing",
-           @list = "dataList",
-           @onchange = "comboType()", @autocomplete = "off"})
-            @Html.ValidationMessageFor(m => m.Item.ItemType, "", new { @class = "text-danger" })
-            <datalist id="dataList"></datalist>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(m => m.Item.Location.LocationName, new { @style = "position:relative", @class = "control-label col-md-2 padRight" })
-            @Html.TextBoxFor(m => m.Item.Location.LocationName, "", new
-       {
-           @name = "location",
-           @class = "form-control text-box",
-           @id = "autoLoc",
-           @placeholder = "Type/Click For Existing",
-           @list = "dataList2",
-           @onchange = "comboLoc()", @autocomplete = "off"})
-            @Html.ValidationMessageFor(m => m.Item.Location.LocationName, "", new { @class = "text-danger" })
-            <datalist id="dataList2"></datalist>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(m => m.Item.SubLocation.SubLocationName, new { @style = "position:relative", @class = "control-label col-md-2 padRight" })
-            @Html.TextBoxFor(m => m.Item.SubLocation.SubLocationName, "", new
-       {
-           @name = "sublocation",
-           @class = "form-control text-box",
-           @id = "autoSub",
-           @list = "dataList3",
-           @placeholder = "Type/Click For Existing",
-           @onchange = "comboSub()", @autocomplete = "off"})
-            @Html.ValidationMessageFor(m => m.Item.SubLocation.SubLocationName, "", new { @class = "text-danger" })
-            <datalist id="dataList3"></datalist>
-        </div>
-
-
-        <div class="form-group">
-            @Html.LabelFor(m => m.Item.LocationComments, new { @style = "position:relative", @class = "control-label col-md-2 padRight" })
-            @Html.TextBoxFor(m => m.Item.LocationComments, new
-       {
-           @name = "locCom",
-           @id = "locComments",
-           @class = "form-control text-box", @autocomplete = "off"})
-            @Html.ValidationMessageFor(m => m.Item.LocationComments, "", new { @class = "text-danger" })
-        </div>
-
-
-        <input type="submit" style="width:200px;margin-top:20px;margin-left:-25px" class="btn btn-primary" name="name" value="Submit" />
-        <input type="button" value="Cancel" style="width:200px;margin-top:20px;" onclick="closeAdd()" class="btn btn-danger" />
-    </div>
-}
+    }
+</div>
 
 <script src="~/Scripts/jquery.validate.js"></script>
 <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
 <script>
 
 

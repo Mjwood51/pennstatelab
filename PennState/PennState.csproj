@@ -226,7 +226,9 @@
     </Compile>
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\AddItemViewModel.cs" />
     <Compile Include="ViewModels\AddUserViewModel.cs" />
+    <Compile Include="ViewModels\EditItemViewModel.cs" />
     <Compile Include="ViewModels\ItemViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -255,10 +257,10 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Images\Uploads\SubLocations\1\Thumbs\timeline.png" />
-    <Content Include="Images\Uploads\SubLocations\1\Thumbs\timeline2.PNG" />
-    <Content Include="Images\Uploads\SubLocations\1\timeline.png" />
-    <Content Include="Images\Uploads\SubLocations\1\timeline2.PNG" />
+    <Content Include="Images\Uploads\SubLocations\1\account creation_user_login.PNG" />
+    <Content Include="Images\Uploads\SubLocations\1\Budget.PNG" />
+    <Content Include="Images\Uploads\SubLocations\1\Thumbs\account creation_user_login.PNG" />
+    <Content Include="Images\Uploads\SubLocations\1\Thumbs\Budget.PNG" />
     <Content Include="Models\DBModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>DBModel.edmx</DependentUpon>
@@ -305,17 +307,7 @@
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\notify.js" />
     <Content Include="Scripts\typeahead.js" />
-    <Content Include="StoredProcedures\GetAllCatLocs.sql" />
-    <Content Include="StoredProcedures\GetAllCatOwners.sql" />
-    <Content Include="StoredProcedures\GetAllCatTypes.sql" />
-    <Content Include="StoredProcedures\GetAllCatVendors.sql" />
-    <Content Include="StoredProcedures\GetAllFiles.sql" />
-    <Content Include="StoredProcedures\GetAllItems.sql" />
-    <Content Include="StoredProcedures\GetAllLocations.sql" />
-    <Content Include="StoredProcedures\GetAllPhotos.sql" />
-    <Content Include="StoredProcedures\GetAllRoles.sql" />
-    <Content Include="StoredProcedures\GetAllSubLocations.sql" />
-    <Content Include="StoredProcedures\GetAllUsers.sql" />
+    <Content Include="StoredProcedures\GetFileDetails.sql" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

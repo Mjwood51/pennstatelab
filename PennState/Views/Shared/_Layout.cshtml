@@ -36,7 +36,7 @@
 </body>
 </html>
 <script src="~/Scripts/chosen.jquery.js"></script>
-<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+@*<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>*@
 <script src="~/Scripts/notify.js"></script>
 <script type="text/javascript">
     $('#myModal2').on('shown.bs.modal', function () {
@@ -90,8 +90,6 @@
             var modal = document.getElementById('logInModal');
         var url = '@Url.Action("Login", "Account")';
             $("#logInBod").load(url, function () {
-                //$(".jumbotron").fadeIn(500).addClass('fadein');
-                //$("body").fadeIn(500).addClass('fadein');
                 $("#logInModal").fadeIn(500).modal(modal.style.display = "block").show();
 
             });
@@ -99,8 +97,6 @@
                 if (!$(event.target).closest('#logInModal').length && !$(event.target).is('#logInModal')) {
 
                     $("#logInModal").fadeOut(500).modal(modal.style.display = "none").hide();
-                    //$(".jumbotron").fadeIn(500).removeClass('fadein');
-                    //$("body").fadeIn(500).removeClass('fadein');
 
                 }
             }
@@ -138,7 +134,6 @@
         var modal3 = document.getElementById('myModal2');
         //Close Add New Item
         function closeAdd() {
-            $("body").fadeIn(500).removeClass('fadein');
             $("#myModal2").fadeOut(500).modal('hide', function () {
                 modal3.style.display = "none";
             }, window.location.reload());
@@ -152,7 +147,6 @@
 
                         $("#myModal2").fadeIn(500).modal('show', function () {
                             modal3.style.display = "block";
-                            $("body").fadeIn(500).addClass('fadein');
                         });
                     });
 
