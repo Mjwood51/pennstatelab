@@ -263,7 +263,7 @@
       <DependentUpon>DBModel.edmx</DependentUpon>
       <LastGenOutput>DBModel.Context.cs</LastGenOutput>
     </Content>
-    <Content Include="Models\DBModel.edmx.sql" />
+    <Content Include="Database\DBModel.edmx.sql" />
     <Content Include="Models\DBModel.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>DBModel.edmx</DependentUpon>
@@ -345,7 +345,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Database\" />
     <Folder Include="Images\Uploads\SubLocations\1\Gallery\Thumbs\" />
   </ItemGroup>
   <ItemGroup>

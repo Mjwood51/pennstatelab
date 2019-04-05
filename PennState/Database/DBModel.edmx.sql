@@ -160,7 +160,7 @@ CREATE TABLE [dbo].[Tbl_Items] (
     [WebAddress] nvarchar(50)  NULL,
     [Vendor] nvarchar(50)  NOT NULL,
     [ContactInfo] nvarchar(200)  NULL,
-    [PurchaseDate] datetime  NOT NULL,
+    [PurchaseDate] datetime  NULL,
     [Added] datetime  NULL,
     [Updated] datetime  NULL,
     [PurchasePrice] decimal(18,2)  NOT NULL,
