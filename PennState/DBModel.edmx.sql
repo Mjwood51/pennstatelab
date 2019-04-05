@@ -2,8 +2,8 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 04/04/2019 17:17:14
--- Generated from EDMX file: C:\Users\mmw5709\source\repos\PennState\PennState\PennState\Models\DBModel.edmx
+-- Date Created: 04/05/2019 14:40:29
+-- Generated from EDMX file: C:\Users\Mark W\source\repos\PennState\PennState\Models\DBModel.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -29,12 +29,6 @@ GO
 IF OBJECT_ID(N'[dbo].[FK_dbo_Tbl_CatagoryVendors_dbo_Tbl_CatagoryVendors_Pid]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Tbl_CatagoryVendors] DROP CONSTRAINT [FK_dbo_Tbl_CatagoryVendors_dbo_Tbl_CatagoryVendors_Pid];
 GO
-IF OBJECT_ID(N'[dbo].[FK_dbo_Tbl_ItemFiles_dbo_Tbl_File_File_Id]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Tbl_ItemFiles] DROP CONSTRAINT [FK_dbo_Tbl_ItemFiles_dbo_Tbl_File_File_Id];
-GO
-IF OBJECT_ID(N'[dbo].[FK_dbo_Tbl_ItemFiles_dbo_Tbl_Items_Item_Id]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Tbl_ItemFiles] DROP CONSTRAINT [FK_dbo_Tbl_ItemFiles_dbo_Tbl_Items_Item_Id];
-GO
 IF OBJECT_ID(N'[dbo].[FK_dbo_Tbl_Items_dbo_Tbl_Locations_LocId]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Tbl_Items] DROP CONSTRAINT [FK_dbo_Tbl_Items_dbo_Tbl_Locations_LocId];
 GO
@@ -44,17 +38,23 @@ GO
 IF OBJECT_ID(N'[dbo].[FK_dbo_Tbl_Items_dbo_Tbl_Users_UsrId]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Tbl_Items] DROP CONSTRAINT [FK_dbo_Tbl_Items_dbo_Tbl_Users_UsrId];
 GO
-IF OBJECT_ID(N'[dbo].[FK_dbo_Tbl_PhotoItems_dbo_Tbl_Items_Item_Id]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Tbl_PhotoItems] DROP CONSTRAINT [FK_dbo_Tbl_PhotoItems_dbo_Tbl_Items_Item_Id];
-GO
-IF OBJECT_ID(N'[dbo].[FK_dbo_Tbl_PhotoItems_dbo_Tbl_Photo_Photo_Id]', 'F') IS NOT NULL
-    ALTER TABLE [dbo].[Tbl_PhotoItems] DROP CONSTRAINT [FK_dbo_Tbl_PhotoItems_dbo_Tbl_Photo_Photo_Id];
-GO
 IF OBJECT_ID(N'[dbo].[FK_dbo_Tbl_SubLocations_dbo_Tbl_Locations_LocId]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Tbl_SubLocations] DROP CONSTRAINT [FK_dbo_Tbl_SubLocations_dbo_Tbl_Locations_LocId];
 GO
 IF OBJECT_ID(N'[dbo].[FK_dbo_Tbl_Users_dbo_Tbl_RoleId]', 'F') IS NOT NULL
     ALTER TABLE [dbo].[Tbl_Users] DROP CONSTRAINT [FK_dbo_Tbl_Users_dbo_Tbl_RoleId];
+GO
+IF OBJECT_ID(N'[dbo].[FK_Tbl_ItemFiles_Tbl_File]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Tbl_ItemFiles] DROP CONSTRAINT [FK_Tbl_ItemFiles_Tbl_File];
+GO
+IF OBJECT_ID(N'[dbo].[FK_Tbl_ItemFiles_Tbl_Items]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Tbl_ItemFiles] DROP CONSTRAINT [FK_Tbl_ItemFiles_Tbl_Items];
+GO
+IF OBJECT_ID(N'[dbo].[FK_Tbl_PhotoItems_Tbl_Items]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Tbl_PhotoItems] DROP CONSTRAINT [FK_Tbl_PhotoItems_Tbl_Items];
+GO
+IF OBJECT_ID(N'[dbo].[FK_Tbl_PhotoItems_Tbl_Photo]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[Tbl_PhotoItems] DROP CONSTRAINT [FK_Tbl_PhotoItems_Tbl_Photo];
 GO
 
 -- --------------------------------------------------
@@ -76,9 +76,6 @@ GO
 IF OBJECT_ID(N'[dbo].[Tbl_File]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Tbl_File];
 GO
-IF OBJECT_ID(N'[dbo].[Tbl_ItemFiles]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[Tbl_ItemFiles];
-GO
 IF OBJECT_ID(N'[dbo].[Tbl_Items]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Tbl_Items];
 GO
@@ -88,9 +85,6 @@ GO
 IF OBJECT_ID(N'[dbo].[Tbl_Photo]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Tbl_Photo];
 GO
-IF OBJECT_ID(N'[dbo].[Tbl_PhotoItems]', 'U') IS NOT NULL
-    DROP TABLE [dbo].[Tbl_PhotoItems];
-GO
 IF OBJECT_ID(N'[dbo].[Tbl_Roles]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Tbl_Roles];
 GO
@@ -99,6 +93,12 @@ IF OBJECT_ID(N'[dbo].[Tbl_SubLocations]', 'U') IS NOT NULL
 GO
 IF OBJECT_ID(N'[dbo].[Tbl_Users]', 'U') IS NOT NULL
     DROP TABLE [dbo].[Tbl_Users];
+GO
+IF OBJECT_ID(N'[dbo].[Tbl_ItemFiles]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Tbl_ItemFiles];
+GO
+IF OBJECT_ID(N'[dbo].[Tbl_PhotoItems]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[Tbl_PhotoItems];
 GO
 
 -- --------------------------------------------------
@@ -221,7 +221,7 @@ GO
 -- Creating table 'Tbl_ItemFiles'
 CREATE TABLE [dbo].[Tbl_ItemFiles] (
     [Files_Id] int  NOT NULL,
-    [Tbl_Items_Id] int  NOT NULL
+    [Items_Id] int  NOT NULL
 );
 GO
 
@@ -302,10 +302,10 @@ ADD CONSTRAINT [PK_Tbl_Users]
     PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
--- Creating primary key on [Files_Id], [Tbl_Items_Id] in table 'Tbl_ItemFiles'
+-- Creating primary key on [Files_Id], [Items_Id] in table 'Tbl_ItemFiles'
 ALTER TABLE [dbo].[Tbl_ItemFiles]
 ADD CONSTRAINT [PK_Tbl_ItemFiles]
-    PRIMARY KEY CLUSTERED ([Files_Id], [Tbl_Items_Id] ASC);
+    PRIMARY KEY CLUSTERED ([Files_Id], [Items_Id] ASC);
 GO
 
 -- Creating primary key on [Items_Id], [Photos_Id] in table 'Tbl_PhotoItems'
@@ -462,10 +462,10 @@ ADD CONSTRAINT [FK_Tbl_ItemFiles_Tbl_File]
     ON DELETE NO ACTION ON UPDATE NO ACTION;
 GO
 
--- Creating foreign key on [Tbl_Items_Id] in table 'Tbl_ItemFiles'
+-- Creating foreign key on [Items_Id] in table 'Tbl_ItemFiles'
 ALTER TABLE [dbo].[Tbl_ItemFiles]
 ADD CONSTRAINT [FK_Tbl_ItemFiles_Tbl_Items]
-    FOREIGN KEY ([Tbl_Items_Id])
+    FOREIGN KEY ([Items_Id])
     REFERENCES [dbo].[Tbl_Items]
         ([Id])
     ON DELETE NO ACTION ON UPDATE NO ACTION;
@@ -474,7 +474,7 @@ GO
 -- Creating non-clustered index for FOREIGN KEY 'FK_Tbl_ItemFiles_Tbl_Items'
 CREATE INDEX [IX_FK_Tbl_ItemFiles_Tbl_Items]
 ON [dbo].[Tbl_ItemFiles]
-    ([Tbl_Items_Id]);
+    ([Items_Id]);
 GO
 
 -- Creating foreign key on [Items_Id] in table 'Tbl_PhotoItems'

@@ -188,10 +188,10 @@
   <EntityType Name="Tbl_ItemFiles">
     <Key>
       <PropertyRef Name="Files_Id" />
-      <PropertyRef Name="Tbl_Items_Id" />
+      <PropertyRef Name="Items_Id" />
     </Key>
     <Property Name="Files_Id" Type="int" Nullable="false" />
-    <Property Name="Tbl_Items_Id" Type="int" Nullable="false" />
+    <Property Name="Items_Id" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Tbl_PhotoItems">
     <Key>
@@ -329,7 +329,7 @@
         <PropertyRef Name="Id" />
       </Principal>
       <Dependent Role="Tbl_ItemFiles">
-        <PropertyRef Name="Tbl_Items_Id" />
+        <PropertyRef Name="Items_Id" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -804,7 +804,7 @@
         <ScalarProperty Name="Id" ColumnName="Files_Id" />
       </EndProperty>
       <EndProperty Name="Tbl_Items">
-        <ScalarProperty Name="Id" ColumnName="Tbl_Items_Id" />
+        <ScalarProperty Name="Id" ColumnName="Items_Id" />
       </EndProperty>
     </AssociationSetMapping>
     <AssociationSetMapping Name="Tbl_PhotoItems" TypeName="DBModel.Tbl_PhotoItems" StoreEntitySet="Tbl_PhotoItems">
