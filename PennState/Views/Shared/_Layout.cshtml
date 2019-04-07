@@ -39,6 +39,9 @@
 @*<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>*@
 <script src="~/Scripts/notify.js"></script>
 <script type="text/javascript">
+
+    
+
     $('#myModal2').on('shown.bs.modal', function () {
         $('.chosen-select', this).chosen();
     });
@@ -73,6 +76,7 @@
             });
         }
     };
+
 
     function validateEditForm() {
         if (!$("#editForm").valid()) {

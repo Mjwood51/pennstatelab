@@ -83,7 +83,9 @@ namespace PennState.Controllers
 
         [HttpPost]
         public ActionResult Edit(EditItemViewModel model)
-        {        
+        {
+            if (ModelState.IsValid)
+            {
                 Tbl_Items modelItem = _context.Tbl_Items.Find(model.Item.Id);
                 List<Image> images = null;
                 List<byte[]> photoDatas = null;
@@ -412,7 +414,7 @@ namespace PennState.Controllers
                     _context.SaveChanges();
                 }
 
-            
+            }
             return RedirectToAction("GetAllItems", "Item");
         }
 
@@ -433,11 +435,12 @@ namespace PennState.Controllers
         [HttpPost]
         public ActionResult AddItem(AddItemViewModel model)
         {
-
+            if (ModelState.IsValid)
+            {
                 var modelItem = new Tbl_Items();
                 List<Image> images = null;
                 List<byte[]> photoDatas = null;
-                if (model.Files != null)
+                if (model.Files.FileList != null)
                 {
                     foreach (var fileId in model.Files.FileList)
                     {
@@ -447,7 +450,7 @@ namespace PennState.Controllers
                     }
                 }
 
-                if (model.Photos != null)
+                if (model.Photos.PhotoList != null)
                 {
                     foreach (var photoId in model.Photos.PhotoList)
                     {
@@ -774,7 +777,7 @@ namespace PennState.Controllers
 
 
                 //Get file extension
-            
+            }
             //verify extension
             return RedirectToAction("GetAllItems", "Item");
         }
@@ -1071,35 +1074,69 @@ namespace PennState.Controllers
         }
 
         [HttpPost]
-        public JsonResult DeleteFile(int id)
+        public JsonResult DeleteFile(int id, int itemId)
         {
-            using (ContextModel _context = new ContextModel())
+            DbConnection();
+            con.Open();
+            using (SqlCommand command = new SqlCommand("DELETE FROM Tbl_ItemFiles WHERE Files_Id = " + id + " AND Items_Id = " + itemId, con))
             {
-                Tbl_File file = _context.Tbl_File.Find(id);
-                _context.Tbl_File.Remove(file);
-                _context.SaveChanges();
-                bool result = true;
-                return Json(result, JsonRequestBehavior.AllowGet);
+                command.ExecuteNonQuery();
             }
-            
+            using (SqlCommand command = new SqlCommand("SELECT Files_Id FROM Tbl_ItemFiles WHERE Files_Id = " + id, con))
+            {
+                var query = command.ExecuteScalar();
+                using (ContextModel _context = new ContextModel())
+                {
+                    Tbl_File file = _context.Tbl_File.Find(id);
+                    if (file != null && query == null)
+                    {
+                        _context.Tbl_File.Remove(file);
+                        _context.SaveChanges();
+                    }
+
+                }
+            }
+            con.Close();
+            bool result = true;
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
-        public JsonResult DeletePhoto(int id)
+        public JsonResult DeletePhoto(int photoId, int itemId, int subId, string name)
         {
-            using (ContextModel _context = new ContextModel())
-            {
-                Tbl_Photo photo = _context.Tbl_Photo.Find(id);
-                _context.Tbl_Photo.Remove(photo);
-                _context.SaveChanges();
-
-                string mappedPath1 = Server.MapPath(@"~/Images/Uploads/SubLocations/" + id);
-                DirectoryInfo attachments_AR = new DirectoryInfo(mappedPath1);
-                EmptyFolder(attachments_AR);
-                Directory.Delete(mappedPath1);
+                    DbConnection();
+                    con.Open();
+                    using (SqlCommand command = new SqlCommand("DELETE FROM Tbl_PhotoItems WHERE Photos_Id = " + photoId + " AND Items_Id = " + itemId, con))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                    using (SqlCommand command = new SqlCommand("SELECT Photos_Id FROM Tbl_PhotoItems WHERE Photos_Id = " + photoId, con))
+                    {
+                        var query = command.ExecuteScalar();
+                        using (ContextModel _context = new ContextModel())
+                        {
+                            Tbl_Photo photo = _context.Tbl_Photo.Find(photoId);
+                            if (photo != null && query == null)
+                            {
+                                _context.Tbl_Photo.Remove(photo);
+                                _context.SaveChanges();
+                                string mappedPath1 = Request.MapPath(@"~/Images/Uploads/SubLocations/" + subId + '/' + name);
+                                string mappedPath2 = Request.MapPath(@"~/Images/Uploads/SubLocations/" + subId + "/Thumbs/" + name);
+                                if (System.IO.File.Exists(mappedPath1))
+                                {
+                                    System.IO.File.Delete(mappedPath1);
+                                }
+                                if (System.IO.File.Exists(mappedPath2))
+                                {
+                                    System.IO.File.Delete(mappedPath2);
+                                }
+                            }
+                        }
+                    }
+                con.Close();
+      
                 bool result = true;
                 return Json(result, JsonRequestBehavior.AllowGet);
-            }
         }
 
         private void EmptyFolder(DirectoryInfo directory)

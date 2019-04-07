@@ -190,6 +190,25 @@
 <script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
 <script>
 
+    $.validator.unobtrusive.adapters.add('filetype', ['validtypes'], function (options) {
+        options.rules['filetype'] = { validtypes: options.params.validtypes.split(',') };
+        options.messages['filetype'] = options.message;
+    });
+
+    $.validator.addMethod("filetype", function (value, element, param) {
+        if (!value) {
+            return true;
+        }
+        var extension = getFileExtension(value);
+        return $.inArray(extension, param.validtypes) !== -1;
+    });
+
+    function getFileExtension(fileName) {
+        if (/[.]/.exec(fileName)) {
+            return /[^.]+$/.exec(fileName)[0].toLowerCase();
+        }
+        return null;
+    }
 
     $.notify.addStyle('happygreen', {
         html: "<div>☺<span data-notify-text/>☺</div>",

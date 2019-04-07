@@ -1,7 +1,7 @@
 ﻿@model PennState.ViewModels.EditItemViewModel
 <link href="~/Content/chosen.css" rel="stylesheet" />
 <div id="divEdit">
-    @using (Ajax.BeginForm("Edit", "Item", FormMethod.Post, new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divEdit" }, new { @onsubmit = "return validateEditForm()", @id = "editForm", enctype = "multipart/form-data" }))
+    @using (Ajax.BeginForm("Edit", "Item", FormMethod.Post, new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divEdit", OnSuccess = "closeEdit()" }, new { @onsubmit = "return validateEditForm()", @id = "editForm", enctype = "multipart/form-data" }))
     {
         @Html.AntiForgeryToken()
 
@@ -88,7 +88,7 @@
                             {
                                 foreach (var file in Model.Item.Files)
                                 {
-                                    <a href="#" id="f_@file.Id" onclick="confirmFileDel(@file.Id)"><i class="glyphicon glyphicon-trash"></i></a>
+                                    <a href="#" id="f_@file.Id" onclick="confirmFileDel('@file.Id,@Model.Item.Id')"><i class="glyphicon glyphicon-trash"></i></a>
                                     @Html.ActionLink(file.ItemFileName, "DownloadFile", new { id = file.Id }, new { @id = "file_" + file.Id })
                                     <br />
                                 }
@@ -116,7 +116,7 @@
                                 foreach (var photo in Model.Item.Photos)
                                 { 
                                 <div class="imgHolder">   
-                                    <span>@photo.PhotoName|<a href="#" id="p_@photo.Id" onclick="confirmPhotoDel(@photo.Id)"><i class="glyphicon glyphicon-trash"></i></a></span>
+                                    <span>@photo.PhotoName|<a href="#" id="p_@photo.Id" onclick="confirmPhotoDel('@photo.Id,@photo.PhotoName,@Model.Item.Id,@Model.Item.SubId')"><i class="glyphicon glyphicon-trash"></i></a></span>
                                     <img id="photo_@photo.Id" src="~/Images/Uploads/SubLocations/@Model.Item.SubId/Thumbs/@photo.PhotoName" style="padding-top:40px;height:150px;width:150px" />                                    
                                 </div>
                                     <br />
@@ -220,12 +220,37 @@
 <script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
 <script>
 
+    $.validator.unobtrusive.adapters.add('filetype', ['validtypes'], function (options) {
+        options.rules['filetype'] = { validtypes: options.params.validtypes.split(',') };
+        options.messages['filetype'] = options.message;
+    });
+
+    $.validator.addMethod("filetype", function (value, element, param) {
+        if (!value) {
+            return true;
+        }
+        var extension = getFileExtension(value);
+        return $.inArray(extension, param.validtypes) !== -1;
+    });
+
+    function getFileExtension(fileName) {
+        if (/[.]/.exec(fileName)) {
+            return /[^.]+$/.exec(fileName)[0].toLowerCase();
+        }
+        return null;
+    }
 
 
-    var confirmPhotoDel = function(photoid){
+    var confirmPhotoDel = function (string) {
+        var r = string.split(',');
+        var photoid = r[0];
+        var name = r[1];
+        var itemid = r[2];
+        var subid = r[3];
+        debugger
             $.ajax({
                 type: "POST",
-                url: '@Url.Action("DeletePhoto", "Item")/' + photoid,
+                url: '@Url.Action("DeletePhoto", "Item")/' + photoid + '/' + itemid + '/' + subid + '/' + name,
                 beforeSend: function () {
                     return confirm("Are you sure you want to delete this photo?");
                 }
@@ -238,10 +263,13 @@
             });
         }
 
-    var confirmFileDel = function(fileid){
+    var confirmFileDel = function (string) {
+        var r = string.split(',');
+        var fileid = r[0];
+        var itemid = r[1];
         $.ajax({
             type: "POST",
-            url: '@Url.Action("DeleteFile", "Item")/' + fileid,
+            url: '@Url.Action("DeleteFile", "Item")/' + fileid + '/' + itemid,
             beforeSend: function () {
                 return confirm("Are you sure you want to delete this file?");
             }

@@ -15,12 +15,12 @@ namespace PennState
 
             routes.MapRoute(
                 "DeletePhoto",
-                "item/deletephoto/{id}",
+                "item/deletephoto/{photoId}/{itemId}/{subId}/{name}",
                 new { controller = "Item", action = "DeletePhoto" });
 
             routes.MapRoute(
                 "DeleteFile",
-                "item/deletefile/{id}",
+                "item/deletefile/{id}/{itemId}",
                 new { controller = "Item", action = "DeleteFile" });
 
             routes.MapRoute(

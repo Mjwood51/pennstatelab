@@ -186,6 +186,7 @@
       <DependentUpon>DBModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\Files.cs" />
+    <Compile Include="Models\FileTypeAttribute.cs" />
     <Compile Include="Models\Item.cs" />
     <Compile Include="Models\Location.cs" />
     <Compile Include="Models\LoginView.cs" />
@@ -258,9 +259,14 @@
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Images\Uploads\SubLocations\1\account creation_user_login.PNG" />
-    <Content Include="Images\Uploads\SubLocations\1\Budget.PNG" />
     <Content Include="Images\Uploads\SubLocations\1\Thumbs\account creation_user_login.PNG" />
-    <Content Include="Images\Uploads\SubLocations\1\Thumbs\Budget.PNG" />
+    <Content Include="Images\Uploads\SubLocations\2\psu.jpg" />
+    <Content Include="Images\Uploads\SubLocations\2\Thumbs\ExcelFile Story1.PNG" />
+    <Content Include="Images\Uploads\SubLocations\2\Thumbs\psu.jpg" />
+    <Content Include="Images\Uploads\SubLocations\2\Thumbs\timeline2.PNG" />
+    <Content Include="Images\Uploads\SubLocations\2\Thumbs\TreeViewClass.PNG" />
+    <Content Include="Images\Uploads\SubLocations\3\account creation_user_login.PNG" />
+    <Content Include="Images\Uploads\SubLocations\3\Thumbs\account creation_user_login.PNG" />
     <Content Include="Models\DBModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>DBModel.edmx</DependentUpon>
@@ -341,6 +347,8 @@
     <Folder Include="App_Data\" />
     <Folder Include="Database\" />
     <Folder Include="Images\Uploads\SubLocations\1\Gallery\Thumbs\" />
+    <Folder Include="Images\Uploads\SubLocations\2\Gallery\Thumbs\" />
+    <Folder Include="Images\Uploads\SubLocations\3\Gallery\Thumbs\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
