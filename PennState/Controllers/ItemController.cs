@@ -81,6 +81,17 @@ namespace PennState.Controllers
             return PartialView("Edit", model);
         }
 
+        [HttpGet]
+        public ActionResult ItemDetails(int cid)
+        {
+            var model = new ItemDetailsModel();
+            using (ContextModel db = new ContextModel())
+            {
+                model.Item = Mapper.Map<Tbl_Items, Item>(db.Tbl_Items.Where(x => x.Id == cid).Include(i => i.Photos).Include(i => i.Files).FirstOrDefault());
+            }
+            return PartialView("ItemDetails", model);
+        }
+
         [HttpPost]
         public ActionResult Edit(EditItemViewModel model)
         {
@@ -249,6 +260,7 @@ namespace PennState.Controllers
                 modelItem.ItemNotes = model.Item.ItemNotes;
                 modelItem.Manufacturer = modelItem.Manufacturer;
                 modelItem.UsrId = id.Id;
+                modelItem.UpdatedBy = id.FirstName + " " + id.LastName;
                 modelItem.Added = DateTime.Now;
                 modelItem.Updated = DateTime.Now;
                 modelItem.AmountInStock = model.Item.AmountInStock;
@@ -283,6 +295,7 @@ namespace PennState.Controllers
                 var pathString5 = "";
                 var path = "";
                 var path2 = "";
+                var path4 = "";
                 int i = 0;
                 if (model.PhotoUpload != null)
                 {
@@ -329,6 +342,12 @@ namespace PennState.Controllers
                         var img = images.ElementAt(i);
                         img = resizeImage(img, new Size(200, 200));
                         img.Save(path2);
+
+                        path4 = string.Format("{0}\\{1}", pathString4, imageName);
+                        var img2 = images.ElementAt(i);
+                        img2 = resizeImage(img2, new Size(500, 375));
+                        img2.Save(path4);
+
                         i++;
                     }
                 }
@@ -622,6 +641,7 @@ namespace PennState.Controllers
                 var pathString5 = "";
                 var path = "";
                 var path2 = "";
+                var path4 = "";
                 int i = 0;
                 if (model.PhotoUpload != null)
                 {
@@ -664,10 +684,15 @@ namespace PennState.Controllers
                         System.Drawing.Image image = imageConverter.ConvertFrom(photoDatas.ElementAt(i)) as System.Drawing.Image;
                         image.Save(path, System.Drawing.Imaging.ImageFormat.Jpeg);
 
-                        path2 = string.Format("{0}\\{1}", pathString3, imageName);
+                        path2 = string.Format("{0}\\{1}", pathString3, imageName);                    
                         var img = images.ElementAt(i);
                         img = resizeImage(img, new Size(200, 200));
                         img.Save(path2);
+
+                        path4 = string.Format("{0}\\{1}", pathString4, imageName);
+                        var img2 = images.ElementAt(i);
+                        img2 = resizeImage(img2, new Size(500, 375));
+                        img2.Save(path4);
                         i++;
                     }
                 }
@@ -1122,6 +1147,7 @@ namespace PennState.Controllers
                                 _context.SaveChanges();
                                 string mappedPath1 = Request.MapPath(@"~/Images/Uploads/SubLocations/" + subId + '/' + name);
                                 string mappedPath2 = Request.MapPath(@"~/Images/Uploads/SubLocations/" + subId + "/Thumbs/" + name);
+                                string mappedPath3 = Request.MapPath(@"~/Images/Uploads/SubLocations/" + subId + "/Gallery/" + name);
                                 if (System.IO.File.Exists(mappedPath1))
                                 {
                                     System.IO.File.Delete(mappedPath1);
@@ -1130,7 +1156,11 @@ namespace PennState.Controllers
                                 {
                                     System.IO.File.Delete(mappedPath2);
                                 }
-                            }
+                                if (System.IO.File.Exists(mappedPath3))
+                                {
+                                    System.IO.File.Delete(mappedPath3);
+                                }
+                    }
                         }
                     }
                 con.Close();
@@ -1165,7 +1195,6 @@ namespace PennState.Controllers
             con.Close();
             return DetList;
         }
-
 
         private void DbConnection()
         {

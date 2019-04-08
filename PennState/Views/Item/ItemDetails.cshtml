@@ -1,0 +1,172 @@
+﻿@model PennState.ViewModels.ItemDetailsModel
+<link href="~/Content/jquery.bxslider.css" rel="stylesheet" />
+<div style="position:relative">
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Item.ItemName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Item.ItemName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Item.AmountInStock)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Item.AmountInStock)
+        </dd>
+        @if (Model.Item.LocationComments != null)
+        {
+        <dt>
+            @Html.DisplayNameFor(model => model.Item.LocationComments)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Item.LocationComments)
+        </dd>
+        }
+        @if (Model.Item.Manufacturer != null)
+        {
+        <dt>
+            @Html.DisplayNameFor(model => model.Item.Manufacturer)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Item.Manufacturer)
+        </dd>
+        }
+        @if (Model.Item.CatalogNumber != null)
+        {
+        <dt>
+            @Html.DisplayNameFor(model => model.Item.CatalogNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Item.CatalogNumber)
+        </dd>
+        }
+        @if (Model.Item.WebAddress != null)
+        {
+        <dt>
+            @Html.DisplayNameFor(model => model.Item.WebAddress)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Item.WebAddress)
+        </dd>
+        }
+        <dt>
+            @Html.DisplayNameFor(model => model.Item.Vendor)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Item.Vendor)
+        </dd>
+        @if (Model.Item.ContactInfo != null)
+        {
+        <dt>
+            @Html.DisplayNameFor(model => model.Item.ContactInfo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Item.ContactInfo)
+        </dd>
+        }
+        <dt>
+            @Html.DisplayNameFor(model => model.Item.PurchaseDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Item.PurchaseDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Item.Added)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Item.Added)
+        </dd>
+        @if (Model.Item.Updated != null)
+        {
+        <dt>
+            @Html.DisplayNameFor(model => model.Item.Updated)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Item.Updated)
+        </dd>
+        }
+        <dt>
+            @Html.DisplayNameFor(model => model.Item.PurchasePrice)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Item.PurchasePrice)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Item.ItemType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Item.ItemType)
+        </dd>
+        @if (Model.Item.ItemNotes != null)
+        {
+        <dt>
+            @Html.DisplayNameFor(model => model.Item.ItemNotes)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Item.ItemNotes)
+        </dd>
+        }
+        @{ if (Model.Item.UpdatedBy != null)
+            {
+                <dt>
+                    @Html.DisplayNameFor(model => model.Item.UpdatedBy)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Item.UpdatedBy)
+                </dd>
+            }
+        }
+    </dl>
+    @{
+        if (Model.Item.Photos.Count > 0)
+        {
+            <div style="position:absolute;left:450px;bottom:-100px">
+                <ul id="slider">
+
+                    @foreach(var image in Model.Item.Photos)
+                    {
+                    <li><img src="@Url.Content("~/Images/Uploads/SubLocations/" + Model.Item.SubId + "/Gallery/" + image.PhotoName)" /></li>
+                    }
+                                        
+                </ul>
+            </div>
+        }
+        else
+        {
+            <div style="position:absolute;left:470px;bottom:80px">
+            <h3>There are no gallery images.</h3>
+            </div>
+        }
+     }
+        </div>
+
+<p>
+    @Html.ActionLink("Back to List", "GetAllItems")
+</p>
+
+<script src="~/Scripts/jquery.bxslider.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#slider').bxSlider();
+        $('.bx-wrapper').width('70%');
+    })
+</script>

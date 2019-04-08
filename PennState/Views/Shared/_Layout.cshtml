@@ -89,7 +89,8 @@
         }
     };
 
-
+        //Login modal open
+        //
         var logIn = function () {
             var modal = document.getElementById('logInModal');
         var url = '@Url.Action("Login", "Account")';
@@ -106,41 +107,72 @@
             }
 
         }
+        //
+        //
 
+        
+        //Edit modal open and close
+        //
         var modal2 = document.getElementById('myModal');
         function closeEdit() {
             $("body").fadeIn(500).removeClass('fadein');
             $("#myModal").fadeOut(500).modal('hide', function () {
 
                 modal2.style.right = "-600px";
-            }, window.location.reload());
+            }, location.reload());
         }
 
-
         var editItem = function (id) {
-
-
             var url = '@Url.Action("Edit", "Item")/' + id;
                     $("#modalBod").load(url, function () {
                         $("body").fadeIn(500).addClass('fadein');
                         $("#myModal").fadeIn(500).modal('show', modal2.style.right = "0px");
             });
-
             window.ondblclick = function (event) {
 
                 if (!$(event.target).closest('#myModal').length) {
                     closeEdit();
                 }
             }
+        }
+        //
+        //
 
 
-         }
+        // Details modal open and close
+        //
+        var modal4 = document.getElementById('detailModal');
+        function closeDetails() {
+            $('#detailModal').fadeOut(500).modal('hide', function () {
+                modal4.style.display = "none";
+            }, location.reload());
+        }
+
+    
+        var itemDetails = function (id) {
+            var url = '@Url.Action("ItemDetails","Item")/' + id;
+            $("#detailBod").load(url, function () {
+                $("#detailModal").fadeIn(500).modal('show', modal4.style.display = "block");
+            });
+
+            window.ondblclick = function (event) {
+                if (!$(event.target).closest('#detailModal').length) {
+                    closeDetails();
+                }
+            }
+        }
+        //
+        //
+
+
+    //Add Item modal open and close
+    //
         var modal3 = document.getElementById('myModal2');
-        //Close Add New Item
+        
         function closeAdd() {
             $("#myModal2").fadeOut(500).modal('hide', function () {
                 modal3.style.display = "none";
-            }, window.location.reload());
+            }, location.reload());
         }
 
 
@@ -159,7 +191,10 @@
                     closeAdd();
                 }
             }
-        }
+    }
+    //
+    //
+
 
     var confirmDelete = function(itemid){
         $.ajax({

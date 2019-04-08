@@ -14,6 +14,7 @@
                @class = "form-control text-box",
                @id = "autoVen",
                @list = "dataList4",
+               @placeholder = "Type/Click For Existing",
                @onchange = "comboVen()", @autocomplete = "off"})
                 @Html.ValidationMessageFor(m => m.Item.Vendor, "", new { @class = "text-danger" })
                 <datalist id="dataList4"></datalist>

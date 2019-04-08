@@ -29,6 +29,11 @@ namespace PennState
                 new { controller = "Item", action = "DeleteItem" });
 
             routes.MapRoute(
+                "ItemDetails",
+                "item/itemdetails/{cid}",
+                new { controller = "Item", action = "ItemDetails" });
+
+            routes.MapRoute(
                 "Edit",
                 "item/edit/{cid}",
                 new { controller = "Item", action = "Edit" });
