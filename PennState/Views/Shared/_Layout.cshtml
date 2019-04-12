@@ -39,7 +39,7 @@
 @*<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>*@
 <script src="~/Scripts/notify.js"></script>
 <script type="text/javascript">
-
+    
     
 
     $('#myModal2').on('shown.bs.modal', function () {
@@ -76,7 +76,6 @@
             });
         }
     };
-
 
     function validateEditForm() {
         if (!$("#editForm").valid()) {
@@ -216,8 +215,8 @@
 
         $('.dropdown-toggle').on("hover", function (e) {
                 e.stopPropagation();
-                e.preventDefault();
-            $(this).next('.dropdown-menu').toggle();
+            e.preventDefault();
+            $(this).next('.dropdown-menu').toggle().fadeOut(9000);
 
 
     });

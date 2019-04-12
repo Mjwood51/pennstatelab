@@ -157,15 +157,15 @@
                                     <div class="form-body">
                                         <div id="jstreeLoc">
                                             @(Html.TreeViewController(Model.LocationsC)
-                                                                                                                                                                                                                                                                                                                                                                                      .EmptyContent("Locations")
-                                                                                                                                                                                                                                                                                                                                                                                          .Children(m => m.Childs)
-                                                                                                                                                                                                                                                                                                                                                                                          .HtmlAttributes(new { id = "tree" })
-                                                                                                                                                                                                                                                                                                                                                                                  .ChildrenHtmlAttributes(new { @class = "subItem" })
-                                                                                                                                                                                                                                                                                                                                                                                      .ItemText(m => m.LocationName)
-                                                                                                                                                                                                                                                                                                                                                                                      .ItemTemplate(
-                                                                                                                                                                                                                    @<text>
-                                                                                                                                                                                                                        <a href="@item.LocationName" desc="@item.LocationName">@item.LocationName</a>
-                                                                                                                                                                                                                    </text>)
+                                                                                                                                                                                                                                                                                                                                                                                                                              .EmptyContent("Locations")
+                                                                                                                                                                                                                                                                                                                                                                                                                                  .Children(m => m.Childs)
+                                                                                                                                                                                                                                                                                                                                                                                                                                  .HtmlAttributes(new { id = "tree" })
+                                                                                                                                                                                                                                                                                                                                                                                                                          .ChildrenHtmlAttributes(new { @class = "subItem" })
+                                                                                                                                                                                                                                                                                                                                                                                                                              .ItemText(m => m.LocationName)
+                                                                                                                                                                                                                                                                                                                                                                                                                              .ItemTemplate(
+                                                                                                                                                                                                                                                            @<text>
+                                                                                                                                                                                                                                                                <a href="@item.LocationName" desc="@item.LocationName">@item.LocationName</a>
+                                                                                                                                                                                                                                                            </text>)
 
                                             )
                                         </div>
@@ -184,15 +184,15 @@
                                     <div class="form-body">
                                         <div id="jstree1">
                                             @(Html.TreeViewController(Model.Types)
-                                                                                                                                                                                                                                                                                                                                                              .EmptyContent("Types")
-                                                                                                                                                                                                                                                                                                                                                              .Children(m => m.Childs)
-                                                                                                                                                                                                                                                                                                                                                              .HtmlAttributes(new { id = "tree" })
-                                                                                                                                                                                                                                                                                                                                                          .ChildrenHtmlAttributes(new { @class = "subItem" })
-                                                                                                                                                                                                                                                                                                                                                              .ItemText(m => m.TypeName)
-                                                                                                                                                                                                                                                                                                                                                              .ItemTemplate(
-                                                                                                                                                                                    @<text>
-                                                                                                                                                                                        <a href="@item.TypeName" desc="@item.TypeName">@item.TypeName</a>
-                                                                                                                                                                                    </text>)
+                                                                                                                                                                                                                                                                                                                                                                                                      .EmptyContent("Types")
+                                                                                                                                                                                                                                                                                                                                                                                                      .Children(m => m.Childs)
+                                                                                                                                                                                                                                                                                                                                                                                                      .HtmlAttributes(new { id = "tree" })
+                                                                                                                                                                                                                                                                                                                                                                                                  .ChildrenHtmlAttributes(new { @class = "subItem" })
+                                                                                                                                                                                                                                                                                                                                                                                                      .ItemText(m => m.TypeName)
+                                                                                                                                                                                                                                                                                                                                                                                                      .ItemTemplate(
+                                                                                                                                                                                                                            @<text>
+                                                                                                                                                                                                                                <a href="@item.TypeName" desc="@item.TypeName">@item.TypeName</a>
+                                                                                                                                                                                                                            </text>)
                                             )
                                         </div>
                                     </div>
@@ -211,15 +211,15 @@
                                     <div class="form-body">
                                         <div id="jstree2">
                                             @(Html.TreeViewController(Model.Vendors)
-                                                                                                                                                                                                                                                                                                                                                                      .EmptyContent("Vendors")
-                                                                                                                                                                                                                                                                                                                                                                      .Children(m => m.Childs)
-                                                                                                                                                                                                                                                                                                                                                                      .HtmlAttributes(new { id = "tree" })
-                                                                                                                                                                                                                                                                                                                                                                  .ChildrenHtmlAttributes(new { @class = "subItem" })
-                                                                                                                                                                                                                                                                                                                                                                      .ItemText(m => m.VendorName)
-                                                                                                                                                                                                                                                                                                                                                                      .ItemTemplate(
-                                                                                                                                                                                    @<text>
-                                                                                                                                                                                        <a href="@item.VendorName" desc="@item.VendorName">@item.VendorName</a>
-                                                                                                                                                                                    </text>)
+                                                                                                                                                                                                                                                                                                                                                                                                              .EmptyContent("Vendors")
+                                                                                                                                                                                                                                                                                                                                                                                                              .Children(m => m.Childs)
+                                                                                                                                                                                                                                                                                                                                                                                                              .HtmlAttributes(new { id = "tree" })
+                                                                                                                                                                                                                                                                                                                                                                                                          .ChildrenHtmlAttributes(new { @class = "subItem" })
+                                                                                                                                                                                                                                                                                                                                                                                                              .ItemText(m => m.VendorName)
+                                                                                                                                                                                                                                                                                                                                                                                                              .ItemTemplate(
+                                                                                                                                                                                                                            @<text>
+                                                                                                                                                                                                                                <a href="@item.VendorName" desc="@item.VendorName">@item.VendorName</a>
+                                                                                                                                                                                                                            </text>)
                                             )
                                         </div>
                                     </div>
@@ -238,15 +238,15 @@
                                     <div class="form-body">
                                         <div id="jstree3">
                                             @(Html.TreeViewController(Model.Owners)
-                                                                                                                                                                                                                                                                                                                                                                              .EmptyContent("Owner")
-                                                                                                                                                                                                                                                                                                                                                                              .Children(m => m.Childs)
-                                                                                                                                                                                                                                                                                                                                                                              .HtmlAttributes(new { id = "tree" })
-                                                                                                                                                                                                                                                                                                                                                                          .ChildrenHtmlAttributes(new { @class = "subItem" })
-                                                                                                                                                                                                                                                                                                                                                                              .ItemText(m => m.OwnerName)
-                                                                                                                                                                                                                                                                                                                                                                              .ItemTemplate(
-                                                                                                                                                                                    @<text>
-                                                                                                                                                                                        <a href="@item.OwnerName" desc="@item.OwnerName">@item.OwnerName</a>
-                                                                                                                                                                                    </text>)
+                                                                                                                                                                                                                                                                                                                                                                                                                      .EmptyContent("Owner")
+                                                                                                                                                                                                                                                                                                                                                                                                                      .Children(m => m.Childs)
+                                                                                                                                                                                                                                                                                                                                                                                                                      .HtmlAttributes(new { id = "tree" })
+                                                                                                                                                                                                                                                                                                                                                                                                                  .ChildrenHtmlAttributes(new { @class = "subItem" })
+                                                                                                                                                                                                                                                                                                                                                                                                                      .ItemText(m => m.OwnerName)
+                                                                                                                                                                                                                                                                                                                                                                                                                      .ItemTemplate(
+                                                                                                                                                                                                                            @<text>
+                                                                                                                                                                                                                                <a href="@item.OwnerName" desc="@item.OwnerName">@item.OwnerName</a>
+                                                                                                                                                                                                                            </text>)
                                             )
                                         </div>
                                     </div>
@@ -258,6 +258,31 @@
                 @*Dropdown menu ends here*@
             </div>
             <a href="#" style="padding-top:10px;padding-right:20px" class="btn-link" onclick="location.href='@Url.Action("GetAllItems", "Item")'" id="clearchk">Start Over (Full List)</a>
+            <div style="position:relative"><p style="color:red">@Html.Raw(ViewBag.Error)</p></div>
+            <div style="margin-top:40px;position:relative">
+                @using (Html.BeginForm("Import", "Item", FormMethod.Post, new { enctype = "multipart/form-data", @id = "importForm" }))
+                {
+                    <div class="fileinputs">
+                        <label class="labelClass" style="position:absolute;bottom:0px;left:50px" for="excelUpload">Import Excel File</label>
+                        <input onchange="CopyMe(this, 'txtFileName')" type="file" name="UploadedFile" id="excelUpload" class="inputfile" />
+                        <div class="fakefile">
+                            <input id="txtFileName" type="text" readonly="readonly" />
+                        </div>
+                    </div>
+
+                    <div style="position:absolute"><input style="margin-left:70px;margin-top:30px" type="submit" name="Import" value="Import" /></div>
+
+                }
+
+            </div>
+
+            <div style="margin-top:100px;position:absolute;margin-left:40px">
+                @using (Html.BeginForm("Export", "Home"))
+                {
+                    <a href="#" style="padding-right:20px" class="btn-link" onclick="location.href='@Url.Action("Export", "Item")'" id="clearchk">Export To Excel File</a>
+
+                }
+            </div>
         </div>
     </div>
 </div>
@@ -267,8 +292,11 @@
     <script src="~/Scripts/jstree.min.js"></script>
     <script>
         
-
-     
+        
+        function CopyMe(oFileInput, sTargetID) {
+            var arrTemp = oFileInput.value.split('\\');
+            document.getElementById(sTargetID).value = arrTemp[arrTemp.length - 1];
+        }
 
         $(document).ready(function () {
 

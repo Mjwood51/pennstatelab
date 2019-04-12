@@ -42,6 +42,14 @@
         </div>
 
         <div class="form-group" style="padding-bottom:10px">
+            @Html.LabelFor(model => model.Item.PurchaseDate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10 padLeft">
+                @Html.EditorFor(model => model.Item.PurchaseDate, new { htmlAttributes = new { @id = "datepicker2", @class = "form-control text-left", @autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.Item.PurchaseDate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" style="padding-bottom:10px">
             @Html.LabelFor(model => model.Item.WebAddress, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10 padLeft">
                 @Html.EditorFor(model => model.Item.WebAddress, new { htmlAttributes = new { @class = "form-control text-left", @autocomplete = "off" } })
@@ -66,13 +74,7 @@
             </div>
         </div>
 
-        <div class="form-group" style="padding-bottom:10px">
-            @Html.LabelFor(model => model.Item.PurchaseDate, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10 padLeft">
-                @Html.EditorFor(model => model.Item.PurchaseDate, new { htmlAttributes = new { @id = "datepicker2", @class = "form-control text-left", @autocomplete = "off" } })
-                @Html.ValidationMessageFor(model => model.Item.PurchaseDate, "", new { @class = "text-danger" })
-            </div>
-        </div>
+
 
         <div class="form-group" style="padding-bottom:10px">
             @Html.LabelFor(model => model.FileUpload, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -99,7 +101,7 @@
 
             </div>
         </div>
-        
+
 
         <div class="form-group" style="padding-bottom:10px">
             @Html.LabelFor(model => model.PhotoUpload, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -114,11 +116,11 @@
                         @{if (Model.Item.Photos != null)
                             {
                                 foreach (var photo in Model.Item.Photos)
-                                { 
-                                <div class="imgHolder">   
-                                    <span>@photo.PhotoName|<a href="#" id="p_@photo.Id" onclick="confirmPhotoDel('@photo.Id,@photo.PhotoName,@Model.Item.Id,@Model.Item.SubId')"><i class="glyphicon glyphicon-trash"></i></a></span>
-                                    <img id="photo_@photo.Id" src="~/Images/Uploads/SubLocations/@Model.Item.SubId/Thumbs/@photo.PhotoName" style="padding-top:40px;height:150px;width:150px" />                                    
-                                </div>
+                                {
+                                    <div class="imgHolder">
+                                        <span>@photo.PhotoName|<a href="#" id="p_@photo.Id" onclick="confirmPhotoDel('@photo.Id,@photo.PhotoName,@Model.Item.Id,@Model.Item.SubId')"><i class="glyphicon glyphicon-trash"></i></a></span>
+                                        <img id="photo_@photo.Id" src="~/Images/Uploads/SubLocations/@Model.Item.SubId/Thumbs/@photo.PhotoName" style="padding-top:40px;height:150px;width:150px" />
+                                    </div>
                                     <br />
                                 }
                             }
@@ -128,7 +130,7 @@
 
             </div>
         </div>
-        
+
         <div class="form-group" style="padding-bottom:10px">
             @Html.LabelFor(model => model.Item.Added, htmlAttributes: new { @class = "control-label col-md-2", @style = "right:7px" })
             <div class="col-md-10 padLeft">

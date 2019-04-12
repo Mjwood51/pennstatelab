@@ -13,6 +13,52 @@
     padding-top: 20px;
 }
 
+.inputfile {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: 2;
+}
+
+    .inputfile + .labelClass {
+        color: dodgerblue;
+        display: inline-block;
+    }
+
+.labelClass {
+    font-weight:100;
+    padding: 2px;
+    display: block;
+    color: dodgerblue;
+}
+
+    .labelClass:hover {
+        opacity: 0.5;
+        cursor: pointer;
+        text-decoration: underline;
+    }
+        .inputfile:focus + label,
+        .inputfile + label:hover {
+            color: dodgerblue;
+        }
+
+    .inputfile + label {
+        cursor: pointer; /* "hand" cursor */
+    }
+
+div.fileinputs {
+    position: relative;
+}
+
+div.fakefile {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 1;
+    margin-left:10px;
+}
 
 .padRight {
     padding-right: 170px;

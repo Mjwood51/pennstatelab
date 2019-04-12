@@ -157,7 +157,7 @@ CREATE TABLE [dbo].[Tbl_Items] (
     [LocationComments] nvarchar(255)  NULL,
     [Manufacturer] nvarchar(50)  NULL,
     [CatalogNumber] nvarchar(25)  NULL,
-    [WebAddress] nvarchar(50)  NULL,
+    [WebAddress] nvarchar(200)  NULL,
     [Vendor] nvarchar(50)  NOT NULL,
     [ContactInfo] nvarchar(200)  NULL,
     [PurchaseDate] datetime  NULL,

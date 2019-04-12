@@ -424,10 +424,10 @@
           <Property Name="LocationComments" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Name="Manufacturer" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="CatalogNumber" Type="String" MaxLength="25" FixedLength="false" Unicode="true" />
-          <Property Name="WebAddress" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="WebAddress" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
           <Property Name="Vendor" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="ContactInfo" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="PurchaseDate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="PurchaseDate" Type="DateTime" Nullable="true" Precision="3" />
           <Property Name="Added" Type="DateTime" Precision="3" />
           <Property Name="Updated" Type="DateTime" Precision="3" />
           <Property Name="PurchasePrice" Type="Decimal" Precision="18" Scale="2" Nullable="false" />

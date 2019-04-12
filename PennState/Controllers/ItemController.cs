@@ -25,6 +25,8 @@ using PennState.ViewModels;
 using AutoMapper;
 using System.Data.Entity.Validation;
 using Dapper;
+using Excel = Microsoft.Office.Interop.Excel;
+using System.Runtime.InteropServices;
 
 namespace PennState.Controllers
 {
@@ -178,55 +180,7 @@ namespace PennState.Controllers
                 }
                 var id = new Tbl_Users();
                 id = _context.Tbl_Users.Where(x => x.UserName == User.Identity.Name).FirstOrDefault();
-
-                Tbl_Locations location = null;
-                Tbl_SubLocations sublocation = null;
-                if (_context.Tbl_Locations.Where(x => x.LocationName == model.Item.Location.LocationName).Any())
-                {
-                    //if this item has an existing location and sublocation get the location object
-                    var loc = _context.Tbl_Locations.Where(x => x.LocationName == model.Item.Location.LocationName).FirstOrDefault();
-                    var sub = _context.Tbl_SubLocations.Where(x => x.SubLocationName == model.Item.SubLocation.SubLocationName && x.Location.LocationName == model.Item.Location.LocationName).FirstOrDefault();
-                    //assign the changed location name to the item
-                    modelItem.Location = loc;
-                    modelItem.LocId = loc.Id;
-                    //if there are any sublocations that have the same location name in the database
-                    if (sub != null)
-                    {
-                        modelItem.SubLocation = sub;
-                        modelItem.SubId = sub.Id;
-                    }
-                    else
-                    {
-                        sublocation = new Tbl_SubLocations()
-                        {
-                            SubLocationName = model.Item.SubLocation.SubLocationName,
-                            Location = loc
-                        };
-                        modelItem.SubLocation = sublocation;
-                    }
-                }
-                //else if neither location and sublocation exist
-                else
-                {
-                    //create a new location
-                    location = new Tbl_Locations()
-                    {
-                        LocationName = model.Item.Location.LocationName    //Create new location and assign it to the new location name
-                    };
-
-                    //create a new sublocation for the location
-                    sublocation = new Tbl_SubLocations()
-                    {
-                        SubLocationName = model.Item.SubLocation.SubLocationName,     //Take the sublocation name and assign it to a new sublocation
-                        Location = location
-                    };
-
-                    //add these to the item
-                    modelItem.Location = location;
-                    modelItem.SubLocation = sublocation;
-                }
-
-
+                modelItem = GetLocation(modelItem, model.Item.SubLocation.SubLocationName, model.Item.Location.LocationName);
 
                 if (files.Count > 0)
                 {
@@ -258,7 +212,7 @@ namespace PennState.Controllers
                 }
                 modelItem.Id = model.Item.Id;
                 modelItem.ItemNotes = model.Item.ItemNotes;
-                modelItem.Manufacturer = modelItem.Manufacturer;
+                modelItem.Manufacturer = model.Item.Manufacturer;
                 modelItem.UsrId = id.Id;
                 modelItem.UpdatedBy = id.FirstName + " " + id.LastName;
                 modelItem.Added = DateTime.Now;
@@ -352,86 +306,8 @@ namespace PennState.Controllers
                     }
                 }
 
-                var testLoc = _context.Tbl_CatagoryLocations.Where(x => x.LocationName == model.Item.Location.LocationName).FirstOrDefault();
-                var catLoc = new Tbl_CatagoryLocations();
-                if (testLoc == null)
-                {
-                    if (model.Item.SubLocation.SubLocationName != null)
-                    {
-                        catLoc.LocationName = model.Item.Location.LocationName;
-                        catLoc.Pid = null;
-                        catLoc.HasChildren = true;
-                    }
-                    else
-                    {
-                        catLoc.LocationName = model.Item.Location.LocationName;
-                        catLoc.Pid = null;
-                        catLoc.HasChildren = false;
-                    }
-
-                    _context.Tbl_CatagoryLocations.Add(catLoc);
-                    _context.SaveChanges();
-                }
-                //Get Parent Locations that Equal the current model's Location Name
-                var parentId = _context.Tbl_CatagoryLocations.Where(x => x.LocationName == model.Item.Location.LocationName).FirstOrDefault().Id;
-
-                //Determine if there are any sublocations that 
-                //1) have a parent 
-                //2) have the sublocation name as the model 
-                //3) have a parent Id that is not equal to the current model's Id
-                //4) where the parent referenced from the database is not equal to null
-                bool noLocations = _context.Tbl_CatagoryLocations.Where(x => x.LocationName == model.Item.SubLocation.SubLocationName && x.Pid == parentId).Any();
-
-
-                if (noLocations == false)
-                {
-                    var catLoc2 = new Tbl_CatagoryLocations
-                    {
-                        LocationName = model.Item.SubLocation.SubLocationName,
-                        Pid = parentId
-                    };
-                    _context.Tbl_CatagoryLocations.Add(catLoc2);
-                    _context.SaveChanges();
-                }
-
-                var owners = _context.Tbl_CatagoryOwners.Where(x => x.OwnerName == id.FirstName + " " + id.LastName).FirstOrDefault();
-                if (owners == null)
-                {
-                    var owner = new Tbl_CatagoryOwners
-                    {
-                        OwnerName = id.FirstName + " " + id.LastName,
-                        Pid = null,
-                        HasChildren = false
-                    };
-                    _context.Tbl_CatagoryOwners.Add(owner);
-                    _context.SaveChanges();
-                }
-
-                var types = _context.Tbl_CatagoryTypes.Where(x => x.TypeName == model.Item.ItemType).FirstOrDefault();
-                if (types == null)
-                {
-                    var type = new Tbl_CatagoryTypes
-                    {
-                        TypeName = model.Item.ItemType,
-                        Pid = null,
-                        HasChildren = false
-                    };
-                    _context.Tbl_CatagoryTypes.Add(type);
-                    _context.SaveChanges();
-                }
-
-                var vendors = _context.Tbl_CatagoryVendors.Where(x => x.VendorName == model.Item.Vendor).FirstOrDefault();
-                if (vendors == null)
-                {
-                    var vendor = new Tbl_CatagoryVendors
-                    {
-                        VendorName = model.Item.Vendor,
-                        Pid = null,
-                        HasChildren = false
-                    };
-                    _context.Tbl_CatagoryVendors.Add(vendor);
-                    _context.SaveChanges();
-                }
+                SaveCatagories(model.Item.Location.LocationName, model.Item.SubLocation.SubLocationName, 
+                               id.FirstName + " " + id.LastName, model.Item.ItemType, model.Item.Vendor);                
 
             }
             return RedirectToAction("GetAllItems", "Item");
@@ -532,55 +408,7 @@ namespace PennState.Controllers
                 var id = new Tbl_Users();
 
                 id = _context.Tbl_Users.Where(x => x.UserName == User.Identity.Name).FirstOrDefault();
-
-                //var item = new Item();
-                Tbl_Locations location = null;
-                Tbl_SubLocations sublocation = null;
-                //Check for new location input
-                if (_context.Tbl_Locations.Where(x => x.LocationName == model.Item.Location.LocationName).Any())
-                {
-                    //if this item has an existing location and sublocation get the location object
-                    var loc = _context.Tbl_Locations.Where(x => x.LocationName == model.Item.Location.LocationName).FirstOrDefault();
-                    var sub = _context.Tbl_SubLocations.Where(x => x.SubLocationName == model.Item.SubLocation.SubLocationName && x.Location.LocationName == model.Item.Location.LocationName).FirstOrDefault();
-                    //assign the changed location name to the item
-                    modelItem.Location = loc;
-                    modelItem.LocId = loc.Id;
-                    //if there are any sublocations that have the same location name in the database
-                    if (sub != null)
-                    {
-                        modelItem.SubLocation = sub;
-                        modelItem.SubId = sub.Id;
-                    }
-                    else
-                    {
-                        sublocation = new Tbl_SubLocations()
-                        {
-                            SubLocationName = model.Item.SubLocation.SubLocationName,
-                            Location = loc
-                        };
-                        modelItem.SubLocation = sublocation;
-                    }
-                }
-                //else if neither location and sublocation exist
-                else
-                {
-                    //create a new location
-                    location = new Tbl_Locations()
-                    {
-                        LocationName = model.Item.Location.LocationName    //Create new location and assign it to the new location name
-                    };
-
-                    //create a new sublocation for the location
-                    sublocation = new Tbl_SubLocations()
-                    {
-                        SubLocationName = model.Item.SubLocation.SubLocationName,     //Take the sublocation name and assign it to a new sublocation
-                        Location = location
-                    };
-
-                    //add these to the item
-                    modelItem.Location = location;
-                    modelItem.SubLocation = sublocation;
-                }
+                modelItem = GetLocation(modelItem, model.Item.SubLocation.SubLocationName, model.Item.Location.LocationName);
 
 
 
@@ -696,105 +524,9 @@ namespace PennState.Controllers
                         i++;
                     }
                 }
-
-                var testLoc = _context.Tbl_CatagoryLocations.Where(x => x.LocationName == model.Item.Location.LocationName).FirstOrDefault();
-                var catLoc = new Tbl_CatagoryLocations();
-                if (testLoc == null)
-                {
-                    if (model.Item.SubLocation.SubLocationName != null)
-                    {
-                        catLoc.LocationName = model.Item.Location.LocationName;
-                        catLoc.Pid = null;
-                        catLoc.HasChildren = true;
-                    }
-                    else
-                    {
-                        catLoc.LocationName = model.Item.Location.LocationName;
-                        catLoc.Pid = null;
-                        catLoc.HasChildren = false;
-                    }
-
-                    _context.Tbl_CatagoryLocations.Add(catLoc);
-                    _context.SaveChanges();
-                }
-
-
-                //Get Parent Locations that Equal the current model's Location Name
-                var parentId = _context.Tbl_CatagoryLocations.Where(x => x.LocationName == model.Item.Location.LocationName).FirstOrDefault().Id;
-
-                //Determine if there are any sublocations that 
-                //1) have a parent 
-                //2) have the sublocation name as the model 
-                //3) have a parent Id that is not equal to the current model's Id
-                //4) where the parent referenced from the database is not equal to null
-                bool noLocations = _context.Tbl_CatagoryLocations.Where(x => x.LocationName == model.Item.SubLocation.SubLocationName && x.Pid == parentId).Any();
-
-
-                if (noLocations == false)
-                {
-                    var catLoc2 = new Tbl_CatagoryLocations
-                    {
-                        LocationName = model.Item.SubLocation.SubLocationName,
-                        Pid = parentId
-                    };
-                    _context.Tbl_CatagoryLocations.Add(catLoc2);
-                    _context.SaveChanges();
-                }
-
-                var owners = _context.Tbl_CatagoryOwners.Where(x => x.OwnerName == id.FirstName + " " + id.LastName).FirstOrDefault();
-                if (owners == null)
-                {
-                    var owner = new Tbl_CatagoryOwners
-                    {
-                        OwnerName = id.FirstName + " " + id.LastName,
-                        Pid = null,
-                        HasChildren = false
-                    };
-                    _context.Tbl_CatagoryOwners.Add(owner);
-                    _context.SaveChanges();
-                }
-
-                var types = _context.Tbl_CatagoryTypes.Where(x => x.TypeName == model.Item.ItemType).FirstOrDefault();
-                if (types == null)
-                {
-                    var type = new Tbl_CatagoryTypes
-                    {
-                        TypeName = modelItem.ItemType,
-                        Pid = null,
-                        HasChildren = false
-                    };
-                    try
-                    {
-                        _context.Tbl_CatagoryTypes.Add(type);
-                        _context.SaveChanges();
-                    }
-                    catch (DbEntityValidationException dbEx)
-                    {
-
-                        foreach (var validationErrors in dbEx.EntityValidationErrors)
-                        {
-                            foreach (var validationError in validationErrors.ValidationErrors)
-                            {
-                                System.Console.WriteLine("Property: {0} Error: {1}", validationError.PropertyName, validationError.ErrorMessage);
-                            }
-                        }
-
-                    }
-                }
-
-                var vendors = _context.Tbl_CatagoryVendors.Where(x => x.VendorName == model.Item.Vendor).FirstOrDefault();
-                if (vendors == null)
-                {
-                    var vendor = new Tbl_CatagoryVendors
-                    {
-                        VendorName = modelItem.Vendor,
-                        Pid = null,
-                        HasChildren = false
-                    };
-                    _context.Tbl_CatagoryVendors.Add(vendor);
-                    _context.SaveChanges();
-                }
-                catLoc = null;
+                SaveCatagories(model.Item.Location.LocationName, model.Item.SubLocation.SubLocationName,
+                               id.FirstName + " " + id.LastName, model.Item.ItemType, model.Item.Vendor);
+                
 
                 files = null;
                 photos = null;
@@ -831,17 +563,7 @@ namespace PennState.Controllers
 
         public ActionResult GetAllItems()
         {
-            var model = new ItemViewModel();
-            using (ContextModel db = new ContextModel())
-            {
-                model.Owners = Mapper.Map<IEnumerable<CatagoryOwner>>(db.Tbl_CatagoryOwners.Where(x => !x.Pid.HasValue).ToList());
-                model.Types = Mapper.Map<IEnumerable<CatagoryType>>(db.Tbl_CatagoryTypes.Where(x => !x.Pid.HasValue).ToList());
-                model.LocationsC = Mapper.Map<IEnumerable<CatagoryLocation>>(db.Tbl_CatagoryLocations.Where(x => !x.Pid.HasValue).ToList());
-                model.Vendors = Mapper.Map<IEnumerable<CatagoryVendor>>(db.Tbl_CatagoryVendors.Where(x => !x.Pid.HasValue).ToList());
-                model.Items = GetItems(names: null);
-                //var pagedList = new PagedList<Item>(model.Items, 1, 1);
-                //model.PagedList = pagedList;
-            }
+            var model = PopulateList();
             ViewBag.ItemList = model.Items.ToList();
             return View("GetItemList", model);
         }
@@ -1208,51 +930,297 @@ namespace PennState.Controllers
 
         }
 
-        //public void SaveItem(Tbl_Items item)
-        //{
-        //    DbConnection();
-        //    SqlCommand cmd = new SqlCommand("spSaveItem", con);
-        //    cmd.CommandType = CommandType.StoredProcedure;
+        public ItemViewModel PopulateList()
+        {
+            var model = new ItemViewModel();
+            using (ContextModel db = new ContextModel())
+            {
+                model.Owners = Mapper.Map<IEnumerable<CatagoryOwner>>(db.Tbl_CatagoryOwners.Where(x => !x.Pid.HasValue).ToList());
+                model.Types = Mapper.Map<IEnumerable<CatagoryType>>(db.Tbl_CatagoryTypes.Where(x => !x.Pid.HasValue).ToList());
+                model.LocationsC = Mapper.Map<IEnumerable<CatagoryLocation>>(db.Tbl_CatagoryLocations.Where(x => !x.Pid.HasValue).ToList());
+                model.Vendors = Mapper.Map<IEnumerable<CatagoryVendor>>(db.Tbl_CatagoryVendors.Where(x => !x.Pid.HasValue).ToList());
+                model.Items = GetItems(names: null);
+                ViewBag.ItemList = model.Items.ToList();               
+                //var pagedList = new PagedList<Item>(model.Items, 1, 1);
+                //model.PagedList = pagedList;
+            }
+            return model;
+        }
 
-        //    SqlParameter paramId = new SqlParameter();
-        //    paramId.ParameterName = "@Id";
-        //    paramId.Value = item.Id;
-        //    cmd.Parameters.Add(paramId);
+        public void SaveCatagories(string locName, string subName, string ownerName, string typeName, string vendorName)
+        {
+            var testLoc = _context.Tbl_CatagoryLocations.Where(x => x.LocationName == locName).FirstOrDefault();
+            var catLoc = new Tbl_CatagoryLocations();
+            if (testLoc == null)
+            {
+                if (subName != null)
+                {
+                    catLoc.LocationName = locName;
+                    catLoc.Pid = null;
+                    catLoc.HasChildren = true;
+                }
+                else
+                {
+                    catLoc.LocationName = locName;
+                    catLoc.Pid = null;
+                    catLoc.HasChildren = false;
+                }
 
-        //    SqlParameter paramName = new SqlParameter();
-        //    paramName.ParameterName = "@ItemName";
-        //    paramName.Value = item.ItemName;
-        //    cmd.Parameters.Add(paramName);
+                _context.Tbl_CatagoryLocations.Add(catLoc);
+                _context.SaveChanges();
+            }
 
-        //    SqlParameter paramStock = new SqlParameter();
-        //    paramStock.ParameterName = "@AmountInStock";
-        //    paramStock.Value = item.AmountInStock;
-        //    cmd.Parameters.Add(paramStock);
 
-        //    SqlParameter paramLocCom = new SqlParameter();
-        //    paramLocCom.ParameterName = "@LocationComments";
-        //    paramLocCom.Value = item.LocationComments;
-        //    cmd.Parameters.Add(paramLocCom);
+            //Get Parent Locations that Equal the current model's Location Name
+            var parentId = _context.Tbl_CatagoryLocations.Where(x => x.LocationName == locName).FirstOrDefault().Id;
 
-        //    SqlParameter paramMan = new SqlParameter();
-        //    paramMan.ParameterName = "@Manufacturer";
-        //    paramMan.Value = item.Manufacturer;
-        //    cmd.Parameters.Add(paramMan);
+            //Determine if there are any sublocations that 
+            //1) have a parent 
+            //2) have the sublocation name as the model 
+            //3) have a parent Id that is not equal to the current model's Id
+            //4) where the parent referenced from the database is not equal to null
+            bool noLocations = _context.Tbl_CatagoryLocations.Where(x => x.LocationName == subName && x.Pid == parentId).Any();
 
-        //    SqlParameter paramCat = new SqlParameter();
-        //    paramCat.ParameterName = "@CatalogNumber";
-        //    paramCat.Value = item.CatalogNumber;
-        //    cmd.Parameters.Add(paramCat);
 
-        //    SqlParameter paramWeb = new SqlParameter();
-        //    paramWeb.ParameterName = "@WebAddress";
-        //    paramWeb.Value = item.WebAddress;
-        //    cmd.Parameters.Add(paramWeb);
+            if (noLocations == false)
+            {
+                var catLoc2 = new Tbl_CatagoryLocations
+                {
+                    LocationName = subName,
+                    Pid = parentId
+                };
+                _context.Tbl_CatagoryLocations.Add(catLoc2);
+                _context.SaveChanges();
+            }
 
-        //    SqlParameter paramId = new SqlParameter();
-        //    paramId.ParameterName = "@Id";
-        //    paramId.Value = item.Id;
-        //    cmd.Parameters.Add(paramId);
-        //}
+            var owners = _context.Tbl_CatagoryOwners.Where(x => x.OwnerName == ownerName).FirstOrDefault();
+            if (owners == null)
+            {
+                var owner = new Tbl_CatagoryOwners
+                {
+                    OwnerName = ownerName,
+                    Pid = null,
+                    HasChildren = false
+                };
+                _context.Tbl_CatagoryOwners.Add(owner);
+                _context.SaveChanges();
+            }
+
+            var types = _context.Tbl_CatagoryTypes.Where(x => x.TypeName == typeName).FirstOrDefault();
+            if (types == null)
+            {
+                var type = new Tbl_CatagoryTypes
+                {
+                    TypeName = typeName,
+                    Pid = null,
+                    HasChildren = false
+                };
+                _context.Tbl_CatagoryTypes.Add(type);
+                _context.SaveChanges();
+            }
+
+            var vendors = _context.Tbl_CatagoryVendors.Where(x => x.VendorName == vendorName).FirstOrDefault();
+            if (vendors == null)
+            {
+                var vendor = new Tbl_CatagoryVendors
+                {
+                    VendorName = vendorName,
+                    Pid = null,
+                    HasChildren = false
+                };
+                _context.Tbl_CatagoryVendors.Add(vendor);
+                _context.SaveChanges();
+            }
+            catLoc = null;
+        }
+
+        public Tbl_Items GetLocation(Tbl_Items item,string subName, string locName)
+        {
+            Tbl_Locations locObject = null;
+            Tbl_SubLocations sublocation = null;
+            if (_context.Tbl_Locations.Where(x => x.LocationName == locName).Any())
+            {
+                var subLoc = _context.Tbl_SubLocations.Where(x => x.SubLocationName == subName && x.Location.LocationName == locName).FirstOrDefault();
+                var location = _context.Tbl_Locations.Where(x => x.LocationName == locName).FirstOrDefault();
+                item.LocId = location.Id;
+                
+                if (subLoc != null)
+                {
+                    item.SubId = subLoc.Id;
+                }
+                else
+                {
+                        sublocation = new Tbl_SubLocations()
+                        {
+                            SubLocationName = subName,
+                            Location = location
+                        };
+                        item.SubLocation = sublocation;
+
+                }
+            }
+            else
+            {
+                //create a new location
+                locObject = new Tbl_Locations()
+                {
+                    LocationName = locName   //Create new location and assign it to the new location name
+                };
+
+                //create a new sublocation for the location
+                sublocation = new Tbl_SubLocations()
+                {
+                    SubLocationName = subName,     //Take the sublocation name and assign it to a new sublocation
+                    Location = locObject
+                };
+
+                //add these to the item
+                item.Location = locObject;
+                item.SubLocation = sublocation;
+            }
+            return item;
+        }
+
+        public List<Tbl_Items> GetItemsUpload(string path)
+        {
+            //Read data from file
+            var application = new Excel.Application();
+            var workbook = application.Workbooks.Open(path);
+            var sheet = new Excel.Worksheet();
+            var firstName = "";
+            var lastName = "";
+            var loc = "";
+            var subLoc = "";
+            List<Tbl_Items> items = new List<Tbl_Items>();
+
+            for (int j = 2; j <= workbook.Worksheets.Count; j++)
+            {
+                sheet = (Excel.Worksheet)workbook.Worksheets.get_Item(j);
+                Excel.Range row = sheet.UsedRange;
+                for(int i = 2; i < row.Rows.Count; i++)
+                {
+
+                    var item = new Tbl_Items();
+                    item.ItemName = row.Cells[i, 3].Text;
+                    item.Vendor = row.Cells[i, 4].Text;
+                    item.CatalogNumber = row.Cells[i, 5].Text;
+                    firstName = row.Cells[i, 6].Text;
+                    if(firstName != "")
+                    firstName = firstName.Substring(0, firstName.IndexOf(' '));
+                    lastName = row.Cells[i, 6].Text;
+                    if(lastName != "")
+                    lastName = lastName.Substring(lastName.LastIndexOf(' ') + 1);
+                    var user = _context.Tbl_Users.Where(x => x.FirstName == firstName && x.LastName == lastName).FirstOrDefault();
+                    if (user == null)
+                    {
+                        user = null;
+                    }
+                    else
+                    {
+                        item.UsrId = user.Id;
+                    }
+                    loc = row.Cells[i, 7].Text;
+                    subLoc = row.Cells[i, 8].Text;
+                    item = GetLocation(item, subLoc, loc);
+                    item.LocationComments = row.Cells[i, 9].Text;
+                    var price = row.Cells[i, 10].Text;
+                    if(price != "")
+                    item.PurchasePrice = Convert.ToDecimal(price);
+                    var amount = row.Cells[i, 11].Text;
+                    if(amount != "" && amount != "Plenty of" && amount != "Many")
+                    item.AmountInStock = Convert.ToInt32(amount);
+                    item.WebAddress = row.Cells[i, 13].Text;
+                    item.ItemNotes = row.Cells[i, 14].Text;
+                    item.ItemType = sheet.Name;
+                    item.PurchaseDate = null;
+                    _context.Tbl_Items.Add(item);
+                    _context.SaveChanges();
+                    SaveCatagories(loc, subLoc, firstName + " " + lastName, sheet.Name, item.Vendor);
+                }
+            }
+            
+            application.Quit();
+            if (workbook != null) { Marshal.ReleaseComObject(workbook); } //release each workbook like this
+            if (sheet != null) { Marshal.ReleaseComObject(sheet); } //release each worksheet like this
+            if (application != null) { Marshal.ReleaseComObject(application); } //release the Excel application
+            workbook = null; //set each memory reference to null.
+            sheet = null;
+            application = null;
+            return items;
+        }
+
+        [HttpPost]
+        public ActionResult Import(FormCollection formCollection)
+        {
+            if (Request != null)
+            {
+                HttpPostedFileBase file = Request.Files["UploadedFile"];
+                if (file == null || file.ContentLength == 0)
+                {
+                    var model = PopulateList();
+                    ViewBag.ItemList = model.Items.ToList();
+                    ViewBag.Error = "Please select an excel file";
+                    return View("GetItemList", model);
+                }
+                else
+                {
+                    if (file.FileName.EndsWith("xls") || file.FileName.EndsWith("xlsx") || file.FileName.EndsWith("xlsm"))
+                    {
+                        string path = Server.MapPath("~/Item/" + file.FileName);
+                        if (System.IO.File.Exists(path))
+                        {
+                            var items = GetItemsUpload(path);
+                                if (items == null)
+                                {
+                                    var model = PopulateList();
+                                    ViewBag.Error = "One or more record values cannot be mapped to the database";
+                                    return View("GetItemList", model);
+                                }
+                                else
+                                {
+                                    var model = PopulateList();
+                                    ViewBag.Success = "The database was uploaded successfully";
+                                    return View("GetItemList", model);
+                                }
+
+                        }
+                         else
+                         {
+                                file.SaveAs(path);
+                                var items = GetItemsUpload(path);
+                                if (items == null)
+                                {
+                                    var model = PopulateList();
+                                    ViewBag.Error = "One or more record values cannot be mapped to the database";
+                                    return View("GetItemList", model);
+                                }
+                                else
+                                {
+                                    var model = PopulateList();
+                                    ViewBag.Success = "The database was uploaded successfully";
+                                    return View("GetItemList", model);
+                                }
+
+                        }
+
+                    }
+                    else
+                    {
+                        var model = PopulateList();
+                        ViewBag.Error = "Please select .xls, .xlsx, or .xlsm type";
+                        return View("GetItemList", model);
+                    }
+                }
+                
+            }
+            else
+            {
+                var model = PopulateList();
+                ViewBag.Error = "An error occured with the file request";
+                return View("GetItemList", model);
+            }
+        }
+
+        
     }
 }
