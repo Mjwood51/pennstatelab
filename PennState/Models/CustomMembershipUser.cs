@@ -22,7 +22,7 @@ namespace PennState.Models
             UserId = user.Id;
             FirstName = user.FirstName;
             LastName = user.LastName;
-            Roles = user.Roles;
+            Roles = user.Tbl_Roles;
         }
     }
 }

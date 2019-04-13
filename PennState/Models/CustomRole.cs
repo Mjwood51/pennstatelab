@@ -28,7 +28,7 @@ namespace PennState.Models
 
             var userRoles = new string[] { };
 
-            using (ContextModel dbContext = new ContextModel())
+            using (PennStateDB dbContext = new PennStateDB())
             {
                 var selectedUser = (from us in dbContext.Tbl_Users.Include("Roles")
                                     where string.Compare(us.UserName, username, StringComparison.OrdinalIgnoreCase) == 0
@@ -37,7 +37,7 @@ namespace PennState.Models
 
                 if (selectedUser != null)
                 {
-                    userRoles = new[] { selectedUser.Roles.RoleName.ToString() };
+                    userRoles = new[] { selectedUser.Tbl_Roles.RoleName.ToString() };
                 }
 
                 return userRoles.ToArray();

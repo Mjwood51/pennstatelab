@@ -36,7 +36,6 @@ namespace PennState.Models
         }
         [Key]
         public int Id { get; set; }
-        [Required(ErrorMessage = "Please Enter a Sublocation")]
         [DisplayName("Sublocation")]
         public string SubLocationName { get; set; }
         public int? LocId { get; set; }

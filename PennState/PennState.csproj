@@ -175,60 +175,60 @@
     <Compile Include="Models\CustomMembershipUser.cs" />
     <Compile Include="Models\CustomPrincipal.cs" />
     <Compile Include="Models\CustomRole.cs" />
-    <Compile Include="Models\DBModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DBModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\DBModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DBModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\DBModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DBModel.edmx</DependentUpon>
-    </Compile>
     <Compile Include="Models\Files.cs" />
     <Compile Include="Models\FileTypeAttribute.cs" />
     <Compile Include="Models\Item.cs" />
     <Compile Include="Models\Location.cs" />
     <Compile Include="Models\LoginView.cs" />
+    <Compile Include="Models\PennStateDB.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PennStateDB.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\PennStateDB.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PennStateDB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\PennStateDB.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PennStateDB.edmx</DependentUpon>
+    </Compile>
     <Compile Include="Models\Photos.cs" />
     <Compile Include="Models\Role.cs" />
     <Compile Include="Models\Tbl_CatagoryLocations.cs">
-      <DependentUpon>DBModel.tt</DependentUpon>
+      <DependentUpon>PennStateDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Tbl_CatagoryOwners.cs">
-      <DependentUpon>DBModel.tt</DependentUpon>
+      <DependentUpon>PennStateDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Tbl_CatagoryTypes.cs">
-      <DependentUpon>DBModel.tt</DependentUpon>
+      <DependentUpon>PennStateDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Tbl_CatagoryVendors.cs">
-      <DependentUpon>DBModel.tt</DependentUpon>
+      <DependentUpon>PennStateDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Tbl_File.cs">
-      <DependentUpon>DBModel.tt</DependentUpon>
+      <DependentUpon>PennStateDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Tbl_Items.cs">
-      <DependentUpon>DBModel.tt</DependentUpon>
+      <DependentUpon>PennStateDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Tbl_Locations.cs">
-      <DependentUpon>DBModel.tt</DependentUpon>
+      <DependentUpon>PennStateDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Tbl_Photo.cs">
-      <DependentUpon>DBModel.tt</DependentUpon>
+      <DependentUpon>PennStateDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Tbl_Roles.cs">
-      <DependentUpon>DBModel.tt</DependentUpon>
+      <DependentUpon>PennStateDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Tbl_SubLocations.cs">
-      <DependentUpon>DBModel.tt</DependentUpon>
+      <DependentUpon>PennStateDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Tbl_Users.cs">
-      <DependentUpon>DBModel.tt</DependentUpon>
+      <DependentUpon>PennStateDB.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -268,29 +268,28 @@
     <Content Include="Images\Uploads\SubLocations\2\Thumbs\ExcelFile Story1.PNG" />
     <Content Include="Images\Uploads\SubLocations\2\Thumbs\timeline2.PNG" />
     <Content Include="Item\Cubbyhole1.jpg" />
-    <Content Include="Models\DBModel.Context.tt">
+    <Content Include="Models\PennStateDB.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>DBModel.edmx</DependentUpon>
-      <LastGenOutput>DBModel.Context.cs</LastGenOutput>
+      <DependentUpon>PennStateDB.edmx</DependentUpon>
+      <LastGenOutput>PennStateDB.Context.cs</LastGenOutput>
     </Content>
-    <Content Include="Models\DBModel.tt">
+    <Content Include="Models\PennStateDB.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>DBModel.edmx</DependentUpon>
-      <LastGenOutput>DBModel.cs</LastGenOutput>
+      <DependentUpon>PennStateDB.edmx</DependentUpon>
+      <LastGenOutput>PennStateDB.cs</LastGenOutput>
     </Content>
     <Content Include="Scripts\bootstrap-notify.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <EntityDeploy Include="Models\DBModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>DBModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\DBModel.edmx.diagram">
-      <DependentUpon>DBModel.edmx</DependentUpon>
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="Content\themes\default-dark\Thumbs.db" />
     <Content Include="Content\themes\default\Thumbs.db" />
+    <EntityDeploy Include="Models\PennStateDB.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>PennStateDB.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\PennStateDB.edmx.diagram">
+      <DependentUpon>PennStateDB.edmx</DependentUpon>
+    </Content>
     <None Include="Scripts\jquery-3.3.1-vsdoc.js" />
     <Content Include="Scripts\chosen.jquery.js" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
@@ -342,7 +341,6 @@
     <Content Include="Views\Account\Registration.cshtml" />
     <Content Include="Views\Item\Edit.cshtml" />
     <Content Include="Views\Item\GetItemList.cshtml" />
-    <Content Include="Views\Item\GetLocation.cshtml" />
     <Content Include="Views\Shared\_NavBar.cshtml" />
     <Content Include="Views\Item\ItemDetails.cshtml" />
   </ItemGroup>

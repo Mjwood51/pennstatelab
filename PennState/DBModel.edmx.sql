@@ -153,22 +153,22 @@ GO
 CREATE TABLE [dbo].[Tbl_Items] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [ItemName] nvarchar(50)  NOT NULL,
-    [AmountInStock] int  NOT NULL,
+    [AmountInStock] int  NULL,
     [LocationComments] nvarchar(255)  NULL,
     [Manufacturer] nvarchar(50)  NULL,
     [CatalogNumber] nvarchar(25)  NULL,
-    [WebAddress] nvarchar(200)  NULL,
-    [Vendor] nvarchar(50)  NOT NULL,
+    [WebAddress] nvarchar(350)  NULL,
+    [Vendor] nvarchar(50)  NULL,
     [ContactInfo] nvarchar(200)  NULL,
     [PurchaseDate] datetime  NULL,
     [Added] datetime  NULL,
     [Updated] datetime  NULL,
-    [PurchasePrice] decimal(18,2)  NOT NULL,
-    [ItemType] nvarchar(20)  NOT NULL,
+    [PurchasePrice] decimal(18,2)  NULL,
+    [ItemType] nvarchar(50)  NOT NULL,
     [ItemNotes] nvarchar(255)  NULL,
     [UpdatedBy] nvarchar(255)  NULL,
     [IsDeleted] bit  NOT NULL,
-    [UsrId] int  NOT NULL,
+    [UsrId] int  NULL,
     [LocId] int  NULL,
     [SubId] int  NULL
 );
@@ -199,7 +199,7 @@ GO
 -- Creating table 'Tbl_SubLocations'
 CREATE TABLE [dbo].[Tbl_SubLocations] (
     [Id] int IDENTITY(1,1) NOT NULL,
-    [SubLocationName] nvarchar(50)  NOT NULL,
+    [SubLocationName] nvarchar(50) NULL,
     [LocId] int  NULL
 );
 GO
@@ -499,6 +499,14 @@ GO
 CREATE INDEX [IX_FK_Tbl_PhotoItems_Tbl_Photo]
 ON [dbo].[Tbl_PhotoItems]
     ([Photos_Id]);
+GO
+
+INSERT INTO [dbo].[Tbl_Roles] (RoleName)
+VALUES('Admin');
+GO
+
+INSERT INTO [dbo].[Tbl_Roles] (RoleName)
+VALUES('User');
 GO
 
 -- --------------------------------------------------

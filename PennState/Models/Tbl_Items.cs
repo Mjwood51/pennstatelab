@@ -17,13 +17,13 @@ namespace PennState.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Tbl_Items()
         {
-            this.Files = new HashSet<Tbl_File>();
-            this.Photos = new HashSet<Tbl_Photo>();
+            this.Tbl_File = new HashSet<Tbl_File>();
+            this.Tbl_Photo = new HashSet<Tbl_Photo>();
         }
     
         public int Id { get; set; }
         public string ItemName { get; set; }
-        public int AmountInStock { get; set; }
+        public Nullable<int> AmountInStock { get; set; }
         public string LocationComments { get; set; }
         public string Manufacturer { get; set; }
         public string CatalogNumber { get; set; }
@@ -33,21 +33,21 @@ namespace PennState.Models
         public Nullable<System.DateTime> PurchaseDate { get; set; }
         public Nullable<System.DateTime> Added { get; set; }
         public Nullable<System.DateTime> Updated { get; set; }
-        public decimal PurchasePrice { get; set; }
+        public Nullable<decimal> PurchasePrice { get; set; }
         public string ItemType { get; set; }
         public string ItemNotes { get; set; }
         public string UpdatedBy { get; set; }
         public bool IsDeleted { get; set; }
-        public int UsrId { get; set; }
+        public Nullable<int> UsrId { get; set; }
         public Nullable<int> LocId { get; set; }
         public Nullable<int> SubId { get; set; }
     
-        public virtual Tbl_Locations Location { get; set; }
-        public virtual Tbl_SubLocations SubLocation { get; set; }
-        public virtual Tbl_Users User { get; set; }
+        public virtual Tbl_Locations Tbl_Locations { get; set; }
+        public virtual Tbl_SubLocations Tbl_SubLocations { get; set; }
+        public virtual Tbl_Users Tbl_Users { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Tbl_File> Files { get; set; }
+        public virtual ICollection<Tbl_File> Tbl_File { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Tbl_Photo> Photos { get; set; }
+        public virtual ICollection<Tbl_Photo> Tbl_Photo { get; set; }
     }
 }

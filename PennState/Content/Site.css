@@ -1,7 +1,5 @@
 ﻿body {
-    padding-bottom: 20px;
     position: relative;
-    background-color: #FFFFFF;
 }
 
 .categoryButton {
@@ -26,6 +24,16 @@
         color: dodgerblue;
         display: inline-block;
     }
+
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5); /*dim the background*/
+}
 
 .labelClass {
     font-weight:100;
@@ -245,7 +253,6 @@ p.thick {
     background: #FFFFFF;
 }
 
-
 .sideModal {
     position: fixed;
     right: -600px;
@@ -273,6 +280,11 @@ p.thick {
 
 .modal-title {
     margin-left: 20px;
+}
+
+.treeClass{
+    overflow-y:auto;
+    max-height:300px;
 }
 
 .logModal {
@@ -365,22 +377,28 @@ table.myFormat {
 .dropleft,
 .dropdown {
     position: relative;
+    
 }
 
 .dropdown-toggle {
     position: relative;
     transition: 500ms;
+    
 }
 
 .dropdown:hover .dropdown-menu {
     transition-delay: 0s;
     display: block;
+    height:auto;
+    overflow:auto;
 }
 
 .dropdown-menu:hover .dropdown-menu {
     transition-delay: 0s;
     display: block;
+    
 }
+
 
 #background {
     top: 0px;

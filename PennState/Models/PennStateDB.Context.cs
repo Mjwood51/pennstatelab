@@ -13,10 +13,10 @@ namespace PennState.Models
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class ContextModel : DbContext
+    public partial class PennStateDB : DbContext
     {
-        public ContextModel()
-            : base("name=ContextModel")
+        public PennStateDB()
+            : base("name=PennStateDB")
         {
         }
     

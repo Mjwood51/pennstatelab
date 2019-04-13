@@ -38,18 +38,18 @@
 <script src="~/Scripts/chosen.jquery.js"></script>
 @*<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>*@
 <script src="~/Scripts/notify.js"></script>
-<script type="text/javascript">
-    
-    
+<script type="text/javascript">   
 
-    $('#myModal2').on('shown.bs.modal', function () {
-        $('.chosen-select', this).chosen();
+    $(document).ready(function () {
+        
+        $('#myModal').on('shown.bs.modal', function () {
+            $('.chosen-select', this).chosen();
+        });
+        $('#myModal2').on('shown.bs.modal', function () {
+            $('.chosen-select', this).chosen();
+        });
     });
-
-    $('#myModal').on('shown.bs.modal', function () {
-        $('.chosen-select', this).chosen();
-    });
-
+    
 
     $.notify.addStyle('happygreen', {
         html: "<div>☺<span data-notify-text/>☺</div>",
@@ -92,16 +92,15 @@
         //
         var logIn = function () {
             var modal = document.getElementById('logInModal');
-        var url = '@Url.Action("Login", "Account")';
+            var url = '@Url.Action("Login", "Account")';
             $("#logInBod").load(url, function () {
                 $("#logInModal").fadeIn(500).modal(modal.style.display = "block").show();
-
+               
             });
             window.onclick = function (event) {
                 if (!$(event.target).closest('#logInModal').length && !$(event.target).is('#logInModal')) {
 
                     $("#logInModal").fadeOut(500).modal(modal.style.display = "none").hide();
-
                 }
             }
 
@@ -110,30 +109,52 @@
         //
 
         
+        //Set Mouse Inside and Outside From Modals
+        //
+        var mouseInside = false;
+
+        $("#myModal").hover(function () {
+            mouseInside = true;
+        }, function () {
+            mouseInside = false;
+        });
+
+        $("#myModal2").hover(function () {
+            mouseInside = true;
+        }, function () {
+            mouseInside = false;
+        });
+
+        $("#detailModal").hover(function () {
+            mouseInside = true;
+        }, function () {
+            mouseInside = false;
+        });
+        //
+        //
+
         //Edit modal open and close
         //
         var modal2 = document.getElementById('myModal');
-        function closeEdit() {
-            $("body").fadeIn(500).removeClass('fadein');
-            $("#myModal").fadeOut(500).modal('hide', function () {
-
-                modal2.style.right = "-600px";
-            }, location.reload());
+    function closeEdit() {
+        $("#myModal").fadeOut(20).modal('hide', function () {
+            modal2.style.right = "-600px";
+        }, location.reload());
         }
-
-        var editItem = function (id) {
-            var url = '@Url.Action("Edit", "Item")/' + id;
-                    $("#modalBod").load(url, function () {
-                        $("body").fadeIn(500).addClass('fadein');
-                        $("#myModal").fadeIn(500).modal('show', modal2.style.right = "0px");
-            });
-            window.ondblclick = function (event) {
-
-                if (!$(event.target).closest('#myModal').length) {
-                    closeEdit();
-                }
+        
+    function editItem(id) {
+        $.ajax({
+            url: '@Url.Action("Edit", "Item")/' + id,
+            type: 'GET',
+            complete: function (e) {
+                $("#myModal").fadeIn(20).modal('show', modal2.style.right = "0px");
+            },
+            success: function (response) {                                
+                $('#modalBod').html(response);
             }
+        });
         }
+
         //
         //
 
@@ -144,7 +165,7 @@
         function closeDetails() {
             $('#detailModal').fadeOut(500).modal('hide', function () {
                 modal4.style.display = "none";
-            }, location.reload());
+            });
         }
 
     
@@ -153,46 +174,46 @@
             $("#detailBod").load(url, function () {
                 $("#detailModal").fadeIn(500).modal('show', modal4.style.display = "block");
             });
-
-            window.ondblclick = function (event) {
-                if (!$(event.target).closest('#detailModal').length) {
-                    closeDetails();
-                }
-            }
         }
+
         //
         //
-
-
-    //Add Item modal open and close
-    //
+        //Add Item modal open and close
+        //
         var modal3 = document.getElementById('myModal2');
         
         function closeAdd() {
             $("#myModal2").fadeOut(500).modal('hide', function () {
                 modal3.style.display = "none";
-            }, location.reload());
+            });
         }
 
 
         var addItem = function () {
 
             var url = '@Url.Action("AddItem", "Item")';
-                    $("#createBod").load(url, function () {
-
+            $("#createBod").load(url, function () {
                         $("#myModal2").fadeIn(500).modal('show', function () {
                             modal3.style.display = "block";
                         });
+                        
                     });
+        }
 
-            window.ondblclick = function (event) {
-                if (!$(event.target).closest('#myModal2').length) {
-                    closeAdd();
-                }
-            }
-    }
-    //
-    //
+    $('body').click(function (event) {
+        if (!$(event.target).closest('#myModal').length && !$(event.target).is('#myModal')) {
+            modal2.style.right = "-600px";
+        }
+    });
+
+    $('body').click(function (event) {
+        if (!$(event.target).closest('#myModal2').length && !$(event.target).is('#myModal2')) {
+            modal3.style.display = "none";
+        }
+    });
+        //
+        //
+    
 
 
     var confirmDelete = function(itemid){
@@ -223,7 +244,7 @@
 
 
 
-
+ 
 
 
 </script>

@@ -27,6 +27,7 @@ using System.Data.Entity.Validation;
 using Dapper;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace PennState.Controllers
 {
@@ -34,14 +35,14 @@ namespace PennState.Controllers
     {
         private SqlConnection con;
         private string constr;
-        private ContextModel _context;
+        private PennStateDB _context;
         private List<Tbl_File> files;
         private List<Tbl_Photo> photos;
         private Tbl_CatagoryLocations catLoc2;
 
         public ItemController()
         {
-            _context = new ContextModel();
+            _context = new PennStateDB();
             files = new List<Tbl_File>();
             photos = new List<Tbl_Photo>();
             catLoc2 = new Tbl_CatagoryLocations();
@@ -55,7 +56,7 @@ namespace PennState.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            using (ContextModel _context = new ContextModel())
+            using (PennStateDB _context = new PennStateDB())
             {
                 if (disposing)
                 {
@@ -72,11 +73,11 @@ namespace PennState.Controllers
             var model = new EditItemViewModel();
             //Files objFile = new Files();
             //Photos objPhoto = new Photos();
-            using (ContextModel db = new ContextModel())
+            using (PennStateDB db = new PennStateDB())
             {
                 model.Files.GetFileList = db.Tbl_File.Select(x => new Files { Id = x.Id, ItemFileName = x.ItemFileName }).ToList();
                 model.Photos.GetPhotoList = db.Tbl_Photo.Select(x => new Photos { Id = x.Id, PhotoName = x.PhotoName }).ToList();
-                model.Item = Mapper.Map<Tbl_Items, Item>(db.Tbl_Items.Where(x => x.Id == cid).Include(i => i.Photos).Include(i => i.Files).FirstOrDefault());
+                model.Item = Mapper.Map<Tbl_Items, Item>(db.Tbl_Items.Where(x => x.Id == cid).Include(i => i.Tbl_Photo).Include(i => i.Tbl_File).FirstOrDefault());
             }
             //model.Files = objFile;
             //model.Photos = objPhoto;
@@ -87,9 +88,9 @@ namespace PennState.Controllers
         public ActionResult ItemDetails(int cid)
         {
             var model = new ItemDetailsModel();
-            using (ContextModel db = new ContextModel())
+            using (PennStateDB db = new PennStateDB())
             {
-                model.Item = Mapper.Map<Tbl_Items, Item>(db.Tbl_Items.Where(x => x.Id == cid).Include(i => i.Photos).Include(i => i.Files).FirstOrDefault());
+                model.Item = Mapper.Map<Tbl_Items, Item>(db.Tbl_Items.Where(x => x.Id == cid).Include(i => i.Tbl_Photo).Include(i => i.Tbl_File).FirstOrDefault());
             }
             return PartialView("ItemDetails", model);
         }
@@ -111,7 +112,8 @@ namespace PennState.Controllers
                         {
                             var fId = Convert.ToInt32(fileId);
                             var existingfile = _context.Tbl_File.Where(x => x.Id == fId).FirstOrDefault();
-                            modelItem.Files.Add(existingfile);
+                            modelItem.Tbl_File.Add(existingfile);
+                            files.Add(existingfile);
                         }
                     }
                 }
@@ -124,7 +126,8 @@ namespace PennState.Controllers
                         {
                             var pId = Convert.ToInt32(photoId);
                             var existingPhoto = _context.Tbl_Photo.Where(x => x.Id == pId).FirstOrDefault();
-                            modelItem.Photos.Add(existingPhoto);
+                            modelItem.Tbl_Photo.Add(existingPhoto);
+                            photos.Add(existingPhoto);
                         }
                     }
                 }
@@ -184,30 +187,30 @@ namespace PennState.Controllers
 
                 if (files.Count > 0)
                 {
-                    if (modelItem.Files.Count > 0)
+                    if (modelItem.Tbl_File.Count > 0)
                     {
-                        modelItem.Files = modelItem.Files.Concat(files).ToList();
+                        modelItem.Tbl_File = modelItem.Tbl_File.Concat(files).ToList();
                     }
                     else
                     {
                         if (model.Item.Files != null)
-                            modelItem.Files = modelItem.Files.Concat(Mapper.Map<IEnumerable<Tbl_File>>(model.Item.Files)).Concat(files).ToList();
+                            modelItem.Tbl_File = modelItem.Tbl_File.Concat(Mapper.Map<IEnumerable<Tbl_File>>(model.Item.Files)).Concat(files).ToList();
                         else
-                            modelItem.Files = files;
+                            modelItem.Tbl_File = files;
                     }
                 }
                 if (photos.Count > 0)
                 {
-                    if (modelItem.Photos.Count > 0)
+                    if (modelItem.Tbl_Photo.Count > 0)
                     {
-                        modelItem.Photos = modelItem.Photos.Concat(photos).ToList();
+                        modelItem.Tbl_Photo = modelItem.Tbl_Photo.Concat(photos).ToList();
                     }
                     else
                     {
                         if (model.Item.Photos != null)
-                            modelItem.Photos = modelItem.Photos.Concat(Mapper.Map<IEnumerable<Tbl_Photo>>(model.Item.Photos)).Concat(photos).ToList();
+                            modelItem.Tbl_Photo = modelItem.Tbl_Photo.Concat(Mapper.Map<IEnumerable<Tbl_Photo>>(model.Item.Photos)).Concat(photos).ToList();
                         else
-                            modelItem.Photos = photos;
+                            modelItem.Tbl_Photo = photos;
                     }
                 }
                 modelItem.Id = model.Item.Id;
@@ -250,15 +253,16 @@ namespace PennState.Controllers
                 var path = "";
                 var path2 = "";
                 var path4 = "";
+                var listImages = new List<Image>();
                 int i = 0;
-                if (model.PhotoUpload != null)
+                if (photos.Count > 0)
                 {
-                    foreach (var photoObj in model.PhotoUpload)
+                    foreach (var photoObj in photos)
                     {
                         //Create necessary directories
                         var originalDir = new DirectoryInfo(string.Format("{0}Images\\Uploads", Server.MapPath(@"\")));
 
-                        var imageName = photoObj.FileName;
+                        var imageName = photoObj.PhotoName;
 
                         var subLocId = (from s in _context.Tbl_SubLocations
                                         join it in _context.Tbl_Items on s.Id equals it.SubId
@@ -286,21 +290,44 @@ namespace PennState.Controllers
 
                         if (!Directory.Exists(pathString5))
                             Directory.CreateDirectory(pathString5);
-
+                        
                         path = string.Format("{0}\\{1}", pathString2, imageName);
                         ImageConverter imageConverter = new System.Drawing.ImageConverter();
-                        System.Drawing.Image image = imageConverter.ConvertFrom(photoDatas.ElementAt(i)) as System.Drawing.Image;
-                        image.Save(path, System.Drawing.Imaging.ImageFormat.Jpeg);
-
+                        if (model.PhotoUpload != null)
+                        {
+                            var image = imageConverter.ConvertFrom(photoDatas.ElementAt(i)) as System.Drawing.Image;
+                            image.Save(path, System.Drawing.Imaging.ImageFormat.Jpeg);
+                        }
+                        if (model.Photos.PhotoList.Count() > 0)
+                        {
+                            var image = imageFromBytes(photoObj.DataStream);
+                            image.Save(path, System.Drawing.Imaging.ImageFormat.Jpeg);
+                            listImages.Add(image);
+                        }
                         path2 = string.Format("{0}\\{1}", pathString3, imageName);
-                        var img = images.ElementAt(i);
-                        img = resizeImage(img, new Size(200, 200));
-                        img.Save(path2);
-
                         path4 = string.Format("{0}\\{1}", pathString4, imageName);
-                        var img2 = images.ElementAt(i);
-                        img2 = resizeImage(img2, new Size(500, 375));
-                        img2.Save(path4);
+                        if (model.PhotoUpload != null)
+                        {
+                            var img = images.ElementAt(i);
+                            img = resizeImage(img, new Size(200, 200));
+                            img.Save(path2);
+                            
+                            var img2 = images.ElementAt(i);
+                            img2 = resizeImage(img2, new Size(500, 375));
+                            img2.Save(path4);
+                        }
+
+                        if(model.Photos.PhotoList.Count()> 0)
+                        {
+                            var img = listImages.ElementAt(i);
+                            img = resizeImage(img, new Size(200, 200));
+                            img.Save(path2);
+
+
+                            var img2 = listImages.ElementAt(i);
+                            img2 = resizeImage(img2, new Size(500, 375));
+                            img2.Save(path4);
+                        }
 
                         i++;
                     }
@@ -313,12 +340,13 @@ namespace PennState.Controllers
             return RedirectToAction("GetAllItems", "Item");
         }
 
+
         [HttpGet]
         public ActionResult AddItem()
         {
             AddItemViewModel model = new AddItemViewModel();
 
-            using (ContextModel db = new ContextModel())
+            using (PennStateDB db = new PennStateDB())
             {
                 model.Files.GetFileList = db.Tbl_File.Select(x => new Files { Id = x.Id, ItemFileName = x.ItemFileName }).ToList();
                 model.Photos.GetPhotoList = db.Tbl_Photo.Select(x => new Photos { Id = x.Id, PhotoName = x.PhotoName }).ToList();
@@ -341,7 +369,8 @@ namespace PennState.Controllers
                     {
                         var fId = Convert.ToInt32(fileId);
                         var existingfile = _context.Tbl_File.Where(x => x.Id == fId).FirstOrDefault();
-                        modelItem.Files.Add(existingfile);
+                        modelItem.Tbl_File.Add(existingfile);
+                        files.Add(existingfile);
                     }
                 }
 
@@ -351,7 +380,8 @@ namespace PennState.Controllers
                     {
                         var pId = Convert.ToInt32(photoId);
                         var existingPhoto = _context.Tbl_Photo.Where(x => x.Id == pId).FirstOrDefault();
-                        modelItem.Photos.Add(existingPhoto);
+                        modelItem.Tbl_Photo.Add(existingPhoto);
+                        photos.Add(existingPhoto);
                     }
                 }
 
@@ -414,24 +444,24 @@ namespace PennState.Controllers
 
                 if (files.Count > 0)
                 {
-                    if (modelItem.Files.Count > 0)
+                    if (modelItem.Tbl_File.Count > 0)
                     {
-                        modelItem.Files = modelItem.Files.Concat(files).ToList();
+                        modelItem.Tbl_File = modelItem.Tbl_File.Concat(files).ToList();
                     }
                     else
                     {
-                        modelItem.Files = files;
+                        modelItem.Tbl_File = files;
                     }
                 }
                 if (photos.Count > 0)
                 {
-                    if (modelItem.Photos.Count > 0)
+                    if (modelItem.Tbl_Photo.Count > 0)
                     {
-                        modelItem.Photos = modelItem.Photos.Concat(photos).ToList();
+                        modelItem.Tbl_Photo = modelItem.Tbl_Photo.Concat(photos).ToList();
                     }
                     else
                     {
-                        modelItem.Photos = photos;
+                        modelItem.Tbl_Photo = photos;
                     }
                 }
 
@@ -539,6 +569,14 @@ namespace PennState.Controllers
             return RedirectToAction("GetAllItems", "Item");
         }
 
+        public Image imageFromBytes(byte[] array)
+        {
+            using (var ms = new MemoryStream(array))
+            {
+                return Image.FromStream(ms);
+            }
+        }
+
         public static Image resizeImage(Image imgToResize, Size size)
         {
             return (Image)(new Bitmap(imgToResize, size));
@@ -548,7 +586,7 @@ namespace PennState.Controllers
         public JsonResult DeleteItem(int id)
         {
             bool result = false;
-            using (ContextModel db = new ContextModel())
+            using (PennStateDB db = new PennStateDB())
             {
                 Tbl_Items item = db.Tbl_Items.SingleOrDefault(x => x.Id == id && x.IsDeleted == false);
                 if (item != null)
@@ -573,13 +611,13 @@ namespace PennState.Controllers
             var listItem = new List<Item>();
             var test = array[0];
             var test2 = "";
-                if (_context.Tbl_Items.Where(x => x.Location.LocationName == test).Any())
+                if (_context.Tbl_Items.Where(x => x.Tbl_Locations.LocationName == test).Any())
                 {
                     for (int i = 0; i < array.Length; i += 2)
                     {
                         test = array[i];
                         test2 = array[i + 1];
-                        listItem = listItem.Concat(Mapper.Map<IEnumerable<Item>>(_context.Tbl_Items.Where(a => a.Location.LocationName == test && a.SubLocation.SubLocationName == test2).ToList())).ToList();
+                        listItem = listItem.Concat(Mapper.Map<IEnumerable<Item>>(_context.Tbl_Items.Where(a => a.Tbl_Locations.LocationName == test && a.Tbl_SubLocations.SubLocationName == test2).ToList())).ToList();
                     }
                 }
                 else if (_context.Tbl_Items.Where(x => x.ItemType == test).Any())
@@ -613,117 +651,72 @@ namespace PennState.Controllers
             return listItem;
         }
 
-        public ActionResult NextPage(int? page)
-        {
-            int pageNumber = page ?? 1;
-            var pageItems = TempData["List"] as List<Item>;
-            var modelItem = new ItemViewModel();
-            var list = new List<Item>();
-            foreach (var item in pageItems)
-            {
-                using (ContextModel db = new ContextModel())
-                {
-                    var single = db.Tbl_Items.Where(x => x.Id == item.Id).FirstOrDefault();
-                    list.Add(Mapper.Map<Item>(single));
-                }
-                
-            }
-            modelItem.Items = list;
-            ViewBag.ItemList = list;
-            //var pagedList = new PagedList<Item>(list, pageNumber, 1);
-            //modelItem.PagedList = pagedList;
-            return View("GetItemList", modelItem);
-        }
-
         [HttpGet]
-        public ActionResult GetItemList(string location, string type, string vendor, string owner)
+        public ActionResult GetItemList(string locations, string types, string vendors, string owners)
         {
-            var pageNumber = 1;
-
-            if (location == "null")
-            {
-                location = null;
-            }
-            if (type == "null")
-            {
-                type = null;
-            }
-            if (vendor == "null")
-            {
-                vendor = null;
-            }
-            if (owner == "null")
-            {
-                owner = null;
-            }
-
-            var itemList = new List<Item>();
             var test = "";
-            string[] loc = null;
-            if (location != null)
+            string[] location = null;
+            string[] vendor = null;
+            string[] type = null;
+            string[] owner = null;
+            var itemList = new List<Item>();
+            JavaScriptSerializer js = new JavaScriptSerializer();
+            if (locations != "null")
             {
-                loc = location.Split(',');
-                itemList = CatQuery(null, loc);
+                location = js.Deserialize<string[]>(locations);
+                itemList = CatQuery(null, location);
             }
-
-                string[] typeAr = null;
-                if (type != null)
+            if (types != "null")
+            {
+                type = js.Deserialize<string[]>(types);
+                if (location != null)
                 {
-                    typeAr = type.Split(',');
-                    if (location != null)
+                    itemList = CatQuery(itemList, type);
+                }
+                else
+                {
+                    for (int i = 0; i < type.Length; i++)
                     {
-                        itemList = CatQuery(itemList, typeAr);
-                    }
-                    else
-                    {
-                        for (int i = 0; i < typeAr.Length; i++)
-                        {
-                            test = typeAr[i];
-                            itemList = itemList.Concat(Mapper.Map<IEnumerable<Item>>(_context.Tbl_Items.Where(x => x.ItemType == test).ToList())).ToList();
-                        }
+                        test = type[i];
+                        itemList = itemList.Concat(Mapper.Map<IEnumerable<Item>>(_context.Tbl_Items.Where(x => x.ItemType == test).ToList())).ToList();
                     }
                 }
-
-                string[] ven = null;
-                if (vendor != null)
+            }
+            if (vendors != "null")
+            {
+                vendor = js.Deserialize<string[]>(vendors);
+                if (location != null || type != null)
                 {
-                    ven = vendor.Split(',');
-                    if (location != null || type != null)
+                    itemList = CatQuery(itemList, vendor);
+                }
+                else
+                {
+                    for (int i = 0; i < vendor.Length; i++)
                     {
-                        itemList = CatQuery(itemList, ven);
-                    }
-                    else
-                    {
-                        for (int i = 0; i < ven.Length; i++)
-                        {
-                            test = ven[i];
-                            itemList = itemList.Concat(Mapper.Map<IEnumerable<Item>>(_context.Tbl_Items.Where(x => x.Vendor == test).ToList())).ToList();
-                        }
+                        test = vendor[i];
+                        itemList = itemList.Concat(Mapper.Map<IEnumerable<Item>>(_context.Tbl_Items.Where(x => x.Vendor == test).ToList())).ToList();
                     }
                 }
-
-                string[] own = null;
-                if (owner != null)
+            }
+            if (owners != "null")
+            {
+                owner = js.Deserialize<string[]>(owners);
+                if (location != null || type != null || vendor != null)
                 {
-                    own = owner.Split(',');
-                    if (location != null || type != null || vendor != null)
+                    itemList = CatQuery(itemList, owner);
+                }
+                else
+                {
+                    for (int i = 0; i < owner.Length; i++)
                     {
-                        itemList = CatQuery(itemList, own);
-                    }
-                    else
-                    {
-                        for (int i = 0; i < own.Length; i++)
-                        {
-                            test = own[i];
-                            itemList = itemList.Concat(Mapper.Map<IEnumerable<Item>>(_context.Tbl_Items.Where(a => a.User.FirstName + " " + a.User.LastName == test).ToList())).ToList();
-                        }
+                        test = owner[i];
+                        itemList = itemList.Concat(Mapper.Map<IEnumerable<Item>>(_context.Tbl_Items.Where(a => a.Tbl_Users.FirstName + " " + a.Tbl_Users.LastName == test).ToList())).ToList();
                     }
                 }
-
+            }            
             itemList = itemList.Where(x => x.IsDeleted == false).ToList();
+          
             var model = new ItemViewModel();
-            //var pagedList = new PagedList<Item>(itemList, pageNumber, 1);
-            //model.PagedList = pagedList;
             model.Items = itemList;
             ViewBag.ItemList = itemList;
 
@@ -733,7 +726,7 @@ namespace PennState.Controllers
 
         private IEnumerable<Item> GetItems(IEnumerable<string> names)
         {
-            using (ContextModel db = new ContextModel())
+            using (PennStateDB db = new PennStateDB())
             {
                 var items = (from I in db.Tbl_Items
                              join U in db.Tbl_Users
@@ -759,7 +752,7 @@ namespace PennState.Controllers
         [Route("item/getterm/{text}")]
         public JsonResult GetTerm(string text)
         {
-            using (ContextModel db = new ContextModel())
+            using (PennStateDB db = new PennStateDB())
             {
                 var ItemType = (from N in db.Tbl_Items.ToList()
                                 where N.ItemType.ToLower().Contains(text.ToLower())
@@ -772,7 +765,7 @@ namespace PennState.Controllers
         [Route("item/getloc/{text}")]
         public JsonResult GetLoc(string text)
         {
-            using (ContextModel db = new ContextModel())
+            using (PennStateDB db = new PennStateDB())
             {
                 var LocType = (from N in db.Tbl_Locations.ToList()
                                where N.LocationName.ToLower().Contains(text.ToLower())
@@ -785,7 +778,7 @@ namespace PennState.Controllers
         [Route("item/getsub/{text}")]
         public JsonResult GetSub(string text)
         {
-            using (ContextModel db = new ContextModel())
+            using (PennStateDB db = new PennStateDB())
             {
                 var SubType = (from N in db.Tbl_SubLocations.ToList()
                                where N.SubLocationName.ToLower().Contains(text.ToLower())
@@ -798,7 +791,7 @@ namespace PennState.Controllers
         [Route("item/getven/{text}")]
         public JsonResult GetVen(string text)
         {
-            using (ContextModel db = new ContextModel())
+            using (PennStateDB db = new PennStateDB())
             {
                 var Ven = (from N in db.Tbl_Items.ToList()
                            where N.Vendor.ToLower().Contains(text.ToLower())
@@ -832,7 +825,7 @@ namespace PennState.Controllers
             using (SqlCommand command = new SqlCommand("SELECT Files_Id FROM Tbl_ItemFiles WHERE Files_Id = " + id, con))
             {
                 var query = command.ExecuteScalar();
-                using (ContextModel _context = new ContextModel())
+                using (PennStateDB _context = new PennStateDB())
                 {
                     Tbl_File file = _context.Tbl_File.Find(id);
                     if (file != null && query == null)
@@ -860,7 +853,7 @@ namespace PennState.Controllers
                     using (SqlCommand command = new SqlCommand("SELECT Photos_Id FROM Tbl_PhotoItems WHERE Photos_Id = " + photoId, con))
                     {
                         var query = command.ExecuteScalar();
-                        using (ContextModel _context = new ContextModel())
+                        using (PennStateDB _context = new PennStateDB())
                         {
                             Tbl_Photo photo = _context.Tbl_Photo.Find(photoId);
                             if (photo != null && query == null)
@@ -920,7 +913,7 @@ namespace PennState.Controllers
 
         private void DbConnection()
         {
-            constr = ConfigurationManager.ConnectionStrings["ContextModel"].ToString();
+            constr = ConfigurationManager.ConnectionStrings["PennStateDB"].ToString();
             if (constr.ToLower().StartsWith("metadata="))
             {
                 System.Data.Entity.Core.EntityClient.EntityConnectionStringBuilder efBuilder = new System.Data.Entity.Core.EntityClient.EntityConnectionStringBuilder(constr);
@@ -933,7 +926,7 @@ namespace PennState.Controllers
         public ItemViewModel PopulateList()
         {
             var model = new ItemViewModel();
-            using (ContextModel db = new ContextModel())
+            using (PennStateDB db = new PennStateDB())
             {
                 model.Owners = Mapper.Map<IEnumerable<CatagoryOwner>>(db.Tbl_CatagoryOwners.Where(x => !x.Pid.HasValue).ToList());
                 model.Types = Mapper.Map<IEnumerable<CatagoryType>>(db.Tbl_CatagoryTypes.Where(x => !x.Pid.HasValue).ToList());
@@ -1040,7 +1033,7 @@ namespace PennState.Controllers
             Tbl_SubLocations sublocation = null;
             if (_context.Tbl_Locations.Where(x => x.LocationName == locName).Any())
             {
-                var subLoc = _context.Tbl_SubLocations.Where(x => x.SubLocationName == subName && x.Location.LocationName == locName).FirstOrDefault();
+                var subLoc = _context.Tbl_SubLocations.Where(x => x.SubLocationName == subName && x.Tbl_Locations.LocationName == locName).FirstOrDefault();
                 var location = _context.Tbl_Locations.Where(x => x.LocationName == locName).FirstOrDefault();
                 item.LocId = location.Id;
                 
@@ -1053,9 +1046,9 @@ namespace PennState.Controllers
                         sublocation = new Tbl_SubLocations()
                         {
                             SubLocationName = subName,
-                            Location = location
+                            Tbl_Locations = location
                         };
-                        item.SubLocation = sublocation;
+                        item.Tbl_SubLocations = sublocation;
 
                 }
             }
@@ -1071,12 +1064,12 @@ namespace PennState.Controllers
                 sublocation = new Tbl_SubLocations()
                 {
                     SubLocationName = subName,     //Take the sublocation name and assign it to a new sublocation
-                    Location = locObject
+                    Tbl_Locations = locObject
                 };
 
                 //add these to the item
-                item.Location = locObject;
-                item.SubLocation = sublocation;
+                item.Tbl_Locations = locObject;
+                item.Tbl_SubLocations = sublocation;
             }
             return item;
         }
@@ -1091,19 +1084,28 @@ namespace PennState.Controllers
             var lastName = "";
             var loc = "";
             var subLoc = "";
+            var index = -1;
             List<Tbl_Items> items = new List<Tbl_Items>();
 
             for (int j = 2; j <= workbook.Worksheets.Count; j++)
             {
                 sheet = (Excel.Worksheet)workbook.Worksheets.get_Item(j);
                 Excel.Range row = sheet.UsedRange;
-                for(int i = 2; i < row.Rows.Count; i++)
+                for(int i = 2; i <= row.Rows.Count; i++)
                 {
 
                     var item = new Tbl_Items();
                     item.ItemName = row.Cells[i, 3].Text;
-                    item.Vendor = row.Cells[i, 4].Text;
+                    if(row.Cells[i, 4].Text == "")
+                    {
+                        item.Vendor = "_";
+                    }
+                    else
+                    {
+                        item.Vendor = row.Cells[i, 4].Text;
+                    }
                     item.CatalogNumber = row.Cells[i, 5].Text;
+                    item.Added = DateTime.Today;
                     firstName = row.Cells[i, 6].Text;
                     if(firstName != "")
                     firstName = firstName.Substring(0, firstName.IndexOf(' '));
@@ -1113,14 +1115,28 @@ namespace PennState.Controllers
                     var user = _context.Tbl_Users.Where(x => x.FirstName == firstName && x.LastName == lastName).FirstOrDefault();
                     if (user == null)
                     {
-                        user = null;
+                        user = _context.Tbl_Users.Where(x => x.RoleId == 1).FirstOrDefault();
+                        item.UsrId = user.Id;
                     }
                     else
                     {
                         item.UsrId = user.Id;
                     }
-                    loc = row.Cells[i, 7].Text;
-                    subLoc = row.Cells[i, 8].Text;
+                    if (row.Cells[i, 7].Text == "")
+                        loc = "_";
+                    else
+                        loc = row.Cells[i, 7].Text;
+                    if (row.Cells[i, 8].Text == "")
+                        subLoc = "_";
+                    else
+                        subLoc = row.Cells[i, 8].Text;
+                    var sb = new StringBuilder(subLoc);
+                    index = subLoc.IndexOf('/');
+                    if(index != -1)
+                    {                       
+                        sb[index] = '-';
+                        subLoc = sb.ToString();
+                    }
                     item = GetLocation(item, subLoc, loc);
                     item.LocationComments = row.Cells[i, 9].Text;
                     var price = row.Cells[i, 10].Text;

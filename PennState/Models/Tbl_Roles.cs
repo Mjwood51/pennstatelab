@@ -17,13 +17,13 @@ namespace PennState.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Tbl_Roles()
         {
-            this.Users = new HashSet<Tbl_Users>();
+            this.Tbl_Users = new HashSet<Tbl_Users>();
         }
     
         public int Id { get; set; }
         public string RoleName { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Tbl_Users> Users { get; set; }
+        public virtual ICollection<Tbl_Users> Tbl_Users { get; set; }
     }
 }

@@ -44,11 +44,10 @@ namespace PennState.Models
         [DisplayName("Catalog #")]
         public string CatalogNumber { get; set; }
 
-        [StringLength(200)]
+        [StringLength(350)]
         [DisplayName("URL Address")]
         public string WebAddress { get; set; }
 
-        [Required]
         [StringLength(50)]
         public string Vendor { get; set; }
 
@@ -59,10 +58,8 @@ namespace PennState.Models
         [DisplayName("Purchase Date")]
         public DateTime? PurchaseDate { get; set; }
 
-        [DisplayFormat(DataFormatString = "{0:dd MMM yyyy}")]
         public DateTime? Added { get; set; }
 
-        [DisplayFormat(DataFormatString = "{0:dd MMM yyyy}")]
         public DateTime? Updated { get; set; }
 
         [Range(typeof(decimal), "0", "79228162514264337593543950335", ErrorMessage = "Please enter valid price")]
@@ -71,7 +68,7 @@ namespace PennState.Models
 
         [Required]
         [DisplayName("Item Type")]
-        [StringLength(20, MinimumLength = 1)]
+        [StringLength(50, MinimumLength = 1)]
         public string ItemType { get; set; }
 
         [StringLength(255)]

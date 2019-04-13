@@ -16,7 +16,7 @@ namespace PennState.Models
             {
                 return false;
             }
-            using (ContextModel _context = new ContextModel())
+            using (PennStateDB _context = new PennStateDB())
             {
                 var hashedpword = _context.Tbl_Users.Where(x => x.UserName.ToLower() == username.ToLower()).FirstOrDefault();
 
@@ -54,7 +54,7 @@ namespace PennState.Models
 
         public override MembershipUser GetUser(string email, bool userIsOnline)
         {
-            using (ContextModel db = new ContextModel())
+            using (PennStateDB db = new PennStateDB())
             {
                 var user = (from us in db.Tbl_Users
                             where string.Compare(email, us.Email, StringComparison.OrdinalIgnoreCase) == 0
@@ -72,7 +72,7 @@ namespace PennState.Models
 
         public override string GetUserNameByEmail(string email)
         {
-            using (ContextModel dbContext = new ContextModel())
+            using (PennStateDB dbContext = new PennStateDB())
             {
                 string username = (from u in dbContext.Tbl_Users
                                    where string.Compare(email, u.Email) == 0

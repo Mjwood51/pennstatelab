@@ -40,7 +40,7 @@ namespace PennState
 
             routes.MapRoute(
                 "GetItemList",
-                "item/getitemlist/{location}/{type}/{vendor}/{owner}",
+                "item/getitemlist/{locations}/{types}/{vendors}/{owners}",
                 new { controller = "Item", action = "GetItemList" });
 
             routes.MapRoute(

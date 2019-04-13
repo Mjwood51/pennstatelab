@@ -17,7 +17,7 @@ namespace PennState.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Tbl_CatagoryLocations()
         {
-            this.Childs = new HashSet<Tbl_CatagoryLocations>();
+            this.Tbl_CatagoryLocations1 = new HashSet<Tbl_CatagoryLocations>();
         }
     
         public int Id { get; set; }
@@ -26,7 +26,7 @@ namespace PennState.Models
         public bool HasChildren { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Tbl_CatagoryLocations> Childs { get; set; }
-        public virtual Tbl_CatagoryLocations Parent { get; set; }
+        public virtual ICollection<Tbl_CatagoryLocations> Tbl_CatagoryLocations1 { get; set; }
+        public virtual Tbl_CatagoryLocations Tbl_CatagoryLocations2 { get; set; }
     }
 }

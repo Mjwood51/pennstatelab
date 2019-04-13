@@ -24,12 +24,12 @@ namespace PennState.Controllers
 {
     public class AccountController : Controller
     {
-        private Role roles;
+        private PennStateDB _context;
+
         public AccountController()
         {
-            roles = new Role();
+            _context = new PennStateDB();
         }
-
 
         public ActionResult Index()
         {
@@ -39,9 +39,9 @@ namespace PennState.Controllers
         //GET: Account
         public ActionResult GetUsers()
         {
-            using (ContextModel _context = new ContextModel())
+            using (PennStateDB _context = new PennStateDB())
             {
-                var user = _context.Tbl_Users.Include(c => c.Roles).ToList();
+                var user = _context.Tbl_Users.Include(c => c.Tbl_Roles).ToList();
                 return View(Mapper.Map<IEnumerable<User>>(user));
             }          
         }
@@ -49,7 +49,7 @@ namespace PennState.Controllers
         public ActionResult AccountDetails(int id)
         {
             var user = new Tbl_Users();
-            using (ContextModel _context = new ContextModel())
+            using (PennStateDB _context = new PennStateDB())
             {
                 user = _context.Tbl_Users.SingleOrDefault(c => c.Id == id);
             }
@@ -61,7 +61,7 @@ namespace PennState.Controllers
 
         protected override void Dispose(bool disposing)
         {
-            using (ContextModel _context = new ContextModel())
+            using (PennStateDB _context = new PennStateDB())
             {
                 _context.Dispose();
             }
@@ -82,6 +82,40 @@ namespace PennState.Controllers
             string savedPasswordHash = Convert.ToBase64String(hashBytes);
             return savedPasswordHash;
         }
+        
+        [AllowAnonymous]
+        [HttpPost]
+        public ActionResult CheckExistingUsername(string userName)
+        {
+            try
+            {
+                return Json(!IsUsernameExists(userName));
+            }
+            catch (Exception ex)
+            {
+                return Json(false);
+            }
+        }
+
+        private bool IsUsernameExists(string userName)
+            => _context.Tbl_Users.Where(x => x.UserName == userName).FirstOrDefault() != null;
+
+        [AllowAnonymous]
+        [HttpPost]
+        public ActionResult CheckExistingEmail(string Email)
+        {
+            try
+            {
+                return Json(!IsEmailExists(Email));
+            }
+            catch (Exception ex)
+            {
+                return Json(false);
+            }
+        }
+
+        private bool IsEmailExists(string email)
+            => _context.Tbl_Users.Where(x=>x.Email == email).FirstOrDefault() != null;
 
         [HttpGet]
         public ActionResult Login(string ReturnUrl = "")
@@ -104,7 +138,7 @@ namespace PennState.Controllers
 
                 if (Membership.ValidateUser(loginView.UserName, loginView.Password))
                 {
-                    using (ContextModel _context = new ContextModel())
+                    using (PennStateDB _context = new PennStateDB())
                     {
                         var user = Mapper.Map<Tbl_Users, User>(_context.Tbl_Users.Where(x => x.UserName == loginView.UserName).FirstOrDefault());
                         if (user != null)
@@ -146,7 +180,7 @@ namespace PennState.Controllers
         [HttpGet]
         public ActionResult AddUser()
         {
-            using (ContextModel _context = new ContextModel())
+            using (PennStateDB _context = new PennStateDB())
             {
                 var roletypes = Mapper.Map<IEnumerable<Role>>(_context.Tbl_Roles.ToList());
                 var viewModel = new AddUserViewModel
@@ -160,47 +194,47 @@ namespace PennState.Controllers
         [HttpPost]
         public ActionResult AddUser(AddUserViewModel model)
         {
-            var roleName = new Role();
 
-            using (ContextModel _context = new ContextModel())
+            using (PennStateDB _context = new PennStateDB())
             {
-                roleName = Mapper.Map<Role>(_context.Tbl_Roles.Where(x => x.Id == model.User.RoleId).FirstOrDefault());
+                var roleName = Mapper.Map<Role>(_context.Tbl_Roles.Where(x => x.Id == model.User.RoleId).FirstOrDefault());
+
+
+                var str = model.User.Email + "Hello4Pizza" + roleName.RoleName;
+                var encr = Crypto.EncryptStringAES(str, "HelloPizza");
+
+                var url = "/account/registration/?id=" + encr;
+
+                var link = Request.Url.AbsoluteUri.Replace(Request.Url.PathAndQuery, url);
+                var fromEmail = new MailAddress("MarkWoodard2227@gmail.com", "Activation Account - Penn State Physics Lab Inventory");
+                var toEmail = new MailAddress(model.User.Email);
+
+                var fromEmailPassword = "Dod&erf@n42";
+                string subject = "Activation Account !";
+
+                string body = "<br/> Please click on the following link in order to register!" + "<br/><a href='" + link + "'> Account Registration ! </a>";
+
+                var smtp = new SmtpClient
+                {
+                    Host = "smtp.gmail.com",
+                    Port = 587,
+                    EnableSsl = true,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(fromEmail.Address, fromEmailPassword)
+                };
+
+                using (var message = new MailMessage(fromEmail, toEmail)
+                {
+                    Subject = subject,
+                    Body = body,
+                    IsBodyHtml = true
+
+                })
+
+                    smtp.Send(message);
+                TempData["SM"] = "Email sent to " + model.User.Email + "!";
             }
-
-            var str = model.User.Email + "Hello4Pizza" + roleName.RoleName;
-            var encr = Crypto.EncryptStringAES(str, "HelloPizza");
-
-            var url = "/account/registration/?id=" + encr;
-
-            var link = Request.Url.AbsoluteUri.Replace(Request.Url.PathAndQuery, url);
-            var fromEmail = new MailAddress("MarkWoodard2227@gmail.com", "Activation Account - Penn State Physics Lab Inventory");
-            var toEmail = new MailAddress(model.User.Email);
-
-            var fromEmailPassword = "Dod&erf@n42";
-            string subject = "Activation Account !";
-
-            string body = "<br/> Please click on the following link in order to register!" + "<br/><a href='" + link + "'> Account Registration ! </a>";
-
-            var smtp = new SmtpClient
-            {
-                Host = "smtp.gmail.com",
-                Port = 587,
-                EnableSsl = true,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(fromEmail.Address, fromEmailPassword)
-            };
-
-            using (var message = new MailMessage(fromEmail, toEmail)
-            {
-                Subject = subject,
-                Body = body,
-                IsBodyHtml = true
-
-            })
-
-                smtp.Send(message);
-            TempData["SM"] = "Email sent to " + model.User.Email + "!";
             return RedirectToAction("AddUser", "Account");
         }
 
@@ -230,70 +264,65 @@ namespace PennState.Controllers
         [HttpPost]
         public ActionResult Registration(RegistrationView registrationView)
         {
-            var role = new Role();
 
-            using (ContextModel _context = new ContextModel())
+            using (PennStateDB _context = new PennStateDB())
             {
-                role = Mapper.Map<Tbl_Roles, Role>(_context.Tbl_Roles.Where(x => x.RoleName == registrationView.Role).FirstOrDefault());
-            }
-            roles = role;
-            bool statusRegistration = false;
-            string messageRegistration = string.Empty;
+                var role = Mapper.Map<Tbl_Roles, Role>(_context.Tbl_Roles.Where(x => x.RoleName == registrationView.Role).FirstOrDefault());
+            
+                bool statusRegistration = false;
+                string messageRegistration = string.Empty;
 
-            if (ModelState.IsValid)
-            {
-                using (ContextModel _context = new ContextModel())
+                if (ModelState.IsValid)
                 {
-                    //Check if email is unique
-                    if (_context.Tbl_Users.Any(x => x.Email == registrationView.Email))
-                    {
-                        ModelState.AddModelError("", "This Email Address is already being used.");
-                        return View(registrationView);
-                    }
+                        //Check if email is unique
+                        if (_context.Tbl_Users.Any(x => x.Email == registrationView.Email))
+                        {
+                            ModelState.AddModelError("", "This Email Address is already being used.");
+                            return View(registrationView);
+                        }
 
-                    //Check if username is unique
-                    if (_context.Tbl_Users.Any(x => x.UserName == registrationView.Username))
-                    {
-                        ModelState.AddModelError("", "This Username is already being used.");
-                        return View(registrationView);
-                    }
-                    // Email Verification  
-                    string userName = Membership.GetUserNameByEmail(registrationView.Email);
-                    if (!string.IsNullOrEmpty(userName))
-                    {
-                        ModelState.AddModelError("Warning Email", "Sorry: Email already Exists");
-                        return View(registrationView);
-                    }
-                    //Save User Data 
-                    string acode = "";
-                    var user = new User()
-                    {
-                        UserName = registrationView.Username,
-                        FirstName = registrationView.FirstName,
-                        LastName = registrationView.LastName,
-                        Email = registrationView.Email,
-                        PasswordHashed = GetHashedPassword(registrationView.Password),
-                        ActivationCode = Guid.NewGuid(),
-                        Roles = roles
-                    };
-                    acode = user.ActivationCode.ToString();
-                    _context.Tbl_Users.Add(Mapper.Map<User, Tbl_Users>(user));
-                    _context.SaveChanges();
-                    roles = null;
+                        //Check if username is unique
+                        if (_context.Tbl_Users.Any(x => x.UserName == registrationView.Username))
+                        {
+                            ModelState.AddModelError("", "This Username is already being used.");
+                            return View(registrationView);
+                        }
+                        // Email Verification  
+                        string userName = Membership.GetUserNameByEmail(registrationView.Email);
+                        if (!string.IsNullOrEmpty(userName))
+                        {
+                            ModelState.AddModelError("Warning Email", "Sorry: Email already Exists");
+                            return View(registrationView);
+                        }
+                        //Save User Data 
+                        string acode = "";
+                        var user = new User()
+                        {
+                            UserName = registrationView.Username,
+                            FirstName = registrationView.FirstName,
+                            LastName = registrationView.LastName,
+                            Email = registrationView.Email,
+                            PasswordHashed = GetHashedPassword(registrationView.Password),
+                            ActivationCode = Guid.NewGuid(),
+                            RoleId = role.Id
+                        };
+                        acode = user.ActivationCode.ToString();
+                        _context.Tbl_Users.Add(Mapper.Map<User, Tbl_Users>(user));
+                        _context.SaveChanges();
 
-                    //Verification Email  
-                    VerificationEmail(registrationView.Email, acode);
-                    messageRegistration = "Your account has been created successfully. ^_^";
-                    statusRegistration = true;
+                        //Verification Email  
+                        VerificationEmail(registrationView.Email, acode);
+                        messageRegistration = "Your account has been created successfully. ^_^";
+                        statusRegistration = true;
                 }
+                else
+                {
+                    messageRegistration = "Something Wrong!";
+                }
+            
+                ViewBag.Message = messageRegistration;
+                ViewBag.Status = statusRegistration;
             }
-            else
-            {
-                messageRegistration = "Something Wrong!";
-            }
-            ViewBag.Message = messageRegistration;
-            ViewBag.Status = statusRegistration;
-
             return View(registrationView);
         }
 
@@ -301,7 +330,7 @@ namespace PennState.Controllers
         public ActionResult ActivationAccount(string id)
         {
             bool statusAccount = false;
-            using (ContextModel dbContext = new ContextModel())
+            using (PennStateDB dbContext = new PennStateDB())
             {
                 var userAccount = dbContext.Tbl_Users.Where(u => u.ActivationCode.ToString().Equals(id)).FirstOrDefault();
 

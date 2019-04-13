@@ -2,8 +2,6 @@
 @using System.Web.UI.WebControls
 @using PennState.Models
 @using PennState.Controllers;
-@using PagedList.Mvc;
-@using PagedList;
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -68,11 +66,18 @@
                                 @item.ItemType
                             </td>
                             <td onclick="editItem(@item.Id)">@item.User.FirstName @item.User.LastName</td>
-                            <td onclick="editItem(@item.Id)">@item.Added</td>
-                            <td onclick="editItem(@item.Id)">@item.Updated</td>
+                            <td onclick="editItem(@item.Id)">@item.Added.ToShortDateString()</td>
+                            @if (item.Updated != null)
+                            {
+                            <td onclick="editItem(@item.Id)">@item.Updated.ToShortDateString()</td>
+                            }
+                            else
+                            {
+                            <td>        _ </td>
+                            }
                             <td>
                                 <a href="#" onclick="itemDetails(@item.Id)" data-toggle="modal"><i class="glyphicon glyphicon-eye-open"></i></a> |
-                                <a href="#" onclick="editItem(@item.Id)" data-toggle="modal"><i class="glyphicon glyphicon-edit"></i></a> |
+                                <a href="#" onclick="editItem(@item.Id);" data-toggle="modal"><i class="glyphicon glyphicon-edit"></i></a> |
                                 <a href="#" onclick="confirmDelete(@item.Id)"><i class="glyphicon glyphicon-trash"></i></a>
                                 <form id="itemId" hidden="hidden">
                                     @item.Id
@@ -82,43 +87,33 @@
                     }
                 </tbody>
             </table>
-            <div class="col-md-12 text-center">
-                <ul class="pagination pagination-lg pager" id="myPager"></ul>
-            </div>
-            @*@Html.PagedListPager(ViewBag.ItemList, page => Url.Action("NextPage",
-        new
-        {
-            page
-        }))*@
-        @*PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "theTable", InsertionMode = InsertionMode.Replace }))*@
         </div>
     </div>
 </div>
 
-<div tabindex="-1" class="sideModal" role="dialog" id="myModal" data-backdrop="false">
-    <div style="bottom:20px">
-        <div class="modal-header">
-            <h3 class="modal-title">Edit Item</h3>
-        </div>
-        <div class="modal-body" id="modalBod">
-
-        </div>
-    </div>
-
-</div>
-
-<div tabindex="-1" class="createModal" role="dialog" id="myModal2" data-backdrop="false">
+    <div tabindex="-1" class="sideModal" role="dialog" id="myModal" data-backdrop="false">
         <div style="bottom:20px">
             <div class="modal-header">
-                <h3 class="modal-title" style="text-align:left">Add Item In Physics Inventory</h3>
+                <h3 class="modal-title">Edit Item</h3>
             </div>
-            <div class="modal-body" id="createBod">
+            <div class="modal-body" id="modalBod">
 
             </div>
         </div>
-</div>
+    </div>
 
-<div tabindex="-1" class="detailsModal" role="dialog" id="detailModal" data-backdrop="false">
+        <div tabindex="-1" class="createModal" data-dismiss="modal" role="dialog" id="myModal2" data-backdrop="false">
+            <div style="bottom:20px">
+                <div class="modal-header">
+                    <h3 class="modal-title" style="text-align:left">Add Item In Physics Inventory</h3>
+                </div>
+                <div class="modal-body" id="createBod">
+
+                </div>
+            </div>
+        </div>
+
+<div tabindex="-1" class="detailsModal" data-dismiss="modal" role="dialog" id="detailModal" data-backdrop="false">
     <div style="bottom:20px">
         <div class="modal-header">
             <h3 class="modal-title" style="text-align:left">Item Details</h3>
@@ -155,19 +150,21 @@
                                 <button class="btn btn-primary dropdown-toggle categoryButton" id="h" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Location</button>
                                 <div class="dropdown-menu">
                                     <div class="form-body">
-                                        <div id="jstreeLoc">
-                                            @(Html.TreeViewController(Model.LocationsC)
-                                                                                                                                                                                                                                                                                                                                                                                                                              .EmptyContent("Locations")
-                                                                                                                                                                                                                                                                                                                                                                                                                                  .Children(m => m.Childs)
-                                                                                                                                                                                                                                                                                                                                                                                                                                  .HtmlAttributes(new { id = "tree" })
-                                                                                                                                                                                                                                                                                                                                                                                                                          .ChildrenHtmlAttributes(new { @class = "subItem" })
-                                                                                                                                                                                                                                                                                                                                                                                                                              .ItemText(m => m.LocationName)
-                                                                                                                                                                                                                                                                                                                                                                                                                              .ItemTemplate(
-                                                                                                                                                                                                                                                            @<text>
-                                                                                                                                                                                                                                                                <a href="@item.LocationName" desc="@item.LocationName">@item.LocationName</a>
-                                                                                                                                                                                                                                                            </text>)
+                                        <div class="treeClass">
+                                            <div id="jstreeLoc">
+                                                @(Html.TreeViewController(Model.LocationsC)
+                                                                                                                                                                                                                                                                                                                                                                                                                                          .EmptyContent("Locations")
+                                                                                                                                                                                                                                                                                                                                                                                                                                              .Children(m => m.Childs)
+                                                                                                                                                                                                                                                                                                                                                                                                                                              .HtmlAttributes(new { id = "tree" })
+                                                                                                                                                                                                                                                                                                                                                                                                                                      .ChildrenHtmlAttributes(new { @class = "subItem" })
+                                                                                                                                                                                                                                                                                                                                                                                                                                          .ItemText(m => m.LocationName)
+                                                                                                                                                                                                                                                                                                                                                                                                                                          .ItemTemplate(
+                                                                                                                                                                                                                                                                        @<text>
+                                                                                                                                                                                                                                                                            <a class="treeClass" href="@item.LocationName" desc="@item.LocationName">@item.LocationName</a>
+                                                                                                                                                                                                                                                                        </text>)
 
-                                            )
+                                                )
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -182,18 +179,20 @@
                                 <button class="btn btn-primary dropdown-toggle categoryButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Type</button>
                                 <div class="dropdown-menu">
                                     <div class="form-body">
-                                        <div id="jstree1">
-                                            @(Html.TreeViewController(Model.Types)
-                                                                                                                                                                                                                                                                                                                                                                                                      .EmptyContent("Types")
-                                                                                                                                                                                                                                                                                                                                                                                                      .Children(m => m.Childs)
-                                                                                                                                                                                                                                                                                                                                                                                                      .HtmlAttributes(new { id = "tree" })
-                                                                                                                                                                                                                                                                                                                                                                                                  .ChildrenHtmlAttributes(new { @class = "subItem" })
-                                                                                                                                                                                                                                                                                                                                                                                                      .ItemText(m => m.TypeName)
-                                                                                                                                                                                                                                                                                                                                                                                                      .ItemTemplate(
-                                                                                                                                                                                                                            @<text>
-                                                                                                                                                                                                                                <a href="@item.TypeName" desc="@item.TypeName">@item.TypeName</a>
-                                                                                                                                                                                                                            </text>)
-                                            )
+                                        <div class="treeClass">
+                                            <div id="jstree1">
+                                                @(Html.TreeViewController(Model.Types)
+                                                                                                                                                                                                                                                                                                                                                                                                                  .EmptyContent("Types")
+                                                                                                                                                                                                                                                                                                                                                                                                                  .Children(m => m.Childs)
+                                                                                                                                                                                                                                                                                                                                                                                                                  .HtmlAttributes(new { id = "tree" })
+                                                                                                                                                                                                                                                                                                                                                                                                              .ChildrenHtmlAttributes(new { @class = "subItem" })
+                                                                                                                                                                                                                                                                                                                                                                                                                  .ItemText(m => m.TypeName)
+                                                                                                                                                                                                                                                                                                                                                                                                                  .ItemTemplate(
+                                                                                                                                                                                                                                        @<text>
+                                                                                                                                                                                                                                            <a href="@item.TypeName" desc="@item.TypeName">@item.TypeName</a>
+                                                                                                                                                                                                                                        </text>)
+                                                )
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -209,18 +208,20 @@
                                 <button class="btn btn-primary dropdown-toggle categoryButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Vendor</button>
                                 <div class="dropdown-menu">
                                     <div class="form-body">
-                                        <div id="jstree2">
-                                            @(Html.TreeViewController(Model.Vendors)
-                                                                                                                                                                                                                                                                                                                                                                                                              .EmptyContent("Vendors")
-                                                                                                                                                                                                                                                                                                                                                                                                              .Children(m => m.Childs)
-                                                                                                                                                                                                                                                                                                                                                                                                              .HtmlAttributes(new { id = "tree" })
-                                                                                                                                                                                                                                                                                                                                                                                                          .ChildrenHtmlAttributes(new { @class = "subItem" })
-                                                                                                                                                                                                                                                                                                                                                                                                              .ItemText(m => m.VendorName)
-                                                                                                                                                                                                                                                                                                                                                                                                              .ItemTemplate(
-                                                                                                                                                                                                                            @<text>
-                                                                                                                                                                                                                                <a href="@item.VendorName" desc="@item.VendorName">@item.VendorName</a>
-                                                                                                                                                                                                                            </text>)
-                                            )
+                                        <div class="treeClass">
+                                            <div id="jstree2">
+                                                @(Html.TreeViewController(Model.Vendors)
+                                                                                                                                                                                                                                                                                                                                                                                                                          .EmptyContent("Vendors")
+                                                                                                                                                                                                                                                                                                                                                                                                                          .Children(m => m.Childs)
+                                                                                                                                                                                                                                                                                                                                                                                                                          .HtmlAttributes(new { id = "tree" })
+                                                                                                                                                                                                                                                                                                                                                                                                                      .ChildrenHtmlAttributes(new { @class = "subItem" })
+                                                                                                                                                                                                                                                                                                                                                                                                                          .ItemText(m => m.VendorName)
+                                                                                                                                                                                                                                                                                                                                                                                                                          .ItemTemplate(
+                                                                                                                                                                                                                                        @<text>
+                                                                                                                                                                                                                                            <a href="@item.VendorName" desc="@item.VendorName">@item.VendorName</a>
+                                                                                                                                                                                                                                        </text>)
+                                                )
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -236,18 +237,20 @@
                                 <button class="btn btn-primary dropdown-toggle categoryButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Owner</button>
                                 <div class="dropdown-menu">
                                     <div class="form-body">
-                                        <div id="jstree3">
-                                            @(Html.TreeViewController(Model.Owners)
-                                                                                                                                                                                                                                                                                                                                                                                                                      .EmptyContent("Owner")
-                                                                                                                                                                                                                                                                                                                                                                                                                      .Children(m => m.Childs)
-                                                                                                                                                                                                                                                                                                                                                                                                                      .HtmlAttributes(new { id = "tree" })
-                                                                                                                                                                                                                                                                                                                                                                                                                  .ChildrenHtmlAttributes(new { @class = "subItem" })
-                                                                                                                                                                                                                                                                                                                                                                                                                      .ItemText(m => m.OwnerName)
-                                                                                                                                                                                                                                                                                                                                                                                                                      .ItemTemplate(
-                                                                                                                                                                                                                            @<text>
-                                                                                                                                                                                                                                <a href="@item.OwnerName" desc="@item.OwnerName">@item.OwnerName</a>
-                                                                                                                                                                                                                            </text>)
-                                            )
+                                        <div class="treeClass">
+                                            <div id="jstree3">
+                                                @(Html.TreeViewController(Model.Owners)
+                                                                                                                                                                                                                                                                                                                                                                                                                                  .EmptyContent("Owner")
+                                                                                                                                                                                                                                                                                                                                                                                                                                  .Children(m => m.Childs)
+                                                                                                                                                                                                                                                                                                                                                                                                                                  .HtmlAttributes(new { id = "tree" })
+                                                                                                                                                                                                                                                                                                                                                                                                                              .ChildrenHtmlAttributes(new { @class = "subItem" })
+                                                                                                                                                                                                                                                                                                                                                                                                                                  .ItemText(m => m.OwnerName)
+                                                                                                                                                                                                                                                                                                                                                                                                                                  .ItemTemplate(
+                                                                                                                                                                                                                                        @<text>
+                                                                                                                                                                                                                                            <a href="@item.OwnerName" desc="@item.OwnerName">@item.OwnerName</a>
+                                                                                                                                                                                                                                        </text>)
+                                                )
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -479,15 +482,13 @@
                 return names;
             }
 
-            $('#jstreeLoc').on('changed.jstree', function (e, data) {
+            $('#jstreeLoc').on('changed.jstree', function (e, data) {                
                 e.preventDefault();
                 var l = [], t = [], v = [], o = [];
                 if (data.event.type = "click") {
-                    var page = $("#pageNum").serialize();
 
                     var locationAr = getSelectedNodes(data, jstreeLocInst);
                     l = getLocationNames(locationAr);
-
                     var selType = jstree1Inst.jstree("get_checked");
                     if (selType.length > 0) {
                         selType = getNodes(selType, jstree1Inst);
@@ -516,12 +517,16 @@
                     }
 
                     $.ajax({
-                        url: '@Url.Action("GetItemList", "Item")/' + l + '/' + t + '/'  + v + '/' + o,
+                        url: '@Url.Action("GetItemList", "Item")',
+                        data: { locations: JSON.stringify(l), types: JSON.stringify(t), vendors: JSON.stringify(v), owners: JSON.stringify(o) },
                         type: "GET",
                         cache: false,
                         async: false,
                         success: function (data) {
                             $("#theTable").html(data);
+                        },
+                        error: function (xhr, status, error) {
+                            alert(xhr.responseText);
                         }
                     });
                 }
@@ -531,10 +536,10 @@
 
 
             $('#jstree1').on('changed.jstree', function (e, data) {
+                debugger
                 e.preventDefault();
                 var l = [], t = [], v = [], o = [];
                 if (data.event.type = "click") {
-                    var page = $("#pageNum").serialize();
 
                     var locationAr = jstreeLocInst.jstree("get_checked");
                     if (locationAr.length > 0) {
@@ -567,12 +572,16 @@
                     }
 
                     $.ajax({
-                        url: '@Url.Action("GetItemList", "Item")/' + l + '/' + t + '/' + v + '/' + o,
+                        url: '@Url.Action("GetItemList", "Item")',
+                        data: { locations: JSON.stringify(l), types: JSON.stringify(t), vendors: JSON.stringify(v), owners: JSON.stringify(o) },
                         type: "GET",
                         cache: false,
                         async: false,
                         success: function (data) {
                             $("#theTable").html(data);
+                        },
+                        error: function (xhr, status, error) {
+                            alert(xhr.responseText);
                         }
                     });
                 }
@@ -584,7 +593,6 @@
                 var l = [], t = [], v = [], o = [];
                 e.preventDefault();
                 if (data.event.type = "click") {
-                    var page = $("#pageNum").serialize();
 
 		            var locationAr = jstreeLocInst.jstree("get_checked");
                     if (locationAr.length > 0) {
@@ -617,12 +625,16 @@
                     }
 
                     $.ajax({
-                        url: '@Url.Action("GetItemList", "Item")/' + l + '/' + t +  '/' + v + '/' + o,
+                        url: '@Url.Action("GetItemList", "Item")',
+                        data: { locations: JSON.stringify(l), types: JSON.stringify(t), vendors: JSON.stringify(v), owners: JSON.stringify(o) },
                         type: "GET",
                         async: false,
                         cache: false,
                         success: function (data) {
                             $("#theTable").html(data);
+                        },
+                        error: function (xhr, status, error) {
+                            alert(xhr.responseText);
                         }
                     });
                 }
@@ -665,12 +677,16 @@
 	                o = getTreeNames(selOwner);
 
                     $.ajax({
-                        url: '@Url.Action("GetItemList", "Item")/' + l + '/' + t + '/' + v + '/' + o,
+                        url: '@Url.Action("GetItemList", "Item")',
+                        data: { locations: JSON.stringify(l), types: JSON.stringify(t), vendors: JSON.stringify(v), owners: JSON.stringify(o) },
                         type: "GET",
                         async: false,
                         cache: false,
                         success: function (data) {
                             $("#theTable").html(data);
+                        },
+                        error: function (xhr, status, error) {
+                            alert(xhr.responseText);
                         }
                     });
                 }

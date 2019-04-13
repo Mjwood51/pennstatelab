@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="e7978b7382b441cb9fc93327085ac3b9" Name="Diagram1">
+        <EntityTypeShape EntityType="PennStateNewDB.Tbl_CatagoryLocations" Width="1.5" PointX="6.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PennStateNewDB.Tbl_CatagoryOwners" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PennStateNewDB.Tbl_CatagoryTypes" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PennStateNewDB.Tbl_CatagoryVendors" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PennStateNewDB.Tbl_File" Width="1.5" PointX="3" PointY="6" IsExpanded="true" />
+        <EntityTypeShape EntityType="PennStateNewDB.Tbl_Items" Width="1.5" PointX="5.25" PointY="6" IsExpanded="true" />
+        <EntityTypeShape EntityType="PennStateNewDB.Tbl_Locations" Width="1.5" PointX="0.75" PointY="4.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="PennStateNewDB.Tbl_Photo" Width="1.5" PointX="7.5" PointY="8" IsExpanded="true" />
+        <EntityTypeShape EntityType="PennStateNewDB.Tbl_Roles" Width="1.5" PointX="0.75" PointY="15.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="PennStateNewDB.Tbl_SubLocations" Width="1.5" PointX="3" PointY="11.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="PennStateNewDB.Tbl_Users" Width="1.5" PointX="3" PointY="14.625" IsExpanded="true" />
+        <AssociationConnector Association="PennStateNewDB.FK_dbo_Tbl_CatagoryLocations_dbo_Tbl_CatagoryLocations_Pid" ManuallyRouted="false" />
+        <AssociationConnector Association="PennStateNewDB.FK_dbo_Tbl_CatagoryOwners_dbo_Tbl_CatagoryOwners_Pid" ManuallyRouted="false" />
+        <AssociationConnector Association="PennStateNewDB.FK_dbo_Tbl_CatagoryTypes_dbo_Tbl_CatagoryTypes_Pid" ManuallyRouted="false" />
+        <AssociationConnector Association="PennStateNewDB.FK_dbo_Tbl_CatagoryVendors_dbo_Tbl_CatagoryVendors_Pid" ManuallyRouted="false" />
+        <AssociationConnector Association="PennStateNewDB.FK_dbo_Tbl_Items_dbo_Tbl_Locations_LocId" ManuallyRouted="false" />
+        <AssociationConnector Association="PennStateNewDB.FK_dbo_Tbl_Items_dbo_Tbl_SubLocations_SubId" ManuallyRouted="false" />
+        <AssociationConnector Association="PennStateNewDB.FK_dbo_Tbl_Items_dbo_Tbl_Users_UsrId" ManuallyRouted="false" />
+        <AssociationConnector Association="PennStateNewDB.FK_dbo_Tbl_SubLocations_dbo_Tbl_Locations_LocId" ManuallyRouted="false" />
+        <AssociationConnector Association="PennStateNewDB.FK_dbo_Tbl_Users_dbo_Tbl_RoleId" ManuallyRouted="false" />
+        <AssociationConnector Association="PennStateNewDB.Tbl_ItemFiles" ManuallyRouted="false" />
+        <AssociationConnector Association="PennStateNewDB.Tbl_PhotoItems" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
