@@ -19,6 +19,7 @@ namespace PennState.Models
         {
             this.Tbl_File = new HashSet<Tbl_File>();
             this.Tbl_Photo = new HashSet<Tbl_Photo>();
+            this.Tbl_Requests = new HashSet<Tbl_Requests>();
         }
     
         public int Id { get; set; }
@@ -41,6 +42,7 @@ namespace PennState.Models
         public Nullable<int> UsrId { get; set; }
         public Nullable<int> LocId { get; set; }
         public Nullable<int> SubId { get; set; }
+        public string Flagged { get; set; }
     
         public virtual Tbl_Locations Tbl_Locations { get; set; }
         public virtual Tbl_SubLocations Tbl_SubLocations { get; set; }
@@ -49,5 +51,7 @@ namespace PennState.Models
         public virtual ICollection<Tbl_File> Tbl_File { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Tbl_Photo> Tbl_Photo { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Tbl_Requests> Tbl_Requests { get; set; }
     }
 }

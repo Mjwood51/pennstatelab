@@ -17,6 +17,7 @@ namespace PennState.Models
         {
             this.Photos = new HashSet<Photos>();
             this.Files = new HashSet<Files>();
+            this.Requests = new HashSet<Requests>();
         }
 
         [Key]
@@ -66,6 +67,10 @@ namespace PennState.Models
         [DisplayName("Purchase Price")]
         public decimal PurchasePrice { get; set; }
 
+        [DisplayName("Request Comments")]
+        [StringLength(150)]
+        public string Flagged { get; set; }
+
         [Required]
         [DisplayName("Item Type")]
         [StringLength(50, MinimumLength = 1)]
@@ -84,6 +89,7 @@ namespace PennState.Models
 
         public virtual ICollection<Photos> Photos { get; set; }
         public virtual ICollection<Files> Files { get; set; }
+        public virtual ICollection<Requests> Requests { get; set; }
 
         public int UsrId { get; set; }
 

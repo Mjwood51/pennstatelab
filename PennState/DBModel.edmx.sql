@@ -170,7 +170,21 @@ CREATE TABLE [dbo].[Tbl_Items] (
     [IsDeleted] bit  NOT NULL,
     [UsrId] int  NULL,
     [LocId] int  NULL,
-    [SubId] int  NULL
+    [SubId] int  NULL,
+	[Flagged] nvarchar(150) NULL
+);
+GO
+
+CREATE TABLE [dbo].[Tbl_Requests] (
+	[Id] int IDENTITY(1, 1) NOT NULL,
+	[ItemName] nvarchar(50) NULL,
+	[Status] nvarchar(20) NULL,
+	[Quantity] int NULL,
+	[UnitPrice] decimal(18, 2) NULL,
+	[TotalPrice] decimal (18, 2) NULL,
+	[Message] nvarchar(150) NULL,
+	[UserId] int NULL,
+	[ItemId] int NULL
 );
 GO
 
@@ -258,6 +272,12 @@ GO
 ALTER TABLE [dbo].[Tbl_CatagoryVendors]
 ADD CONSTRAINT [PK_Tbl_CatagoryVendors]
     PRIMARY KEY CLUSTERED ([Id] ASC);
+GO
+
+--Create primary key on [Id] in table 'Tbl_Requests
+ALTER TABLE [dbo].[Tbl_Requests]
+ADD CONSTRAINT [PK_Tbl_Requests]
+	PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
 -- Creating primary key on [Id] in table 'Tbl_File'
@@ -423,6 +443,36 @@ ON [dbo].[Tbl_Items]
     ([UsrId]);
 GO
 
+-- Creating non-clustered index for FOREIGN KEY 'FK_dbo_Tbl_Requests_dbo_Tbl_Items_ItemId'
+ALTER TABLE [dbo].[Tbl_Requests]
+WITH NOCHECK ADD CONSTRAINT [FK_dbo_Tbl_Requests_dbo_Tbl_Items_ItemId]
+	FOREIGN KEY ([ItemId])
+	REFERENCES [dbo].[Tbl_Items]
+		([Id])
+	ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_dbo_Tbl_Requests_dbo_Tbl_Items_ItemId'
+CREATE INDEX [IX_FK_dbo_Tbl_Requests_dbo_Tbl_Items_ItemId]
+ON [dbo].[Tbl_Requests]
+	([ItemId]);
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_dbo_Tbl_Requests_dbo_Tbl_Users_UserId'
+ALTER TABLE [dbo].[Tbl_Requests]
+ADD CONSTRAINT [FK_dbo_Tbl_Requests_dbo_Tbl_Users_UserId]
+	FOREIGN KEY ([UserId])
+	REFERENCES [dbo].[Tbl_Users]
+		([Id])
+	ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_dbo_Tbl_Requests_dbo_Tbl_Users_UserId'
+CREATE INDEX [IX_FK_dbo_Tbl_Requests_dbo_Tbl_Users_UserId]
+ON [dbo].[Tbl_Requests]
+	([UserId]);
+GO
+
 -- Creating foreign key on [LocId] in table 'Tbl_SubLocations'
 ALTER TABLE [dbo].[Tbl_SubLocations]
 ADD CONSTRAINT [FK_dbo_Tbl_SubLocations_dbo_Tbl_Locations_LocId]
@@ -507,6 +557,10 @@ GO
 
 INSERT INTO [dbo].[Tbl_Roles] (RoleName)
 VALUES('User');
+GO
+
+INSERT INTO [dbo].[Tbl_Roles] (RoleName)
+VALUES('Observer');
 GO
 
 -- --------------------------------------------------

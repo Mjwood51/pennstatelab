@@ -15,6 +15,7 @@ namespace PennState.Models
         public User()
         {
             this.Items = new HashSet<Item>();
+            this.Requests = new HashSet<Requests>();
         }
 
         [Key]
@@ -44,5 +45,6 @@ namespace PennState.Models
         [ForeignKey("RoleId")]
         public virtual Role Roles { get; set; }
         public virtual ICollection<Item> Items { get; set; }
+        public virtual ICollection<Requests> Requests { get; set; }
     }
 }

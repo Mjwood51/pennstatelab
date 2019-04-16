@@ -1,0 +1,297 @@
+﻿@model PennState.ViewModels.FlagItemViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h4>Make A Request</h4>
+@using (Html.BeginForm(null, null, FormMethod.Post, new { @id = "flagForm"}))
+{
+    @Html.AntiForgeryToken()
+    <div style="position:relative">
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @if (Model.TheItem != null)
+            {
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TheItem.ItemName, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.TheItem.ItemName, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.TheItem.ItemName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                @Html.EditorFor(model => model.TheItem.Id, new { htmlAttributes = new { @type = "hidden" } })
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TheItem.AmountInStock, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.TheItem.AmountInStock, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                        @Html.ValidationMessageFor(model => model.TheItem.AmountInStock, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TheItem.CatalogNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.TheItem.CatalogNumber, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.TheItem.CatalogNumber, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TheItem.WebAddress, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.TheItem.WebAddress, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.TheItem.WebAddress, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TheItem.Vendor, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.TheItem.Vendor, new { htmlAttributes = new { @class = "form-control", @id = "autoVen3", @list = "dataListVen2", @onchange = "comboVen3()", @autocomplete = "off" } })
+                        <datalist id="dataListVen2"></datalist>
+                        @Html.ValidationMessageFor(model => model.TheItem.Vendor, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TheItem.ItemType, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.TheItem.ItemType, new { htmlAttributes = new { @class = "form-control", @id = "autoType3", @list = "dataListType2", @onchange = "comboType3()", @autocomplete = "off" } })
+                        <datalist id="dataListType2"></datalist>
+                        @Html.ValidationMessageFor(model => model.TheItem.ItemType, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TheItem.Flagged, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.TextAreaFor(model => model.TheItem.Flagged, new { @class = "form-control", @style = "width:350px" })
+                        @Html.ValidationMessageFor(model => model.TheItem.Flagged, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TheRequest.ItemName, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.TheRequest.ItemName, new { htmlAttributes = new { @class = "form-control", @autocomplete = "off" } })
+                        @Html.ValidationMessageFor(model => model.TheRequest.ItemName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                @Html.EditorFor(model => model.TheItem.Id, new { htmlAttributes = new { @type = "hidden" } })
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TheItem.AmountInStock, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.TheItem.AmountInStock, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                        @Html.ValidationMessageFor(model => model.TheItem.AmountInStock, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TheItem.CatalogNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.TheItem.CatalogNumber, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                        @Html.ValidationMessageFor(model => model.TheItem.CatalogNumber, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TheItem.WebAddress, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.TheItem.WebAddress, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                        @Html.ValidationMessageFor(model => model.TheItem.WebAddress, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TheItem.Vendor, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.TheItem.Vendor, new { htmlAttributes = new { @class = "form-control", @id = "autoVen3", @list = "dataListVen2", @onchange = "comboVen3()", @autocomplete = "off", @readonly = "readonly" } })
+                        <datalist id="dataListVen2"></datalist>
+                        @Html.ValidationMessageFor(model => model.TheItem.Vendor, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TheItem.ItemType, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.TheItem.ItemType, new { htmlAttributes = new { @class = "form-control", @id = "autoType3", @list = "dataListType2", @onchange = "comboType3()", @autocomplete = "off", @readonly = "readonly" } })
+                        <datalist id="dataListType2"></datalist>
+                        @Html.ValidationMessageFor(model => model.TheItem.ItemType, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TheItem.Flagged, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.TextAreaFor(model => model.TheItem.Flagged, new { @class = "form-control", @style = "width:350px", @readonly = "readonly" })
+                        @Html.ValidationMessageFor(model => model.TheItem.Flagged, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            }
+            <div style="position:absolute;left:600px;top:0">
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TheRequest.StatEnum, htmlAttributes: new { @class = "control-label col-md-2", @style = "text-align:right" })
+                    <div class="col-md-10">
+                        @Html.EnumDropDownListFor(model => model.TheRequest.StatEnum, new { @class = "form-control", @style = "margin-left:80px;width:200px;height:40px" })
+                        @Html.ValidationMessageFor(model => model.TheRequest.StatEnum, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TheRequest.Quantity, htmlAttributes: new { @class = "control-label col-md-2", @style = "text-align:right" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.TheRequest.Quantity, new { htmlAttributes = new { @class = "form-control", @style = "margin-left:80px", @id = "qText" } })
+                        @Html.ValidationMessageFor(model => model.TheRequest.Quantity, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TheRequest.UnitPrice, htmlAttributes: new { @class = "control-label col-md-2", @style = "text-align:right" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.TheRequest.UnitPrice, new { htmlAttributes = new { @class = "form-control", @style = "margin-left:80px", @id = "pText", @autocomplete = "off" } })
+                        @Html.ValidationMessageFor(model => model.TheRequest.UnitPrice, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.TheRequest.TotalPrice, htmlAttributes: new { @class = "control-label col-md-2", @style = "text-align:right" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.TheRequest.TotalPrice, new { htmlAttributes = new { @class = "form-control", @style = "margin-left:80px", @id = "tText", @readonly = "readonly" } })
+                        @Html.ValidationMessageFor(model => model.TheRequest.TotalPrice, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                @if (Model.TheItem == null)
+                {
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TheRequest.Message, htmlAttributes: new { @class = "control-label col-md-2", @style = "text-align:right;margin-top:110px" })
+                        <div class="col-md-10">
+                            @Html.TextAreaFor(model => model.TheRequest.Message, new { @class = "form-control", @style = "width:350px;margin-left:80px;margin-top:110px" })
+                            @Html.ValidationMessageFor(model => model.TheRequest.Message, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TheRequest.Message, htmlAttributes: new { @class = "control-label col-md-2", @style = "text-align:right;margin-top:105px" })
+                        <div class="col-md-10">
+                            @Html.TextAreaFor(model => model.TheRequest.Message, new { @class = "form-control", @style = "width:350px;margin-left:80px;margin-top:105px", @readonly = "readonly" })
+                            @Html.ValidationMessageFor(model => model.TheRequest.Message, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                }
+
+
+            </div>
+        </div>
+        <hr />
+        <hr />
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Request" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+<script>
+
+    $(document).ready(function () {
+
+        $('#pText').on('keyup', function (e) {
+            debugger
+            var txtA = getKeys(e);
+            var txtB = $('#qText').val();
+            var adjust = parseFloat(txtA * txtB, 10);
+            var txtC = '$' + adjust.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+            $('#tText').val(txtC);
+
+        });
+
+        $('#pText').on('keydown', function (e) {
+            debugger
+            var txtA = getKeys(e);
+            var txtB = $('#qText').val();
+            var adjust = parseFloat(txtA * txtB, 10);
+            var txtC = '$' + adjust.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+            $('#tText').val(txtC);
+
+        });
+    });
+
+    function getKeys(e) {
+        var txtA;
+        if (e.keyCode != 8) {
+            txtA = parseFloat(e.target.value + String.fromCharCode(e.which));
+        }
+        else {
+            var str = e.target.value;            
+            txtA = parseFloat(str.substring(0, str.length));
+        }            
+        return txtA;
+    }
+
+    $(document).ready(function () {
+        $('#qText').on('click', function (e) {
+            debugger
+            var txtA = parseFloat(e.target.value);
+            var txtB = $('#pText').val();
+            var txtC = '$' + parseFloat(txtA * txtB, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+            $('#tText').val(txtC);
+        });
+    });
+    
+
+    function stopRKey(evt) {
+        var evt = (evt) ? evt : ((event) ? event : null);
+        var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+        if ((evt.keyCode == 13) && (node.type == "text")) { return false; }
+    }
+    document.onkeypress = stopRKey;
+
+    $(document).ready(function () {
+        $("#autoType3").click("input", function comboType3() {
+            var options = {};
+            options.url = "/item/getterm";
+            options.type = "GET";
+            options.data = { "text": $("#autoType3").val() };
+            options.dataType = "json";
+            options.success = function (data) {
+                $("#dataListType2").empty();
+                for (var i = 0; i < data.length; i++) {
+                    $("#dataListType2").append("<option value='" +
+                        data[i].ItemType + "'></option>");
+                }
+            };
+            $.ajax(options);
+        });
+
+    });
+
+    $(document).ready(function () {
+        $("#autoVen3").click("input", function comboVen3() {
+            var options = {};
+            options.url = "/item/getven";
+            options.type = "GET";
+            options.data = { "text": $("#autoVen3").val() };
+            options.dataType = "json";
+            options.success = function (data) {
+                $("#dataListVen2").empty();
+                for (var i = 0; i < data.length; i++) {
+                    $("#dataListVen2").append("<option value='" +
+                        data[i].Vendor + "'></option>");
+                }
+            };
+            $.ajax(options);
+        });
+
+    });
+</script>

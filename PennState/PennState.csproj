@@ -196,6 +196,7 @@
       <DependentUpon>PennStateDB.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\Photos.cs" />
+    <Compile Include="Models\Requests.cs" />
     <Compile Include="Models\Role.cs" />
     <Compile Include="Models\Tbl_CatagoryLocations.cs">
       <DependentUpon>PennStateDB.tt</DependentUpon>
@@ -221,6 +222,9 @@
     <Compile Include="Models\Tbl_Photo.cs">
       <DependentUpon>PennStateDB.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\Tbl_Requests.cs">
+      <DependentUpon>PennStateDB.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\Tbl_Roles.cs">
       <DependentUpon>PennStateDB.tt</DependentUpon>
     </Compile>
@@ -235,8 +239,10 @@
     <Compile Include="ViewModels\AddItemViewModel.cs" />
     <Compile Include="ViewModels\AddUserViewModel.cs" />
     <Compile Include="ViewModels\EditItemViewModel.cs" />
+    <Compile Include="ViewModels\FlagItemViewModel.cs" />
     <Compile Include="ViewModels\ItemDetailsModel.cs" />
     <Compile Include="ViewModels\ItemViewModel.cs" />
+    <Compile Include="ViewModels\RequestViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-cosmo.css" />
@@ -343,6 +349,8 @@
     <Content Include="Views\Item\GetItemList.cshtml" />
     <Content Include="Views\Shared\_NavBar.cshtml" />
     <Content Include="Views\Item\ItemDetails.cshtml" />
+    <Content Include="Views\Item\FlagItem.cshtml" />
+    <Content Include="Views\Item\GetRequests.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

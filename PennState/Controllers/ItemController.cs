@@ -27,7 +27,10 @@ using System.Data.Entity.Validation;
 using Dapper;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
+using System.Reflection;
+using SQL = System.Data;
 using System.Text;
+using Microsoft.Office.Interop.Excel;
 
 namespace PennState.Controllers
 {
@@ -65,6 +68,48 @@ namespace PennState.Controllers
             }
 
             base.Dispose(disposing);
+        }
+
+        [HttpGet]
+        public ActionResult Search(string query)
+        {
+            var text = string.Format("%{0}%", query);
+            var lower = query.ToLower();
+            var something = _context.Tbl_Items.Where(x => DbFunctions.Like(x.ItemName, text)).ToList();
+            if (something.Count == 0)
+            {
+                something = _context.Tbl_Items.Where(x => DbFunctions.Like(x.ItemType, text)).ToList();
+            }
+            if (something.Count == 0)
+            {
+                something = _context.Tbl_Items.Where(x => DbFunctions.Like(x.Tbl_Users.FirstName + " " + x.Tbl_Users.LastName, text)).ToList();
+
+            }
+            if(something.Count == 0)
+            {
+                something = _context.Tbl_Items.Where(x => DbFunctions.Like(x.CatalogNumber, text)).ToList();
+            }
+            if(something.Count == 0)
+            {
+                something = _context.Tbl_Items.Where(x => DbFunctions.Like(x.Manufacturer, text)).ToList();
+            }
+            if(something.Count == 0)
+            {
+                something = _context.Tbl_Items.Where(x => DbFunctions.Like(x.Tbl_SubLocations.SubLocationName, text)).ToList();
+            }
+            if(something.Count == 0)
+            {
+                something = _context.Tbl_Items.Where(x => DbFunctions.Like(x.Tbl_Locations.LocationName, text)).ToList();
+            }
+            if (something.Count == 0)
+            {
+                something = _context.Tbl_Items.Where(x => DbFunctions.Like(x.Vendor, text)).ToList();
+            }
+
+            var model = PopulateNewList();
+            model.Items = Mapper.Map<IEnumerable<Item>>(something);
+            ViewBag.ItemList = model.Items;
+            return View("GetItemList", model);
         }
 
         [HttpGet]
@@ -181,8 +226,7 @@ namespace PennState.Controllers
                         }
                     }
                 }
-                var id = new Tbl_Users();
-                id = _context.Tbl_Users.Where(x => x.UserName == User.Identity.Name).FirstOrDefault();
+                var id = _context.Tbl_Users.Where(x => x.UserName == User.Identity.Name).FirstOrDefault();
                 modelItem = GetLocation(modelItem, model.Item.SubLocation.SubLocationName, model.Item.Location.LocationName);
 
                 if (files.Count > 0)
@@ -923,6 +967,19 @@ namespace PennState.Controllers
 
         }
 
+        public ItemViewModel PopulateNewList()
+        {
+            var model = new ItemViewModel();
+            using (PennStateDB db = new PennStateDB())
+            {
+                model.Owners = Mapper.Map<IEnumerable<CatagoryOwner>>(db.Tbl_CatagoryOwners.Where(x => !x.Pid.HasValue).ToList());
+                model.Types = Mapper.Map<IEnumerable<CatagoryType>>(db.Tbl_CatagoryTypes.Where(x => !x.Pid.HasValue).ToList());
+                model.LocationsC = Mapper.Map<IEnumerable<CatagoryLocation>>(db.Tbl_CatagoryLocations.Where(x => !x.Pid.HasValue).ToList());
+                model.Vendors = Mapper.Map<IEnumerable<CatagoryVendor>>(db.Tbl_CatagoryVendors.Where(x => !x.Pid.HasValue).ToList());
+            }
+            return model;
+        }
+
         public ItemViewModel PopulateList()
         {
             var model = new ItemViewModel();
@@ -1194,9 +1251,8 @@ namespace PennState.Controllers
                                 }
                                 else
                                 {
-                                    var model = PopulateList();
                                     ViewBag.Success = "The database was uploaded successfully";
-                                    return View("GetItemList", model);
+                                    return RedirectToAction("GetAllItems");
                                 }
 
                         }
@@ -1212,9 +1268,8 @@ namespace PennState.Controllers
                                 }
                                 else
                                 {
-                                    var model = PopulateList();
                                     ViewBag.Success = "The database was uploaded successfully";
-                                    return View("GetItemList", model);
+                                    return RedirectToAction("GetAllItems");
                                 }
 
                         }
@@ -1237,6 +1292,205 @@ namespace PennState.Controllers
             }
         }
 
-        
+        public ActionResult Export()
+        {
+            //string conString = "your connection string";
+            StringBuilder query = new StringBuilder();
+            query.Append("SELECT * ");
+            query.Append("FROM [dbo].[Tbl_Items] ");
+            query.Append("ORDER BY ItemType ");
+              
+
+            SQL.DataTable dtItems = new SQL.DataTable();
+            DbConnection();
+            con.Open();
+            using (SqlDataAdapter da = new SqlDataAdapter(query.ToString(), con))
+                {
+                    da.Fill(dtItems);
+                }
+            con.Close();
+            dtItems.Columns["Id"].SetOrdinal(1);
+            dtItems.Columns["IsDeleted"].SetOrdinal(2);
+            dtItems.Columns["ItemName"].SetOrdinal(3);
+            dtItems.Columns["Vendor"].SetOrdinal(4);
+            dtItems.Columns["CatalogNumber"].SetOrdinal(5);
+            dtItems.Columns.Add("Owner").SetOrdinal(6);
+            dtItems.Columns.Add("Location").SetOrdinal(7);
+            dtItems.Columns.Add("Sub-location").SetOrdinal(8);
+            dtItems.Columns["LocationComments"].SetOrdinal(9);
+            dtItems.Columns["PurchasePrice"].SetOrdinal(10);
+            dtItems.Columns["AmountInStock"].SetOrdinal(11);
+            dtItems.Columns["Manufacturer"].SetOrdinal(12);
+            dtItems.Columns["WebAddress"].SetOrdinal(14);
+            dtItems.Columns["ItemNotes"].SetOrdinal(15);
+            Excel.Application oXL = new Excel.Application();
+            Excel._Workbook oWB;
+            Excel._Worksheet oSheet;
+            oWB = (Excel._Workbook)(oXL.Workbooks.Add(Missing.Value));
+            oSheet = (Excel._Worksheet)oWB.ActiveSheet;
+            try
+            {
+                SQL.DataTable dtCatagoryTypes = dtItems.DefaultView.ToTable(true, "ItemType");
+                foreach(SQL.DataRow catagory in dtCatagoryTypes.Rows)
+                {
+                    oSheet = (Excel._Worksheet)oXL.Worksheets.Add();
+                    oSheet.Name = catagory[0].ToString();
+                    string[] colNames = new string[dtItems.Columns.Count];
+                    int col = 0;
+
+                    foreach (SQL.DataColumn dc in dtItems.Columns)
+                        colNames[col++] = dc.ColumnName;
+
+                    char lastColumn = (char)(65 + dtItems.Columns.Count - 1);
+
+                    oSheet.get_Range("A1", lastColumn + "1").Value = colNames;
+                    oSheet.get_Range("A1", lastColumn + "1").Font.Bold = true;
+                    oSheet.get_Range("A1", lastColumn + "1").VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+
+                    SQL.DataRow[] dr = dtItems.Select(string.Format("ItemType='{0}'",catagory[0].ToString()));
+
+                    string[,] rowData = new string[dr.Count<SQL.DataRow>(), dtItems.Columns.Count];
+
+                    int rowCnt = 0;
+                    int redRows = 2;
+                    foreach (SQL.DataRow row in dr)
+                    {
+                        for (col = 0; col < dtItems.Columns.Count; col++)
+                        {
+                            if (col == 5)
+                            {
+                                var id = Convert.ToInt32(row[20].ToString());
+                                var f = _context.Tbl_Users.Where(x => x.Id == id).FirstOrDefault().FirstName;
+                                var l = _context.Tbl_Users.Where(x => x.Id == id).FirstOrDefault().LastName;
+                                rowData[rowCnt, col] = f + " " + l;
+                            }
+                            else if (col == 6)
+                            {
+                                var id = Convert.ToInt32(row[21].ToString());
+                                var l = _context.Tbl_Locations.Where(x => x.Id == id).FirstOrDefault().LocationName;
+                                rowData[rowCnt, col] = l;
+                            }
+                            else if (col == 7)
+                            {
+                                var id = Convert.ToInt32(row[22].ToString());
+                                var s = _context.Tbl_SubLocations.Where(x => x.Id == id).FirstOrDefault().SubLocationName;
+                                rowData[rowCnt, col] = s;
+                            }
+                            else
+                            {
+                                rowData[rowCnt, col] = row[col].ToString();
+                            }
+                        }
+
+                        redRows++;
+                        rowCnt++;
+                    }
+                    oSheet.get_Range("A2", lastColumn + rowCnt.ToString()).Value2 = rowData;
+
+                }
+                oXL.Worksheets[oXL.Sheets.Count].Delete();
+                oSheet = (Excel._Worksheet)oXL.Worksheets.Add();
+                oSheet.Name = "Test";
+
+                oXL.Visible = true;
+                oXL.UserControl = true;
+
+                //oWB.SaveAs("Products.xlsx",
+                //    AccessMode: Excel.XlSaveAsAccessMode.xlShared);
+
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                Marshal.ReleaseComObject(oWB);
+            }
+
+            ViewBag.Success = "The database was successfully export to an Excel File.";
+            return RedirectToAction("GetAllItems");
+
+        }
+
+        [HttpGet]
+        public ActionResult GetRequests()
+        {
+            RequestViewModel model = new RequestViewModel();
+            if (_context.Tbl_Requests.Any())
+            {
+                var requests = Mapper.Map<IEnumerable<Requests>>(_context.Tbl_Requests.ToList());
+                model.Requests = requests;
+            }
+            return View(model);
+        }
+
+        [HttpGet]
+        public ActionResult FlagItem(int? id)
+        {
+
+            FlagItemViewModel model = new FlagItemViewModel();
+            using (PennStateDB db = new PennStateDB())
+            {
+                if (id != null)
+                {
+                    model.TheItem = new Item();
+                    model.TheRequest = new Requests();
+                    model.TheItem = Mapper.Map<Item>(db.Tbl_Items.Where(x => x.Id == id).FirstOrDefault());
+                    model.TheRequest.UnitPrice = model.TheItem.PurchasePrice;
+                }
+                else
+                {
+                    model.TheItem = null;
+                    model.TheRequest = new Requests();
+                }
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult FlagItem(FlagItemViewModel model)
+        {
+            Tbl_Requests request = new Tbl_Requests();
+            if (model.TheItem.ItemName != null)
+            {
+                request.ItemName = model.TheItem.ItemName;
+                var item = _context.Tbl_Items.Find(model.TheItem.Id);
+
+                if (model.TheItem.Flagged != null)
+                {
+                    item.Flagged = model.TheItem.Flagged;
+                    request.Message = model.TheItem.Flagged;
+                }
+                else
+                    item.Flagged = "Requested";
+            }
+            else
+            {
+                request.ItemName = model.TheRequest.ItemName;
+                request.Message = model.TheRequest.Message;
+            }
+            var id = _context.Tbl_Users.Where(x => x.UserName == User.Identity.Name).FirstOrDefault();
+            if (model.TheItem.ItemName != null)
+                request.ItemId = model.TheItem.Id;
+            else
+                request.ItemId = null;
+                
+            request.UserId = id.Id;   
+            if(model.TheRequest.TotalPrice != null)
+            {
+                var price = Convert.ToDecimal(model.TheRequest.TotalPrice.Substring(1));
+                request.TotalPrice = price;
+            }
+            request.Quantity = model.TheRequest.Quantity;
+            request.Status = model.TheRequest.StatEnum.ToString();
+            //request.TotalPrice = model.TheRequest.TotalPrice;
+            request.UnitPrice = model.TheRequest.UnitPrice;
+            _context.Tbl_Requests.Add(request);
+            _context.SaveChanges();
+            var items = PopulateList();
+            return View("GetItemList", items);
+        }
     }
 }

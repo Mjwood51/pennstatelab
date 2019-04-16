@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="PennStateNewDB.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="PennStateNewDB.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="Tbl_CatagoryLocations">
           <Key>
             <PropertyRef Name="Id" />
@@ -81,6 +81,7 @@
           <Property Name="UsrId" Type="int" />
           <Property Name="LocId" Type="int" />
           <Property Name="SubId" Type="int" />
+          <Property Name="Flagged" Type="nvarchar" MaxLength="150" />
         </EntityType>
         <EntityType Name="Tbl_Locations">
           <Key>
@@ -105,6 +106,20 @@
           <Property Name="Items_Id" Type="int" Nullable="false" />
           <Property Name="Photos_Id" Type="int" Nullable="false" />
         </EntityType>
+        <EntityType Name="Tbl_Requests">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ItemName" Type="nvarchar" MaxLength="50" />
+          <Property Name="Status" Type="nvarchar" MaxLength="20" />
+          <Property Name="Quantity" Type="int" />
+          <Property Name="UnitPrice" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="TotalPrice" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="Message" Type="nvarchar" MaxLength="150" />
+          <Property Name="UserId" Type="int" />
+          <Property Name="ItemId" Type="int" />
+        </EntityType>
         <EntityType Name="Tbl_Roles">
           <Key>
             <PropertyRef Name="Id" />
@@ -117,7 +132,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="SubLocationName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="SubLocationName" Type="nvarchar" MaxLength="50" />
           <Property Name="LocId" Type="int" />
         </EntityType>
         <EntityType Name="Tbl_Users">
@@ -218,6 +233,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_dbo_Tbl_Requests_dbo_Tbl_Items_ItemId">
+          <End Role="Tbl_Items" Type="Self.Tbl_Items" Multiplicity="0..1" />
+          <End Role="Tbl_Requests" Type="Self.Tbl_Requests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tbl_Items">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Tbl_Requests">
+              <PropertyRef Name="ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_Tbl_Requests_dbo_Tbl_Users_UserId">
+          <End Role="Tbl_Users" Type="Self.Tbl_Users" Multiplicity="0..1" />
+          <End Role="Tbl_Requests" Type="Self.Tbl_Requests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tbl_Users">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Tbl_Requests">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_dbo_Tbl_SubLocations_dbo_Tbl_Locations_LocId">
           <End Role="Tbl_Locations" Type="Self.Tbl_Locations" Multiplicity="0..1" />
           <End Role="Tbl_SubLocations" Type="Self.Tbl_SubLocations" Multiplicity="*" />
@@ -301,6 +340,7 @@
           <EntitySet Name="Tbl_Locations" EntityType="Self.Tbl_Locations" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tbl_Photo" EntityType="Self.Tbl_Photo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tbl_PhotoItems" EntityType="Self.Tbl_PhotoItems" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Tbl_Requests" EntityType="Self.Tbl_Requests" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tbl_Roles" EntityType="Self.Tbl_Roles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tbl_SubLocations" EntityType="Self.Tbl_SubLocations" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tbl_Users" EntityType="Self.Tbl_Users" Schema="dbo" store:Type="Tables" />
@@ -332,6 +372,14 @@
             <End Role="Tbl_Users" EntitySet="Tbl_Users" />
             <End Role="Tbl_Items" EntitySet="Tbl_Items" />
           </AssociationSet>
+          <AssociationSet Name="FK_dbo_Tbl_Requests_dbo_Tbl_Items_ItemId" Association="Self.FK_dbo_Tbl_Requests_dbo_Tbl_Items_ItemId">
+            <End Role="Tbl_Items" EntitySet="Tbl_Items" />
+            <End Role="Tbl_Requests" EntitySet="Tbl_Requests" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_Tbl_Requests_dbo_Tbl_Users_UserId" Association="Self.FK_dbo_Tbl_Requests_dbo_Tbl_Users_UserId">
+            <End Role="Tbl_Users" EntitySet="Tbl_Users" />
+            <End Role="Tbl_Requests" EntitySet="Tbl_Requests" />
+          </AssociationSet>
           <AssociationSet Name="FK_dbo_Tbl_SubLocations_dbo_Tbl_Locations_LocId" Association="Self.FK_dbo_Tbl_SubLocations_dbo_Tbl_Locations_LocId">
             <End Role="Tbl_Locations" EntitySet="Tbl_Locations" />
             <End Role="Tbl_SubLocations" EntitySet="Tbl_SubLocations" />
@@ -357,8 +405,7 @@
             <End Role="Tbl_PhotoItems" EntitySet="Tbl_PhotoItems" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="PennStateNewDB" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -444,6 +491,8 @@
           <NavigationProperty Name="Tbl_Users" Relationship="Self.FK_dbo_Tbl_Items_dbo_Tbl_Users_UsrId" FromRole="Tbl_Items" ToRole="Tbl_Users" />
           <NavigationProperty Name="Tbl_File" Relationship="Self.Tbl_ItemFiles" FromRole="Tbl_Items" ToRole="Tbl_File" />
           <NavigationProperty Name="Tbl_Photo" Relationship="Self.Tbl_PhotoItems" FromRole="Tbl_Items" ToRole="Tbl_Photo" />
+          <Property Name="Flagged" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Tbl_Requests" Relationship="PennStateNewDB.FK_dbo_Tbl_Requests_dbo_Tbl_Items_ItemId" FromRole="Tbl_Items" ToRole="Tbl_Requests" />
         </EntityType>
         <EntityType Name="Tbl_Locations">
           <Key>
@@ -476,7 +525,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="SubLocationName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="SubLocationName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="LocId" Type="Int32" />
           <NavigationProperty Name="Tbl_Items" Relationship="Self.FK_dbo_Tbl_Items_dbo_Tbl_SubLocations_SubId" FromRole="Tbl_SubLocations" ToRole="Tbl_Items" />
           <NavigationProperty Name="Tbl_Locations" Relationship="Self.FK_dbo_Tbl_SubLocations_dbo_Tbl_Locations_LocId" FromRole="Tbl_SubLocations" ToRole="Tbl_Locations" />
@@ -496,6 +545,7 @@
           <Property Name="RoleId" Type="Int32" Nullable="false" />
           <NavigationProperty Name="Tbl_Items" Relationship="Self.FK_dbo_Tbl_Items_dbo_Tbl_Users_UsrId" FromRole="Tbl_Users" ToRole="Tbl_Items" />
           <NavigationProperty Name="Tbl_Roles" Relationship="Self.FK_dbo_Tbl_Users_dbo_Tbl_RoleId" FromRole="Tbl_Users" ToRole="Tbl_Roles" />
+          <NavigationProperty Name="Tbl_Requests" Relationship="PennStateNewDB.FK_dbo_Tbl_Requests_dbo_Tbl_Users_UserId" FromRole="Tbl_Users" ToRole="Tbl_Requests" />
         </EntityType>
         <Association Name="FK_dbo_Tbl_CatagoryLocations_dbo_Tbl_CatagoryLocations_Pid">
           <End Role="Tbl_CatagoryLocations" Type="Self.Tbl_CatagoryLocations" Multiplicity="0..1" />
@@ -669,7 +719,56 @@
             <End Role="Tbl_Items" EntitySet="Tbl_Items" />
             <End Role="Tbl_Photo" EntitySet="Tbl_Photo" />
           </AssociationSet>
+          <EntitySet Name="Tbl_Requests" EntityType="PennStateNewDB.Tbl_Requests" />
+          <AssociationSet Name="FK_dbo_Tbl_Requests_dbo_Tbl_Items_ItemId" Association="PennStateNewDB.FK_dbo_Tbl_Requests_dbo_Tbl_Items_ItemId">
+            <End Role="Tbl_Items" EntitySet="Tbl_Items" />
+            <End Role="Tbl_Requests" EntitySet="Tbl_Requests" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_Tbl_Requests_dbo_Tbl_Users_UserId" Association="PennStateNewDB.FK_dbo_Tbl_Requests_dbo_Tbl_Users_UserId">
+            <End Role="Tbl_Users" EntitySet="Tbl_Users" />
+            <End Role="Tbl_Requests" EntitySet="Tbl_Requests" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="Tbl_Requests">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Status" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Quantity" Type="Int32" />
+          <Property Name="UnitPrice" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="Message" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="UserId" Type="Int32" />
+          <Property Name="ItemId" Type="Int32" />
+          <NavigationProperty Name="Tbl_Items" Relationship="PennStateNewDB.FK_dbo_Tbl_Requests_dbo_Tbl_Items_ItemId" FromRole="Tbl_Requests" ToRole="Tbl_Items" />
+          <NavigationProperty Name="Tbl_Users" Relationship="PennStateNewDB.FK_dbo_Tbl_Requests_dbo_Tbl_Users_UserId" FromRole="Tbl_Requests" ToRole="Tbl_Users" />
+          <Property Name="TotalPrice" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="ItemName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <Association Name="FK_dbo_Tbl_Requests_dbo_Tbl_Items_ItemId">
+          <End Type="PennStateNewDB.Tbl_Items" Role="Tbl_Items" Multiplicity="0..1" />
+          <End Type="PennStateNewDB.Tbl_Requests" Role="Tbl_Requests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tbl_Items">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Tbl_Requests">
+              <PropertyRef Name="ItemId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_Tbl_Requests_dbo_Tbl_Users_UserId">
+          <End Type="PennStateNewDB.Tbl_Users" Role="Tbl_Users" Multiplicity="0..1" />
+          <End Type="PennStateNewDB.Tbl_Requests" Role="Tbl_Requests" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tbl_Users">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Tbl_Requests">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -728,6 +827,7 @@
           <EntitySetMapping Name="Tbl_Items">
             <EntityTypeMapping TypeName="PennStateNewDB.Tbl_Items">
               <MappingFragment StoreEntitySet="Tbl_Items">
+                <ScalarProperty Name="Flagged" ColumnName="Flagged" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="ItemName" ColumnName="ItemName" />
                 <ScalarProperty Name="AmountInStock" ColumnName="AmountInStock" />
@@ -816,6 +916,21 @@
               <ScalarProperty Name="Id" ColumnName="Photos_Id" />
             </EndProperty>
           </AssociationSetMapping>
+          <EntitySetMapping Name="Tbl_Requests">
+            <EntityTypeMapping TypeName="PennStateNewDB.Tbl_Requests">
+              <MappingFragment StoreEntitySet="Tbl_Requests">
+                <ScalarProperty Name="ItemName" ColumnName="ItemName" />
+                <ScalarProperty Name="TotalPrice" ColumnName="TotalPrice" />
+                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Message" ColumnName="Message" />
+                <ScalarProperty Name="UnitPrice" ColumnName="UnitPrice" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

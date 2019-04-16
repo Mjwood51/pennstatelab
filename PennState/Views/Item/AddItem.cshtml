@@ -191,6 +191,13 @@
 <script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
 <script>
 
+    function stopRKey(evt) {
+        var evt = (evt) ? evt : ((event) ? event : null);
+        var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+        if ((evt.keyCode == 13) && (node.type == "text")) { return false; }
+    }
+    document.onkeypress = stopRKey;
+
     $.validator.unobtrusive.adapters.add('filetype', ['validtypes'], function (options) {
         options.rules['filetype'] = { validtypes: options.params.validtypes.split(',') };
         options.messages['filetype'] = options.message;

@@ -36,10 +36,34 @@
 </body>
 </html>
 <script src="~/Scripts/chosen.jquery.js"></script>
-@*<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>*@
 <script src="~/Scripts/notify.js"></script>
 <script type="text/javascript">   
 
+    //Search for query string
+    $(document).ready(function () {
+        $('#my_form').on('keydown', function (e) {
+                debugger
+                var q = e.target.value;
+                var key = e.which;
+                if (key == 13) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        $.ajax({
+                        url: '@Url.Action("Search", "Item")/' + q,
+                        type: 'GET',
+                        async: false,
+                        success: function (data) {
+                            $("#theTable").html(data);
+                        },
+                        error: function (xhr, status, error) {
+                            alert(xhr.responseText);
+                        }
+                        
+                        });                 
+                }
+        });
+    });
+    
     $(document).ready(function () {
         
         $('#myModal').on('shown.bs.modal', function () {
@@ -111,49 +135,61 @@
         
         //Set Mouse Inside and Outside From Modals
         //
-        var mouseInside = false;
-
-        $("#myModal").hover(function () {
-            mouseInside = true;
-        }, function () {
-            mouseInside = false;
-        });
-
-        $("#myModal2").hover(function () {
-            mouseInside = true;
-        }, function () {
-            mouseInside = false;
-        });
-
-        $("#detailModal").hover(function () {
-            mouseInside = true;
-        }, function () {
-            mouseInside = false;
-        });
         //
         //
 
         //Edit modal open and close
         //
-        var modal2 = document.getElementById('myModal');
-    function closeEdit() {
-        $("#myModal").fadeOut(20).modal('hide', function () {
-            modal2.style.right = "-600px";
-        }, location.reload());
-        }
+    var modal2 = document.getElementById('myModal');
+    var editContent = document.getElementById('editContent');
+    var closeEdit = function () {
+        modal2.style.right = "-600px";
+        editContent.style.display = "none";        
+        $('#myModal').modal('hide');
+    }
         
     function editItem(id) {
         $.ajax({
             url: '@Url.Action("Edit", "Item")/' + id,
             type: 'GET',
             complete: function (e) {
-                $("#myModal").fadeIn(20).modal('show', modal2.style.right = "0px");
+                $("#myModal").fadeIn(20).modal('toggle');
+                modal2.style.right = "0px";
+                editContent.style.display = "block";
+
             },
             success: function (response) {                                
                 $('#modalBod').html(response);
             }
         });
+    }
+
+    //Add Item modal open and close
+        //
+        var modal3 = document.getElementById('myModal2');
+        
+        var closeAdd = function() {            
+            $("#myModal2").modal('hide');
+            modal3.style.display = "none";
         }
+
+
+        var addItem = function () {
+            $.ajax({
+            url: '@Url.Action("AddItem", "Item")',
+            type: 'GET',
+            complete: function (e) {
+                $("#myModal2").fadeIn(300).modal('toggle');
+                modal3.style.display = "block";
+            },
+            success: function (response) {                                
+                $('#createBod').html(response);               
+            }
+        });           
+        }
+
+        //
+        //
 
         //
         //
@@ -178,42 +214,28 @@
 
         //
         //
-        //Add Item modal open and close
-        //
-        var modal3 = document.getElementById('myModal2');
         
-        function closeAdd() {
-            $("#myModal2").fadeOut(500).modal('hide', function () {
-                modal3.style.display = "none";
-            });
-        }
-
-
-        var addItem = function () {
-
-            var url = '@Url.Action("AddItem", "Item")';
-            $("#createBod").load(url, function () {
-                        $("#myModal2").fadeIn(500).modal('show', function () {
-                            modal3.style.display = "block";
-                        });
-                        
-                    });
-        }
 
     $('body').click(function (event) {
         if (!$(event.target).closest('#myModal').length && !$(event.target).is('#myModal')) {
-            modal2.style.right = "-600px";
+            modal2.style.display = "none";
+            document.getElementById('pageId').classList.remove('overlay');
+        }
+        else {
+            $("#myModal").fadeIn(300).modal('toggle');
+            modal2.style.display = "block";
+            document.getElementById('pageId').classList.add('overlay');
         }
     });
 
     $('body').click(function (event) {
         if (!$(event.target).closest('#myModal2').length && !$(event.target).is('#myModal2')) {
             modal3.style.display = "none";
+            $("#myModal2").modal('hide');
         }
     });
         //
         //
-    
 
 
     var confirmDelete = function(itemid){

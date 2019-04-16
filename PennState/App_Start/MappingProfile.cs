@@ -115,6 +115,28 @@ namespace PennState.App_Start
                 .ForMember(u => u.ItemFileName, property => property.MapFrom(i => i.ItemFileName))
                 .ForMember(u => u.Items, property => property.MapFrom(i => i.Tbl_Items));
 
+            Mapper.CreateMap<Tbl_Requests, Requests>()
+                .ForMember(u => u.Id, property => property.MapFrom(i => i.Id))
+                .ForMember(u => u.Item, property => property.MapFrom(i => i.Tbl_Items))
+                .ForMember(u => u.ItemId, property => property.MapFrom(i => i.ItemId))
+                .ForMember(u => u.Message, property => property.MapFrom(i => i.Message))
+                .ForMember(u => u.Quantity, property => property.MapFrom(i => i.Quantity))
+                .ForMember(u => u.TotalPrice, property => property.MapFrom(i => i.TotalPrice))
+                .ForMember(u => u.UnitPrice, property => property.MapFrom(i => i.UnitPrice))
+                .ForMember(u => u.User, property => property.MapFrom(i => i.Tbl_Users))
+                .ForMember(u => u.UserId, property => property.MapFrom(i => i.UserId));
+
+            Mapper.CreateMap<Requests, Tbl_Requests>()
+                .ForMember(u => u.Id, property => property.MapFrom(i => i.Id))
+                .ForMember(u => u.Tbl_Items, property => property.MapFrom(i => i.Item))
+                .ForMember(u => u.ItemId, property => property.MapFrom(i => i.ItemId))
+                .ForMember(u => u.Message, property => property.MapFrom(i => i.Message))
+                .ForMember(u => u.Quantity, property => property.MapFrom(i => i.Quantity))
+                .ForMember(u => u.TotalPrice, property => property.MapFrom(i => i.TotalPrice))
+                .ForMember(u => u.UnitPrice, property => property.MapFrom(i => i.UnitPrice))
+                .ForMember(u => u.Tbl_Users, property => property.MapFrom(i => i.User))
+                .ForMember(u => u.UserId, property => property.MapFrom(i => i.UserId));
+
             Mapper.CreateMap<Item, Tbl_Items>()
                 .ForMember(u => u.Id, property => property.MapFrom(i => i.Id))
                 .ForMember(u => u.Added, property => property.MapFrom(i => i.Added))
@@ -124,6 +146,7 @@ namespace PennState.App_Start
                 .ForMember(u => u.Tbl_File, property => property.MapFrom(i => i.Files))
                 .ForMember(u => u.IsDeleted, property => property.MapFrom(i => i.IsDeleted))
                 .ForMember(u => u.ItemName, property => property.MapFrom(i => i.ItemName))
+                .ForMember(u => u.Flagged, property => property.MapFrom(i => i.Flagged))
                 .ForMember(u => u.ItemNotes, property => property.MapFrom(i => i.ItemNotes))
                 .ForMember(u => u.ItemType, property => property.MapFrom(i => i.ItemType))
                 .ForMember(u => u.Tbl_Locations, property => property.MapFrom(i => i.Location))
@@ -152,6 +175,7 @@ namespace PennState.App_Start
                 .ForMember(u => u.IsDeleted, property => property.MapFrom(i => i.IsDeleted))
                 .ForMember(u => u.ItemName, property => property.MapFrom(i => i.ItemName))
                 .ForMember(u => u.ItemNotes, property => property.MapFrom(i => i.ItemNotes))
+                .ForMember(u => u.Flagged, property => property.MapFrom(i => i.Flagged))
                 .ForMember(u => u.ItemType, property => property.MapFrom(i => i.ItemType))
                 .ForMember(u => u.Location, property => property.MapFrom(i => i.Tbl_Locations))
                 .ForMember(u => u.LocationComments, property => property.MapFrom(i => i.LocationComments))

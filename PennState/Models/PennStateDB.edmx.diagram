@@ -27,6 +27,9 @@
         <AssociationConnector Association="PennStateNewDB.FK_dbo_Tbl_Users_dbo_Tbl_RoleId" ManuallyRouted="false" />
         <AssociationConnector Association="PennStateNewDB.Tbl_ItemFiles" ManuallyRouted="false" />
         <AssociationConnector Association="PennStateNewDB.Tbl_PhotoItems" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="PennStateNewDB.Tbl_Requests" Width="1.5" PointX="7.5" PointY="14.625" />
+        <AssociationConnector Association="PennStateNewDB.FK_dbo_Tbl_Requests_dbo_Tbl_Items_ItemId" />
+        <AssociationConnector Association="PennStateNewDB.FK_dbo_Tbl_Requests_dbo_Tbl_Users_UserId" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

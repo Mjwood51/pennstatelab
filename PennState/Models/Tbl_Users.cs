@@ -18,6 +18,7 @@ namespace PennState.Models
         public Tbl_Users()
         {
             this.Tbl_Items = new HashSet<Tbl_Items>();
+            this.Tbl_Requests = new HashSet<Tbl_Requests>();
         }
     
         public int Id { get; set; }
@@ -33,5 +34,7 @@ namespace PennState.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Tbl_Items> Tbl_Items { get; set; }
         public virtual Tbl_Roles Tbl_Roles { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Tbl_Requests> Tbl_Requests { get; set; }
     }
 }

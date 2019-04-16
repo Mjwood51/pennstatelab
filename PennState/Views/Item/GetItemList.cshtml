@@ -2,7 +2,6 @@
 @using System.Web.UI.WebControls
 @using PennState.Models
 @using PennState.Controllers;
-
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -17,90 +16,95 @@
     TempData["List"] = items;
     TempData.Keep("List");
 }
+    <div class="page" id="pageId">
+        <div class="page-init">
+            <div id="listBoxId" class="listBox">
+                <div id="theTable">
+                    <table id="myTable" class="table table-hover table-striped header-fixed">
+                        <tbody id="myTableBody">
+                            <tr>
+                                <th scope="col">
+                                    Name
+                                </th>
+                                <th scope="col">
+                                    Vendor
+                                </th>
+                                <th scope="col">
+                                    Amount
+                                </th>
+                                <th scope="col">
+                                    Location
+                                </th>
+                                <th scope="col">
+                                    Type
+                                </th>
+                                <th scope="col">Owner</th>
+                                <th scope="col">Added</th>
+                                <th scope="col">Updated</th>
+                                <th scope="col"> </th>
+                            </tr>
 
-<div class="page-init">
-    <div id="listBoxId" class="listBox">
-        <div id="theTable">
-            <table id="myTable" class="table table-hover table-striped header-fixed">
-                <tbody id="myTableBody">
-                    <tr>
-                        <th scope="col">
-                            Name
-                        </th>
-                        <th scope="col">
-                            Vendor
-                        </th>
-                        <th scope="col">
-                            Amount
-                        </th>
-                        <th scope="col">
-                            Location
-                        </th>
-                        <th scope="col">
-                            Type
-                        </th>
-                        <th scope="col">Owner</th>
-                        <th scope="col">Added</th>
-                        <th scope="col">Updated</th>
-                        <th scope="col"> </th>
-                    </tr>
-
-                    @foreach (var item in ViewBag.ItemList)
-                    {
-                        <tr class="table-primary" scope="row" id="row_@item.Id" data-toggle="modal">
-                            <td onclick="editItem(@item.Id)">
-                                @item.ItemName
-                            </td>
-                            <td onclick="editItem(@item.Id)">
-                                @item.Vendor
-                            </td>
-                            <td onclick="editItem(@item.Id)">
-                                @item.AmountInStock
-                            </td>
-                            <td onclick="editItem(@item.Id)">
-                                @item.Location.LocationName<br>
-                                @item.SubLocation.SubLocationName<br>
-                                @item.LocationComments<br>
-                            </td>
-                            <td onclick="editItem(@item.Id)">
-                                @item.ItemType
-                            </td>
-                            <td onclick="editItem(@item.Id)">@item.User.FirstName @item.User.LastName</td>
-                            <td onclick="editItem(@item.Id)">@item.Added.ToShortDateString()</td>
-                            @if (item.Updated != null)
+                            @foreach (var item in ViewBag.ItemList)
                             {
-                            <td onclick="editItem(@item.Id)">@item.Updated.ToShortDateString()</td>
+                                <tr class="table-primary" scope="row" id="row_@item.Id" data-toggle="modal">
+                                    <td>
+                                        <a class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.ItemName</a>
+                                    </td>
+                                    <td>
+                                        <a class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.Vendor</a>
+                                    </td>
+                                    <td>
+                                       <a class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.AmountInStock</a>
+                                    </td>
+                                    <td>
+                                        <a class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.Location.LocationName</a><br>
+                                        <a class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.SubLocation.SubLocationName</a><br>
+                                        @item.LocationComments<br>
+                                    </td>
+                                    <td>
+                                        <a class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.ItemType</a>
+                                    </td>
+                                    <td><a class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.User.FirstName @item.User.LastName</a></td>
+                                    <td><a class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.Added.ToShortDateString()</a></td>
+                                    @if (item.Updated != null)
+                                    {
+                                        <td><a class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.Updated.ToShortDateString()</a></td>
+                                    }
+                                    else
+                                    {
+                                        <td>        _ </td>
+                                    }
+                                    <td>
+                                        <a href="#" onclick="itemDetails(@item.Id)" data-toggle="modal"><i class="glyphicon glyphicon-eye-open"></i></a> |
+                                        <a href="#" onclick="editItem(@item.Id);" data-toggle="modal"><i class="glyphicon glyphicon-edit"></i></a> |
+                                        <a href="#" onclick="confirmDelete(@item.Id)"><i class="glyphicon glyphicon-trash"></i></a>
+                                        <br />
+                                        <br />
+                                        @Html.ActionLink("Request", "FlagItem", new { id = item.Id}, new { @style = "margin-left:10px"})
+                                        <form id="itemId" hidden="hidden">
+                                            @item.Id
+                                        </form>
+                                    </td>
+                                </tr>
                             }
-                            else
-                            {
-                            <td>        _ </td>
-                            }
-                            <td>
-                                <a href="#" onclick="itemDetails(@item.Id)" data-toggle="modal"><i class="glyphicon glyphicon-eye-open"></i></a> |
-                                <a href="#" onclick="editItem(@item.Id);" data-toggle="modal"><i class="glyphicon glyphicon-edit"></i></a> |
-                                <a href="#" onclick="confirmDelete(@item.Id)"><i class="glyphicon glyphicon-trash"></i></a>
-                                <form id="itemId" hidden="hidden">
-                                    @item.Id
-                                </form>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-    <div tabindex="-1" class="sideModal" role="dialog" id="myModal" data-backdrop="false">
-        <div style="bottom:20px">
-            <div class="modal-header">
-                <h3 class="modal-title">Edit Item</h3>
-            </div>
-            <div class="modal-body" id="modalBod">
-
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
+
+        <div tabindex="-1" class="sideModal" role="dialog" id="myModal" data-backdrop="false">
+            <div class="modal-content2" id="editContent">
+                <div style="bottom:20px">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Edit Item</h3>
+                    </div>
+                    <div class="modal-body" id="modalBod">
+
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div tabindex="-1" class="createModal" data-dismiss="modal" role="dialog" id="myModal2" data-backdrop="false">
             <div style="bottom:20px">
@@ -113,187 +117,187 @@
             </div>
         </div>
 
-<div tabindex="-1" class="detailsModal" data-dismiss="modal" role="dialog" id="detailModal" data-backdrop="false">
-    <div style="bottom:20px">
-        <div class="modal-header">
-            <h3 class="modal-title" style="text-align:left">Item Details</h3>
-        </div>
-        <div class="modal-body" id="detailBod">
-
-        </div>
-    </div>
-</div>
-
-
-<div class="page-init">
-    <h3></h3>
-    <div class="parent-sidebar">
-        <div class="sidebar" id="sideForm">
-            <a href="#"><img src="" /></a>
-            <div class="page-init">
-                <div class="row">
-                    <div class="form-group" style="padding-left:80px">
-                        <a href="#" onclick="addItem()" data-toggle="modal">Add New Item <i class="glyphicon glyphicon-pencil"></i></a>
-                    </div>
+        <div tabindex="-1" class="detailsModal" data-dismiss="modal" role="dialog" id="detailModal" data-backdrop="false">
+            <div style="bottom:20px">
+                <div class="modal-header">
+                    <h3 class="modal-title" style="text-align:left">Item Details</h3>
                 </div>
-                <div class="row">
-                    <div class="form-group categoryDrop" style="padding-left:15px">
-                        <input class="form-control mr-sm-2" type="text" placeholder="Search Inventory" />
-                    </div>
-                </div>
+                <div class="modal-body" id="detailBod">
 
-                @* Dropdown menu starts here *@
-                <div class="row">
-                    <div class="form-group">
-                        <div class="btn-group categoryDrop" style="padding-left:30px">
-                            <div class="dropdown">
-                                <button class="btn btn-primary dropdown-toggle categoryButton" id="h" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Location</button>
-                                <div class="dropdown-menu">
-                                    <div class="form-body">
-                                        <div class="treeClass">
-                                            <div id="jstreeLoc">
-                                                @(Html.TreeViewController(Model.LocationsC)
-                                                                                                                                                                                                                                                                                                                                                                                                                                          .EmptyContent("Locations")
-                                                                                                                                                                                                                                                                                                                                                                                                                                              .Children(m => m.Childs)
-                                                                                                                                                                                                                                                                                                                                                                                                                                              .HtmlAttributes(new { id = "tree" })
+                </div>
+            </div>
+        </div>
+
+
+        <div class="page-init">
+            <h3></h3>
+            <div class="parent-sidebar">
+                <div class="sidebar" id="sideForm">
+                    <a href="#"><img src="" /></a>
+                    <div class="page-init">
+                        <div class="row">
+                            <div class="form-group" style="padding-left:80px">                                
+                                    <a href="#" onclick="addItem()" data-toggle="modal">Add New Item <i class="glyphicon glyphicon-pencil"></i></a>                                
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group categoryDrop" style="padding-left:15px">
+                                <form action="#" id="my_form" method="post" name="my_form">
+                                    <input class="form-control mr-sm-2" type="text" id="queryBox" autocomplete="off" placeholder="Search (Press Enter)" />
+                                </form>
+                            </div>
+                        </div>
+
+                        @* Dropdown menu starts here *@
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="btn-group categoryDrop" style="padding-left:30px">
+                                    <div class="dropdown">
+                                        <button class="btn btn-primary dropdown-toggle categoryButton" id="h" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Location</button>
+                                        <div class="dropdown-menu">
+                                            <div class="form-body">
+                                                <div class="treeClass">
+                                                    <div id="jstreeLoc">
+                                                        @(Html.TreeViewController(Model.LocationsC)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                  .EmptyContent("Locations")
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                      .Children(m => m.Childs)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                      .HtmlAttributes(new { id = "tree" })
+                                                                                                                                                                                                                                                                                                                                                                                                                                                              .ChildrenHtmlAttributes(new { @class = "subItem" })
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                  .ItemText(m => m.LocationName)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                  .ItemTemplate(
+                                                                                                                                                                                                                                                                                                @<text>
+                                                                                                                                                                                                                                                                                                    <a class="treeClass" href="@item.LocationName" desc="@item.LocationName">@item.LocationName</a>
+                                                                                                                                                                                                                                                                                                </text>)
+
+                                                        )
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="btn-group  categoryDrop" style="padding-left:30px">
+                                    <div class="dropdown" id="h2">
+                                        <button class="btn btn-primary dropdown-toggle categoryButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Type</button>
+                                        <div class="dropdown-menu">
+                                            <div class="form-body">
+                                                <div class="treeClass">
+                                                    <div id="jstree1">
+                                                        @(Html.TreeViewController(Model.Types)
+                                                                                                                                                                                                                                                                                                                                                                                                                                          .EmptyContent("Types")
+                                                                                                                                                                                                                                                                                                                                                                                                                                          .Children(m => m.Childs)
+                                                                                                                                                                                                                                                                                                                                                                                                                                          .HtmlAttributes(new { id = "tree" })
                                                                                                                                                                                                                                                                                                                                                                                                                                       .ChildrenHtmlAttributes(new { @class = "subItem" })
-                                                                                                                                                                                                                                                                                                                                                                                                                                          .ItemText(m => m.LocationName)
+                                                                                                                                                                                                                                                                                                                                                                                                                                          .ItemText(m => m.TypeName)
                                                                                                                                                                                                                                                                                                                                                                                                                                           .ItemTemplate(
-                                                                                                                                                                                                                                                                        @<text>
-                                                                                                                                                                                                                                                                            <a class="treeClass" href="@item.LocationName" desc="@item.LocationName">@item.LocationName</a>
-                                                                                                                                                                                                                                                                        </text>)
-
-                                                )
+                                                                                                                                                                                                                                                                @<text>
+                                                                                                                                                                                                                                                                    <a href="@item.TypeName" desc="@item.TypeName">@item.TypeName</a>
+                                                                                                                                                                                                                                                                </text>)
+                                                        )
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="form-group">
-                        <div class="btn-group  categoryDrop" style="padding-left:30px">
-                            <div class="dropdown" id="h2">
-                                <button class="btn btn-primary dropdown-toggle categoryButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Type</button>
-                                <div class="dropdown-menu">
-                                    <div class="form-body">
-                                        <div class="treeClass">
-                                            <div id="jstree1">
-                                                @(Html.TreeViewController(Model.Types)
-                                                                                                                                                                                                                                                                                                                                                                                                                  .EmptyContent("Types")
-                                                                                                                                                                                                                                                                                                                                                                                                                  .Children(m => m.Childs)
-                                                                                                                                                                                                                                                                                                                                                                                                                  .HtmlAttributes(new { id = "tree" })
-                                                                                                                                                                                                                                                                                                                                                                                                              .ChildrenHtmlAttributes(new { @class = "subItem" })
-                                                                                                                                                                                                                                                                                                                                                                                                                  .ItemText(m => m.TypeName)
-                                                                                                                                                                                                                                                                                                                                                                                                                  .ItemTemplate(
-                                                                                                                                                                                                                                        @<text>
-                                                                                                                                                                                                                                            <a href="@item.TypeName" desc="@item.TypeName">@item.TypeName</a>
-                                                                                                                                                                                                                                        </text>)
-                                                )
+
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="btn-group categoryDrop" style="padding-left:30px">
+                                    <div class="dropdown" id="h3">
+                                        <button class="btn btn-primary dropdown-toggle categoryButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Vendor</button>
+                                        <div class="dropdown-menu">
+                                            <div class="form-body">
+                                                <div class="treeClass">
+                                                    <div id="jstree2">
+                                                        @(Html.TreeViewController(Model.Vendors)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                  .EmptyContent("Vendors")
+                                                                                                                                                                                                                                                                                                                                                                                                                                                  .Children(m => m.Childs)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                  .HtmlAttributes(new { id = "tree" })
+                                                                                                                                                                                                                                                                                                                                                                                                                                              .ChildrenHtmlAttributes(new { @class = "subItem" })
+                                                                                                                                                                                                                                                                                                                                                                                                                                                  .ItemText(m => m.VendorName)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                  .ItemTemplate(
+                                                                                                                                                                                                                                                                @<text>
+                                                                                                                                                                                                                                                                    <a href="@item.VendorName" desc="@item.VendorName">@item.VendorName</a>
+                                                                                                                                                                                                                                                                </text>)
+                                                        )
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <div class="row">
-                    <div class="form-group">
-                        <div class="btn-group categoryDrop" style="padding-left:30px">
-                            <div class="dropdown" id="h3">
-                                <button class="btn btn-primary dropdown-toggle categoryButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Vendor</button>
-                                <div class="dropdown-menu">
-                                    <div class="form-body">
-                                        <div class="treeClass">
-                                            <div id="jstree2">
-                                                @(Html.TreeViewController(Model.Vendors)
-                                                                                                                                                                                                                                                                                                                                                                                                                          .EmptyContent("Vendors")
-                                                                                                                                                                                                                                                                                                                                                                                                                          .Children(m => m.Childs)
-                                                                                                                                                                                                                                                                                                                                                                                                                          .HtmlAttributes(new { id = "tree" })
-                                                                                                                                                                                                                                                                                                                                                                                                                      .ChildrenHtmlAttributes(new { @class = "subItem" })
-                                                                                                                                                                                                                                                                                                                                                                                                                          .ItemText(m => m.VendorName)
-                                                                                                                                                                                                                                                                                                                                                                                                                          .ItemTemplate(
-                                                                                                                                                                                                                                        @<text>
-                                                                                                                                                                                                                                            <a href="@item.VendorName" desc="@item.VendorName">@item.VendorName</a>
-                                                                                                                                                                                                                                        </text>)
-                                                )
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="btn-group categoryDrop" style="padding-left:30px">
+                                    <div class="dropdown" id="h4">
+                                        <button class="btn btn-primary dropdown-toggle categoryButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Owner</button>
+                                        <div class="dropdown-menu">
+                                            <div class="form-body">
+                                                <div class="treeClass">
+                                                    <div id="jstree3">
+                                                        @(Html.TreeViewController(Model.Owners)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                          .EmptyContent("Owner")
+                                                                                                                                                                                                                                                                                                                                                                                                                                                          .Children(m => m.Childs)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                          .HtmlAttributes(new { id = "tree" })
+                                                                                                                                                                                                                                                                                                                                                                                                                                                      .ChildrenHtmlAttributes(new { @class = "subItem" })
+                                                                                                                                                                                                                                                                                                                                                                                                                                                          .ItemText(m => m.OwnerName)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                          .ItemTemplate(
+                                                                                                                                                                                                                                                                @<text>
+                                                                                                                                                                                                                                                                    <a href="@item.OwnerName" desc="@item.OwnerName">@item.OwnerName</a>
+                                                                                                                                                                                                                                                                </text>)
+                                                        )
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        @*Dropdown menu ends here*@
                     </div>
-                </div>
-
-                <div class="row">
-                    <div class="form-group">
-                        <div class="btn-group categoryDrop" style="padding-left:30px">
-                            <div class="dropdown" id="h4">
-                                <button class="btn btn-primary dropdown-toggle categoryButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Owner</button>
-                                <div class="dropdown-menu">
-                                    <div class="form-body">
-                                        <div class="treeClass">
-                                            <div id="jstree3">
-                                                @(Html.TreeViewController(Model.Owners)
-                                                                                                                                                                                                                                                                                                                                                                                                                                  .EmptyContent("Owner")
-                                                                                                                                                                                                                                                                                                                                                                                                                                  .Children(m => m.Childs)
-                                                                                                                                                                                                                                                                                                                                                                                                                                  .HtmlAttributes(new { id = "tree" })
-                                                                                                                                                                                                                                                                                                                                                                                                                              .ChildrenHtmlAttributes(new { @class = "subItem" })
-                                                                                                                                                                                                                                                                                                                                                                                                                                  .ItemText(m => m.OwnerName)
-                                                                                                                                                                                                                                                                                                                                                                                                                                  .ItemTemplate(
-                                                                                                                                                                                                                                        @<text>
-                                                                                                                                                                                                                                            <a href="@item.OwnerName" desc="@item.OwnerName">@item.OwnerName</a>
-                                                                                                                                                                                                                                        </text>)
-                                                )
-                                            </div>
-                                        </div>
-                                    </div>
+                    <a href="#" style="padding-top:10px;padding-right:20px" class="btn-link" onclick="location.href='@Url.Action("GetAllItems", "Item")'" id="clearchk">Start Over (Full List)</a>
+                    <div style="position:relative"><p style="color:red">@Html.Raw(ViewBag.Error)</p></div>
+                    <div style="position:relative"><p style="color:lawngreen">@Html.Raw(ViewBag.Success)</p></div>
+                    <div style="margin-top:40px;position:relative">
+                        @using (Html.BeginForm("Import", "Item", FormMethod.Post, new { enctype = "multipart/form-data", @id = "importForm" }))
+                        {
+                            <div class="fileinputs">
+                                <label class="labelClass" style="position:absolute;bottom:0px;left:50px" for="excelUpload">Import Excel File</label>
+                                <input onchange="CopyMe(this, 'txtFileName')" type="file" name="UploadedFile" id="excelUpload" class="inputfile" />
+                                <div class="fakefile">
+                                    <input id="txtFileName" type="text" readonly="readonly" />
                                 </div>
                             </div>
-                        </div>
+
+                            <div style="position:absolute"><input style="margin-left:70px;margin-top:30px" type="submit" name="Import" value="Import" /></div>
+
+                        }
+
+                    </div>
+
+                    <div style="margin-top:100px;position:absolute;margin-left:20px">
+                        @Html.ActionLink("Export Database to Excel", "Export", "Item", new { @style = "padding-right:20px", @class = "btn-link" })
                     </div>
                 </div>
-                @*Dropdown menu ends here*@
-            </div>
-            <a href="#" style="padding-top:10px;padding-right:20px" class="btn-link" onclick="location.href='@Url.Action("GetAllItems", "Item")'" id="clearchk">Start Over (Full List)</a>
-            <div style="position:relative"><p style="color:red">@Html.Raw(ViewBag.Error)</p></div>
-            <div style="margin-top:40px;position:relative">
-                @using (Html.BeginForm("Import", "Item", FormMethod.Post, new { enctype = "multipart/form-data", @id = "importForm" }))
-                {
-                    <div class="fileinputs">
-                        <label class="labelClass" style="position:absolute;bottom:0px;left:50px" for="excelUpload">Import Excel File</label>
-                        <input onchange="CopyMe(this, 'txtFileName')" type="file" name="UploadedFile" id="excelUpload" class="inputfile" />
-                        <div class="fakefile">
-                            <input id="txtFileName" type="text" readonly="readonly" />
-                        </div>
-                    </div>
-
-                    <div style="position:absolute"><input style="margin-left:70px;margin-top:30px" type="submit" name="Import" value="Import" /></div>
-
-                }
-
-            </div>
-
-            <div style="margin-top:100px;position:absolute;margin-left:40px">
-                @using (Html.BeginForm("Export", "Home"))
-                {
-                    <a href="#" style="padding-right:20px" class="btn-link" onclick="location.href='@Url.Action("Export", "Item")'" id="clearchk">Export To Excel File</a>
-
-                }
             </div>
         </div>
     </div>
-</div>
-
 @section Scripts{
 
     <script src="~/Scripts/jstree.min.js"></script>
     <script>
+
         
         
         function CopyMe(oFileInput, sTargetID) {
@@ -536,7 +540,6 @@
 
 
             $('#jstree1').on('changed.jstree', function (e, data) {
-                debugger
                 e.preventDefault();
                 var l = [], t = [], v = [], o = [];
                 if (data.event.type = "click") {
