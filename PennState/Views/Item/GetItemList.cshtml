@@ -21,29 +21,30 @@
             <div id="listBoxId" class="listBox">
                 <div id="theTable">
                     <table id="myTable" class="table table-hover table-striped header-fixed">
-                        <tbody id="myTableBody">
+                        <thead>
                             <tr>
-                                <th scope="col">
+                                <th>
                                     Name
                                 </th>
-                                <th scope="col">
+                                <th>
                                     Vendor
                                 </th>
-                                <th scope="col">
+                                <th>
                                     Amount
                                 </th>
-                                <th scope="col">
+                                <th>
                                     Location
                                 </th>
-                                <th scope="col">
+                                <th>
                                     Type
                                 </th>
-                                <th scope="col">Owner</th>
-                                <th scope="col">Added</th>
-                                <th scope="col">Updated</th>
-                                <th scope="col"> </th>
+                                <th>Owner</th>
+                                <th>Added</th>
+                                <th>Updated</th>
+                                <th>       </th>
                             </tr>
-
+                        </thead>
+                        <tbody id="myTableBody">
                             @foreach (var item in ViewBag.ItemList)
                             {
                                 <tr class="table-primary" scope="row" id="row_@item.Id" data-toggle="modal">
@@ -54,7 +55,7 @@
                                         <a class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.Vendor</a>
                                     </td>
                                     <td>
-                                       <a class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.AmountInStock</a>
+                                        <a class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.AmountInStock</a>
                                     </td>
                                     <td>
                                         <a class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.Location.LocationName</a><br>
@@ -80,7 +81,7 @@
                                         <a href="#" onclick="confirmDelete(@item.Id)"><i class="glyphicon glyphicon-trash"></i></a>
                                         <br />
                                         <br />
-                                        @Html.ActionLink("Request", "FlagItem", new { id = item.Id}, new { @style = "margin-left:10px"})
+                                        @Html.ActionLink("Request", "FlagItem", new { id = item.Id }, new { @style = "margin-left:10px" })
                                         <form id="itemId" hidden="hidden">
                                             @item.Id
                                         </form>

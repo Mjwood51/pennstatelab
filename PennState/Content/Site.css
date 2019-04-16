@@ -155,6 +155,7 @@ label {
 
 .page-init {
     margin-top: 100px;
+    width: 100%;
 }
 /* Override the default bootstrap behavior where horizontal description lists 
    will truncate terms that are too long to fit in the left column 
@@ -188,8 +189,12 @@ label {
     position: inherit;
 }
 
+tr{
+    width:100%;
+}
 .myTableRow tr {
     background: #F5F5DC;
+
 }
 
     .myTableRow tr:hover {
@@ -239,18 +244,13 @@ p.thick {
 }
 
 .listBox {
-    position: fixed;
+    width: 1650px;
+    position:fixed;
     border-style: solid;
     border-width: 1px;
     border-color: black;
-    overflow: auto;
-    width: 1640px;
-    margin-right: 10px;
-    height: inherit;
-    left: inherit;
     top: 62px;
-    right: -10px;
-    bottom: 0px;
+    left:280px;
     background: #FFFFFF;
 }
 
@@ -374,7 +374,6 @@ p.thick {
 #searchWrapper img {
     vertical-align: middle;
 }
-
 
 table.myFormat {
     table-layout: fixed;
