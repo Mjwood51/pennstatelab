@@ -224,13 +224,15 @@ namespace PennState.App_Start
                 .ForMember(u => u.Id, property => property.MapFrom(i => i.Id))
                 .ForMember(u => u.DataStream, property => property.MapFrom(i => i.DataStream))
                 .ForMember(u => u.PhotoName, property => property.MapFrom(i => i.PhotoName))
-                .ForMember(u => u.Tbl_Items, property => property.MapFrom(i => i.Items));
+                .ForMember(u => u.Tbl_Items, property => property.MapFrom(i => i.Items))
+                .ForMember(u => u.SubId, property => property.MapFrom(i => i.SubId)); 
 
             Mapper.CreateMap<Tbl_Photo, Photos>()
                 .ForMember(u => u.Id, property => property.MapFrom(i => i.Id))
                 .ForMember(u => u.DataStream, property => property.MapFrom(i => i.DataStream))
                 .ForMember(u => u.PhotoName, property => property.MapFrom(i => i.PhotoName))
-                .ForMember(u => u.Items, property => property.MapFrom(i => i.Tbl_Items));
+                .ForMember(u => u.Items, property => property.MapFrom(i => i.Tbl_Items))
+                .ForMember(u => u.SubId, property => property.MapFrom(i => i.SubId));
 
             Mapper.CreateMap<Role, Tbl_Roles>()
                 .ForMember(u => u.Id, property => property.MapFrom(i => i.Id))

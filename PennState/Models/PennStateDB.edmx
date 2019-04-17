@@ -97,6 +97,7 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="PhotoName" Type="varchar" MaxLength="50" />
           <Property Name="DataStream" Type="varbinary(max)" />
+          <Property Name="SubId" Type="int" />
         </EntityType>
         <EntityType Name="Tbl_PhotoItems">
           <Key>
@@ -511,6 +512,7 @@
           <Property Name="PhotoName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="DataStream" Type="Binary" MaxLength="Max" FixedLength="false" />
           <NavigationProperty Name="Tbl_Items" Relationship="Self.Tbl_PhotoItems" FromRole="Tbl_Photo" ToRole="Tbl_Items" />
+          <Property Name="SubId" Type="Int32" />
         </EntityType>
         <EntityType Name="Tbl_Roles">
           <Key>
@@ -862,6 +864,7 @@
           <EntitySetMapping Name="Tbl_Photo">
             <EntityTypeMapping TypeName="PennStateNewDB.Tbl_Photo">
               <MappingFragment StoreEntitySet="Tbl_Photo">
+                <ScalarProperty Name="SubId" ColumnName="SubId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="PhotoName" ColumnName="PhotoName" />
                 <ScalarProperty Name="DataStream" ColumnName="DataStream" />

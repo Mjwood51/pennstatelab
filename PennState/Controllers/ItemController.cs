@@ -145,6 +145,7 @@ namespace PennState.Controllers
         {
             if (ModelState.IsValid)
             {
+                var photos2 = new List<Tbl_Photo>();
                 Tbl_Items modelItem = _context.Tbl_Items.Find(model.Item.Id);
                 List<Image> images = null;
                 List<byte[]> photoDatas = null;
@@ -172,7 +173,7 @@ namespace PennState.Controllers
                             var pId = Convert.ToInt32(photoId);
                             var existingPhoto = _context.Tbl_Photo.Where(x => x.Id == pId).FirstOrDefault();
                             modelItem.Tbl_Photo.Add(existingPhoto);
-                            photos.Add(existingPhoto);
+                            photos2.Add(existingPhoto);
                         }
                     }
                 }
@@ -199,33 +200,7 @@ namespace PennState.Controllers
                     }
                 }
 
-                if (model.PhotoUpload != null)
-                {
-                    images = new List<Image>();
-                    photoDatas = new List<byte[]>();
-                    foreach (HttpPostedFileBase photo in model.PhotoUpload)
-                    {
-                        if (photo != null && photo.ContentLength > 0)
-                        {
-                            var varPhoto = new Photos()
-                            {
-                                PhotoName = System.IO.Path.GetFileName(photo.FileName)
-                            };
-
-                            using (var preader = new System.IO.BinaryReader(photo.InputStream))
-                            {
-                                var byteArray = preader.ReadBytes(photo.ContentLength);
-                                photoDatas.Add(byteArray);
-                                varPhoto.DataStream = byteArray;
-                                using (var ms = new MemoryStream(byteArray))
-                                {
-                                    images.Add(Image.FromStream(ms));
-                                }
-                            }
-                            photos.Add(Mapper.Map<Photos, Tbl_Photo>(varPhoto));
-                        }
-                    }
-                }
+                
                 var id = _context.Tbl_Users.Where(x => x.UserName == User.Identity.Name).FirstOrDefault();
                 modelItem = GetLocation(modelItem, model.Item.SubLocation.SubLocationName, model.Item.Location.LocationName);
 
@@ -243,20 +218,7 @@ namespace PennState.Controllers
                             modelItem.Tbl_File = files;
                     }
                 }
-                if (photos.Count > 0)
-                {
-                    if (modelItem.Tbl_Photo.Count > 0)
-                    {
-                        modelItem.Tbl_Photo = modelItem.Tbl_Photo.Concat(photos).ToList();
-                    }
-                    else
-                    {
-                        if (model.Item.Photos != null)
-                            modelItem.Tbl_Photo = modelItem.Tbl_Photo.Concat(Mapper.Map<IEnumerable<Tbl_Photo>>(model.Item.Photos)).Concat(photos).ToList();
-                        else
-                            modelItem.Tbl_Photo = photos;
-                    }
-                }
+                
                 modelItem.Id = model.Item.Id;
                 modelItem.ItemNotes = model.Item.ItemNotes;
                 modelItem.Manufacturer = model.Item.Manufacturer;
@@ -288,6 +250,53 @@ namespace PennState.Controllers
                     }
                 }
 
+                Tbl_Items testItem = _context.Tbl_Items.Find(modelItem.Id);
+
+                if (model.PhotoUpload != null)
+                {
+                    images = new List<Image>();
+                    photoDatas = new List<byte[]>();
+                    foreach (HttpPostedFileBase photo in model.PhotoUpload)
+                    {
+                        if (photo != null && photo.ContentLength > 0)
+                        {
+                            var varPhoto = new Photos()
+                            {
+                                PhotoName = System.IO.Path.GetFileName(photo.FileName)
+                            };
+
+                            using (var preader = new System.IO.BinaryReader(photo.InputStream))
+                            {
+                                var byteArray = preader.ReadBytes(photo.ContentLength);
+                                photoDatas.Add(byteArray);
+                                varPhoto.DataStream = byteArray;
+                                using (var ms = new MemoryStream(byteArray))
+                                {
+                                    images.Add(Image.FromStream(ms));
+                                }
+                            }
+                            varPhoto.SubId = testItem.SubId;
+                            photos.Add(Mapper.Map<Photos, Tbl_Photo>(varPhoto));
+                        }
+                    }
+                }
+
+                if (photos.Count > 0)
+                {
+                    if (modelItem.Tbl_Photo.Count > 0)
+                    {
+                        testItem.Tbl_Photo = modelItem.Tbl_Photo.Concat(photos).ToList();
+                    }
+                    else
+                    {
+                        if (model.Item.Photos != null)
+                            testItem.Tbl_Photo = modelItem.Tbl_Photo.Concat(Mapper.Map<IEnumerable<Tbl_Photo>>(model.Item.Photos)).Concat(photos).ToList();
+                        else
+                            testItem.Tbl_Photo = photos;
+                    }
+                }
+
+                _context.SaveChanges();
 
                 var pathString1 = "";
                 var pathString2 = "";
@@ -297,71 +306,61 @@ namespace PennState.Controllers
                 var path = "";
                 var path2 = "";
                 var path4 = "";
-                var listImages = new List<Image>();
-                int i = 0;
-                if (photos.Count > 0)
+                var imageName = "";
+                               
+                if (photos.Count > 0 || photos2.Count > 0)
                 {
-                    foreach (var photoObj in photos)
+                    var i = 0;
+                    var subLocId = (from s in _context.Tbl_SubLocations
+                                    join it in _context.Tbl_Items on s.Id equals it.SubId
+                                    where it.Id == modelItem.Id
+                                    select s).FirstOrDefault();
+                    //Create necessary directories
+                    var originalDir = new DirectoryInfo(string.Format("{0}Images\\Uploads", Server.MapPath(@"\")));
+                    //Check if file was uploaded
+                    pathString1 = Path.Combine(originalDir.ToString(), "SubLocations");
+                    pathString2 = Path.Combine(originalDir.ToString(), "SubLocations\\" + subLocId.Id.ToString());
+                    pathString3 = Path.Combine(originalDir.ToString(), "SubLocations\\" + subLocId.Id.ToString() + "\\Thumbs");
+                    pathString4 = Path.Combine(originalDir.ToString(), "SubLocations\\" + subLocId.Id.ToString() + "\\Gallery");
+                    pathString5 = Path.Combine(originalDir.ToString(), "SubLocations\\" + subLocId.Id.ToString() + "\\Gallery\\Thumbs");
+
+                    if (!Directory.Exists(pathString1))
+                        Directory.CreateDirectory(pathString1);
+
+                    if (!Directory.Exists(pathString2))
+                        Directory.CreateDirectory(pathString2);
+
+                    if (!Directory.Exists(pathString3))
+                        Directory.CreateDirectory(pathString3);
+
+                    if (!Directory.Exists(pathString4))
+                        Directory.CreateDirectory(pathString4);
+
+                    if (!Directory.Exists(pathString5))
+                        Directory.CreateDirectory(pathString5);
+                    var listImages = new List<Image>();
+                    ImageConverter imageConverter = new System.Drawing.ImageConverter();
+                    foreach (var photoObj in photos2)
                     {
-                        //Create necessary directories
-                        var originalDir = new DirectoryInfo(string.Format("{0}Images\\Uploads", Server.MapPath(@"\")));
-
-                        var imageName = photoObj.PhotoName;
-
-                        var subLocId = (from s in _context.Tbl_SubLocations
-                                        join it in _context.Tbl_Items on s.Id equals it.SubId
-                                        where it.Id == modelItem.Id
-                                        select s).FirstOrDefault();
-
-                        //Check if file was uploaded
-                        pathString1 = Path.Combine(originalDir.ToString(), "SubLocations");
-                        pathString2 = Path.Combine(originalDir.ToString(), "SubLocations\\" + subLocId.Id.ToString());
-                        pathString3 = Path.Combine(originalDir.ToString(), "SubLocations\\" + subLocId.Id.ToString() + "\\Thumbs");
-                        pathString4 = Path.Combine(originalDir.ToString(), "SubLocations\\" + subLocId.Id.ToString() + "\\Gallery");
-                        pathString5 = Path.Combine(originalDir.ToString(), "SubLocations\\" + subLocId.Id.ToString() + "\\Gallery\\Thumbs");
-
-                        if (!Directory.Exists(pathString1))
-                            Directory.CreateDirectory(pathString1);
-
-                        if (!Directory.Exists(pathString2))
-                            Directory.CreateDirectory(pathString2);
-
-                        if (!Directory.Exists(pathString3))
-                            Directory.CreateDirectory(pathString3);
-
-                        if (!Directory.Exists(pathString4))
-                            Directory.CreateDirectory(pathString4);
-
-                        if (!Directory.Exists(pathString5))
-                            Directory.CreateDirectory(pathString5);
                         
+                        imageName = photoObj.PhotoName;                        
                         path = string.Format("{0}\\{1}", pathString2, imageName);
-                        ImageConverter imageConverter = new System.Drawing.ImageConverter();
-                        if (model.PhotoUpload != null)
+                        
+                        
+                        if (model.Photos.PhotoList != null)
                         {
-                            var image = imageConverter.ConvertFrom(photoDatas.ElementAt(i)) as System.Drawing.Image;
-                            image.Save(path, System.Drawing.Imaging.ImageFormat.Jpeg);
-                        }
-                        if (model.Photos.PhotoList.Count() > 0)
-                        {
-                            var image = imageFromBytes(photoObj.DataStream);
+                            var newId = _context.Tbl_Photo.Where(x => x.PhotoName == imageName).FirstOrDefault().SubId;
+                            pathString5 = Path.Combine(originalDir.ToString(), "SubLocations\\" + newId.ToString());
+                            var newPath = string.Format("{0}\\{1}", pathString5, imageName);
+                            var image = Image.FromFile(newPath);
                             image.Save(path, System.Drawing.Imaging.ImageFormat.Jpeg);
                             listImages.Add(image);
                         }
                         path2 = string.Format("{0}\\{1}", pathString3, imageName);
                         path4 = string.Format("{0}\\{1}", pathString4, imageName);
-                        if (model.PhotoUpload != null)
-                        {
-                            var img = images.ElementAt(i);
-                            img = resizeImage(img, new Size(200, 200));
-                            img.Save(path2);
-                            
-                            var img2 = images.ElementAt(i);
-                            img2 = resizeImage(img2, new Size(500, 375));
-                            img2.Save(path4);
-                        }
+                                               
 
-                        if(model.Photos.PhotoList.Count()> 0)
+                        if(model.Photos.PhotoList != null)
                         {
                             var img = listImages.ElementAt(i);
                             img = resizeImage(img, new Size(200, 200));
@@ -373,6 +372,30 @@ namespace PennState.Controllers
                             img2.Save(path4);
                         }
 
+                        i++;
+                    }
+                    i = 0;
+                    foreach(var objPhoto in photos)
+                    {                        
+                        imageName = objPhoto.PhotoName;
+                        path = string.Format("{0}\\{1}", pathString2, imageName);
+                        path2 = string.Format("{0}\\{1}", pathString3, imageName);
+                        path4 = string.Format("{0}\\{1}", pathString4, imageName);
+                        if (model.PhotoUpload != null)
+                        {
+                            var image = imageConverter.ConvertFrom(photoDatas.ElementAt(i)) as System.Drawing.Image;
+                            image.Save(path, System.Drawing.Imaging.ImageFormat.Jpeg);
+                        }
+                        if (model.PhotoUpload != null)
+                        {
+                            var img = images.ElementAt(i);
+                            img = resizeImage(img, new Size(200, 200));
+                            img.Save(path2);
+
+                            var img2 = images.ElementAt(i);
+                            img2 = resizeImage(img2, new Size(500, 375));
+                            img2.Save(path4);
+                        }
                         i++;
                     }
                 }
@@ -404,6 +427,7 @@ namespace PennState.Controllers
         {
             if (ModelState.IsValid)
             {
+                var photos2 = new List<Tbl_Photo>();
                 var modelItem = new Tbl_Items();
                 List<Image> images = null;
                 List<byte[]> photoDatas = null;
@@ -425,7 +449,7 @@ namespace PennState.Controllers
                         var pId = Convert.ToInt32(photoId);
                         var existingPhoto = _context.Tbl_Photo.Where(x => x.Id == pId).FirstOrDefault();
                         modelItem.Tbl_Photo.Add(existingPhoto);
-                        photos.Add(existingPhoto);
+                        photos2.Add(existingPhoto);
                     }
                 }
 
@@ -451,33 +475,7 @@ namespace PennState.Controllers
                     }
                 }
 
-                if (model.PhotoUpload != null)
-                {
-                    images = new List<Image>();
-                    photoDatas = new List<byte[]>();
-                    foreach (HttpPostedFileBase photo in model.PhotoUpload)
-                    {
-                        if (photo != null && photo.ContentLength > 0)
-                        {
-                            var varPhoto = new Tbl_Photo()
-                            {
-                                PhotoName = System.IO.Path.GetFileName(photo.FileName)
-                            };
-
-                            using (var preader = new System.IO.BinaryReader(photo.InputStream))
-                            {
-                                var byteArray = preader.ReadBytes(photo.ContentLength);
-                                photoDatas.Add(byteArray);
-                                varPhoto.DataStream = byteArray;
-                                using (var ms = new MemoryStream(byteArray))
-                                {
-                                    images.Add(Image.FromStream(ms));
-                                }
-                            }
-                            photos.Add(varPhoto);
-                        }
-                    }
-                }
+                
 
                 var id = new Tbl_Users();
 
@@ -497,17 +495,7 @@ namespace PennState.Controllers
                         modelItem.Tbl_File = files;
                     }
                 }
-                if (photos.Count > 0)
-                {
-                    if (modelItem.Tbl_Photo.Count > 0)
-                    {
-                        modelItem.Tbl_Photo = modelItem.Tbl_Photo.Concat(photos).ToList();
-                    }
-                    else
-                    {
-                        modelItem.Tbl_Photo = photos;
-                    }
-                }
+                
 
                 modelItem.UsrId = id.Id;
                 modelItem.Added = DateTime.Now;
@@ -536,6 +524,51 @@ namespace PennState.Controllers
                         }
                     }
                 }
+                Tbl_Items testItem = _context.Tbl_Items.Find(modelItem.Id);
+
+                if (model.PhotoUpload != null)
+                {
+                    images = new List<Image>();
+                    photoDatas = new List<byte[]>();
+                    foreach (HttpPostedFileBase photo in model.PhotoUpload)
+                    {
+                        if (photo != null && photo.ContentLength > 0)
+                        {
+                            var varPhoto = new Tbl_Photo()
+                            {
+                                PhotoName = System.IO.Path.GetFileName(photo.FileName)
+                            };
+
+                            using (var preader = new System.IO.BinaryReader(photo.InputStream))
+                            {
+                                var byteArray = preader.ReadBytes(photo.ContentLength);
+                                photoDatas.Add(byteArray);
+                                varPhoto.DataStream = byteArray;
+                                using (var ms = new MemoryStream(byteArray))
+                                {
+                                    images.Add(Image.FromStream(ms));
+                                }
+                            }
+                            varPhoto.SubId = testItem.SubId;
+                            photos.Add(varPhoto);
+                        }
+                    }
+                }
+
+                if (photos.Count > 0)
+                {
+                    if (modelItem.Tbl_Photo.Count > 0)
+                    {
+                        testItem.Tbl_Photo = modelItem.Tbl_Photo.Concat(photos).ToList();
+                    }
+                    else
+                    {
+                        testItem.Tbl_Photo = photos;
+                    }
+                }
+
+                _context.SaveChanges();
+
                 var pathString1 = "";
                 var pathString2 = "";
                 var pathString3 = "";
@@ -544,57 +577,96 @@ namespace PennState.Controllers
                 var path = "";
                 var path2 = "";
                 var path4 = "";
-                int i = 0;
-                if (model.PhotoUpload != null)
+                var imageName = "";
+
+                if (photos.Count > 0 || photos2.Count > 0)
                 {
-                    foreach (var photoObj in model.PhotoUpload)
+                    var i = 0;
+                    var subLocId = (from s in _context.Tbl_SubLocations
+                                    join it in _context.Tbl_Items on s.Id equals it.SubId
+                                    where it.Id == modelItem.Id
+                                    select s).FirstOrDefault();
+                    //Create necessary directories
+                    var originalDir = new DirectoryInfo(string.Format("{0}Images\\Uploads", Server.MapPath(@"\")));
+                    //Check if file was uploaded
+                    pathString1 = Path.Combine(originalDir.ToString(), "SubLocations");
+                    pathString2 = Path.Combine(originalDir.ToString(), "SubLocations\\" + subLocId.Id.ToString());
+                    pathString3 = Path.Combine(originalDir.ToString(), "SubLocations\\" + subLocId.Id.ToString() + "\\Thumbs");
+                    pathString4 = Path.Combine(originalDir.ToString(), "SubLocations\\" + subLocId.Id.ToString() + "\\Gallery");
+                    pathString5 = Path.Combine(originalDir.ToString(), "SubLocations\\" + subLocId.Id.ToString() + "\\Gallery\\Thumbs");
+
+                    if (!Directory.Exists(pathString1))
+                        Directory.CreateDirectory(pathString1);
+
+                    if (!Directory.Exists(pathString2))
+                        Directory.CreateDirectory(pathString2);
+
+                    if (!Directory.Exists(pathString3))
+                        Directory.CreateDirectory(pathString3);
+
+                    if (!Directory.Exists(pathString4))
+                        Directory.CreateDirectory(pathString4);
+
+                    if (!Directory.Exists(pathString5))
+                        Directory.CreateDirectory(pathString5);
+                    var listImages = new List<Image>();
+                    ImageConverter imageConverter = new System.Drawing.ImageConverter();
+                    foreach (var photoObj in photos2)
                     {
-                        //Create necessary directories
-                        var originalDir = new DirectoryInfo(string.Format("{0}Images\\Uploads", Server.MapPath(@"\")));
 
-                        var imageName = photoObj.FileName;
-
-                        var subLocId = (from s in _context.Tbl_SubLocations
-                                        join it in _context.Tbl_Items on s.Id equals it.SubId
-                                        where it.Id == modelItem.Id
-                                        select s).FirstOrDefault();
-
-                        //Check if file was uploaded
-                        pathString1 = Path.Combine(originalDir.ToString(), "SubLocations");
-                        pathString2 = Path.Combine(originalDir.ToString(), "SubLocations\\" + subLocId.Id.ToString());
-                        pathString3 = Path.Combine(originalDir.ToString(), "SubLocations\\" + subLocId.Id.ToString() + "\\Thumbs");
-                        pathString4 = Path.Combine(originalDir.ToString(), "SubLocations\\" + subLocId.Id.ToString() + "\\Gallery");
-                        pathString5 = Path.Combine(originalDir.ToString(), "SubLocations\\" + subLocId.Id.ToString() + "\\Gallery\\Thumbs");
-
-                        if (!Directory.Exists(pathString1))
-                            Directory.CreateDirectory(pathString1);
-
-                        if (!Directory.Exists(pathString2))
-                            Directory.CreateDirectory(pathString2);
-
-                        if (!Directory.Exists(pathString3))
-                            Directory.CreateDirectory(pathString3);
-
-                        if (!Directory.Exists(pathString4))
-                            Directory.CreateDirectory(pathString4);
-
-                        if (!Directory.Exists(pathString5))
-                            Directory.CreateDirectory(pathString5);
-
+                        imageName = photoObj.PhotoName;
                         path = string.Format("{0}\\{1}", pathString2, imageName);
-                        ImageConverter imageConverter = new System.Drawing.ImageConverter();
-                        System.Drawing.Image image = imageConverter.ConvertFrom(photoDatas.ElementAt(i)) as System.Drawing.Image;
-                        image.Save(path, System.Drawing.Imaging.ImageFormat.Jpeg);
 
-                        path2 = string.Format("{0}\\{1}", pathString3, imageName);                    
-                        var img = images.ElementAt(i);
-                        img = resizeImage(img, new Size(200, 200));
-                        img.Save(path2);
 
+                        if (model.Photos.PhotoList != null)
+                        {
+                            var newId = _context.Tbl_Photo.Where(x => x.PhotoName == imageName).FirstOrDefault().SubId;
+                            pathString5 = Path.Combine(originalDir.ToString(), "SubLocations\\" + newId.ToString());
+                            var newPath = string.Format("{0}\\{1}", pathString5, imageName);
+                            var image = Image.FromFile(newPath);
+                            image.Save(path, System.Drawing.Imaging.ImageFormat.Jpeg);
+                            listImages.Add(image);
+                        }
+                        path2 = string.Format("{0}\\{1}", pathString3, imageName);
                         path4 = string.Format("{0}\\{1}", pathString4, imageName);
-                        var img2 = images.ElementAt(i);
-                        img2 = resizeImage(img2, new Size(500, 375));
-                        img2.Save(path4);
+
+
+                        if (model.Photos.PhotoList != null)
+                        {
+                            var img = listImages.ElementAt(i);
+                            img = resizeImage(img, new Size(200, 200));
+                            img.Save(path2);
+
+
+                            var img2 = listImages.ElementAt(i);
+                            img2 = resizeImage(img2, new Size(500, 375));
+                            img2.Save(path4);
+                        }
+
+                        i++;
+                    }
+                    i = 0;
+                    foreach (var objPhoto in photos)
+                    {
+                        imageName = objPhoto.PhotoName;
+                        path = string.Format("{0}\\{1}", pathString2, imageName);
+                        path2 = string.Format("{0}\\{1}", pathString3, imageName);
+                        path4 = string.Format("{0}\\{1}", pathString4, imageName);
+                        if (model.PhotoUpload != null)
+                        {
+                            var image = imageConverter.ConvertFrom(photoDatas.ElementAt(i)) as System.Drawing.Image;
+                            image.Save(path, System.Drawing.Imaging.ImageFormat.Jpeg);
+                        }
+                        if (model.PhotoUpload != null)
+                        {
+                            var img = images.ElementAt(i);
+                            img = resizeImage(img, new Size(200, 200));
+                            img.Save(path2);
+
+                            var img2 = images.ElementAt(i);
+                            img2 = resizeImage(img2, new Size(500, 375));
+                            img2.Save(path4);
+                        }
                         i++;
                     }
                 }

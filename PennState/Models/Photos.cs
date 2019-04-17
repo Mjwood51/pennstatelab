@@ -19,6 +19,7 @@ namespace PennState.Models
         public int Id { get; set; }
         public string PhotoName { get; set; }
         public byte[] DataStream { get; set; }
+        public int? SubId { get; set; }
 
         public List<Photos> GetPhotoList { get; set; }
         public string[] PhotoList { get; set; }

@@ -98,6 +98,7 @@
             $.notify("Item Has Been Added", {
                 style: 'happygreen'
             });
+            closeAdd();
         }
     };
 
@@ -109,6 +110,7 @@
             $.notify("Item Saved", {
                 style: 'happygreen'
             });
+            closeEdit();
         }
     };
 
@@ -191,9 +193,6 @@
         //
         //
 
-        //
-        //
-
 
         // Details modal open and close
         //
@@ -206,34 +205,51 @@
 
     
         var itemDetails = function (id) {
-            var url = '@Url.Action("ItemDetails","Item")/' + id;
-            $("#detailBod").load(url, function () {
-                $("#detailModal").fadeIn(500).modal('show', modal4.style.display = "block");
+            $.ajax({
+                url: '@Url.Action("ItemDetails", "Item")/' + id,
+                type: 'GET',
+                complete: function (e) {
+                    $("#detailModal").fadeIn(300).modal('toggle');
+                    modal4.style.display = "block";
+                },
+                success: function (response) {
+                    $('#detailBod').html(response);
+                }
             });
-        }
+
+            }
 
         //
         //
         
+        
+        $('body').click(function (event) {
+            if (!$(event.target).closest('#myModal').length && !$(event.target).is('#myModal')) {
+                modal2.style.display = "none";
+                document.getElementById('pageId').classList.remove('overlay');
+            }
+            else {
+                $("#myModal").fadeIn(300).modal('toggle');
+                modal2.style.display = "block";
+                document.getElementById('pageId').classList.add('overlay');
+            }
+        });
 
-    $('body').click(function (event) {
-        if (!$(event.target).closest('#myModal').length && !$(event.target).is('#myModal')) {
-            modal2.style.display = "none";
-            document.getElementById('pageId').classList.remove('overlay');
-        }
-        else {
-            $("#myModal").fadeIn(300).modal('toggle');
-            modal2.style.display = "block";
-            document.getElementById('pageId').classList.add('overlay');
-        }
-    });
+        $('body').click(function (event) {
+            if (!$(event.target).closest('#myModal2').length && !$(event.target).is('#myModal2')) {
+                modal3.style.display = "none";
+                $("#myModal2").modal('hide');
+            }
+        });
 
-    $('body').click(function (event) {
-        if (!$(event.target).closest('#myModal2').length && !$(event.target).is('#myModal2')) {
-            modal3.style.display = "none";
-            $("#myModal2").modal('hide');
-        }
-    });
+        $('body').click(function (event) {
+            if (!$(event.target).closest('#detailModal').length && !$(event.target).is('#detailModal')) {
+                modal4.style.display = "none";
+                $("#detailModal").modal('hide');
+            }
+        });
+
+
         //
         //
 

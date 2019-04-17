@@ -1,7 +1,7 @@
 ﻿@model PennState.ViewModels.AddItemViewModel
 <link href="~/Content/chosen.css" rel="stylesheet" />
 <div id="divCreate">
-    @using (Ajax.BeginForm("AddItem", "Item", FormMethod.Post, new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divCreate", OnSuccess="closeAdd()" }, new { @id = "createForm", enctype = "multipart/form-data", @onsubmit = "return validateAddForm()" }))
+    @using (Html.BeginForm("AddItem", "Item", FormMethod.Post, new { @id = "createForm", enctype = "multipart/form-data", @onsubmit = "return validateAddForm()" }))
     {
         @Html.AntiForgeryToken()
 
@@ -102,7 +102,7 @@
 
 <script src="~/Scripts/jquery.validate.js"></script>
 <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
-<script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
+@*<script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>*@
 <script>
 
     function stopRKey(evt) {

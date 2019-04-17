@@ -271,8 +271,6 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Images\Uploads\SubLocations\2\Thumbs\ExcelFile Story1.PNG" />
-    <Content Include="Images\Uploads\SubLocations\2\Thumbs\timeline2.PNG" />
     <Content Include="Item\Cubbyhole1.jpg" />
     <Content Include="Models\PennStateDB.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -355,13 +353,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Database\" />
-    <Folder Include="Images\Uploads\SubLocations\1\Gallery\Thumbs\" />
-    <Folder Include="Images\Uploads\SubLocations\1\Thumbs\" />
-    <Folder Include="Images\Uploads\SubLocations\2\Gallery\Thumbs\" />
-    <Folder Include="Images\Uploads\SubLocations\3\Gallery\Thumbs\" />
-    <Folder Include="Images\Uploads\SubLocations\3\Thumbs\" />
-    <Folder Include="Images\Uploads\SubLocations\4\Gallery\Thumbs\" />
-    <Folder Include="Images\Uploads\SubLocations\4\Thumbs\" />
+    <Folder Include="Images\Uploads\SubLocations\" />
     <Folder Include="Scripts\Uploadify\" />
   </ItemGroup>
   <ItemGroup>

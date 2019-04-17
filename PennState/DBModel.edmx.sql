@@ -199,7 +199,8 @@ GO
 CREATE TABLE [dbo].[Tbl_Photo] (
     [Id] int IDENTITY(1,1) NOT NULL,
     [PhotoName] varchar(50)  NULL,
-    [DataStream] varbinary(max)  NULL
+    [DataStream] varbinary(max)  NULL,
+	[SubId] int NULL,
 );
 GO
 

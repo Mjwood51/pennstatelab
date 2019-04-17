@@ -23,6 +23,7 @@ namespace PennState.Models
         public int Id { get; set; }
         public string PhotoName { get; set; }
         public byte[] DataStream { get; set; }
+        public Nullable<int> SubId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Tbl_Items> Tbl_Items { get; set; }
