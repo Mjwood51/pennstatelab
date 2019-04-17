@@ -56,6 +56,8 @@ namespace PennState.Models
         [DisplayName("Contact Information")]
         public string ContactInfo { get; set; }
 
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [DisplayName("Purchase Date")]
         public DateTime? PurchaseDate { get; set; }
 

@@ -1670,7 +1670,8 @@ pre code {
 .table {
     margin-bottom: 1rem;
     color: #373a3c;
-    
+    height: 100%;
+    bottom: 0px;
 }
 
 tr:after {
@@ -1684,6 +1685,7 @@ tr:after {
     padding: 0.75rem;
     vertical-align: top;
     border-top: 1px solid #dee2e6;
+    width: 180px;
 }
 
 .table thead th {
@@ -1693,13 +1695,13 @@ tr:after {
 
 .table tbody + tbody {
     border-top: 2px solid #dee2e6;
-    
 }
 
 tbody {
-    overflow-y: auto;
-
+    height: 100%;
+    top: 100px;
 }
+
 .table-sm th,
 .table-sm td {
   padding: 0.3rem;
@@ -1727,18 +1729,22 @@ tbody {
 }
 
 .table-striped tbody tr:nth-of-type(odd) {
-  background-color: rgba(0, 0, 0, 0.05);
+    background-color: rgba(0, 0, 0, 0.05);
+    height: 100%;
 }
 
 .table-hover tbody tr:hover {
   color: #373a3c;
   background-color: rgba(0, 0, 0, 0.075);
+  height: 100%;
 }
 
 .table-primary,
 .table-primary > th,
 .table-primary > td {
   background-color: #c3dbf7;
+  width: 180px;
+  bottom: 0px;
 }
 
 .table-primary th,

@@ -44,7 +44,7 @@
         <div class="form-group" style="padding-bottom:10px">
             @Html.LabelFor(model => model.Item.PurchaseDate, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10 padLeft">
-                @Html.EditorFor(model => model.Item.PurchaseDate, new { htmlAttributes = new { @id = "datepicker2", @class = "form-control text-left", @autocomplete = "off" } })
+                @Html.EditorFor(model => model.Item.PurchaseDate, new { htmlAttributes = new { @class = "form-control text-left", @style = "padding-bottom:40px;padding-top:0px", @autocomplete = "off" } })
                 @Html.ValidationMessageFor(model => model.Item.PurchaseDate, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -290,10 +290,6 @@
             });
         });
     }
-
-    $(function () {
-        $("#datepicker2").datepicker({ maxDate: '0' });
-    });
 
     $(document).ready(function () {
         $("#autoType2").click("input", function comboType2() {

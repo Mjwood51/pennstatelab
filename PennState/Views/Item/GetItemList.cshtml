@@ -19,29 +19,29 @@
     <div class="page" id="pageId">
         <div class="page-init">
             <div id="listBoxId" class="listBox">
-                <div id="theTable">
+                <div id="theTable" style="height:100%">
                     <table id="myTable" class="table table-hover table-striped header-fixed">
                         <thead>
                             <tr>
-                                <th>
+                                <th scope="col">
                                     Name
                                 </th>
-                                <th>
+                                <th scope="col">
                                     Vendor
                                 </th>
-                                <th>
+                                <th scope="col">
                                     Amount
                                 </th>
-                                <th>
+                                <th scope="col">
                                     Location
                                 </th>
-                                <th>
+                                <th scope="col">
                                     Type
                                 </th>
-                                <th>Owner</th>
-                                <th>Added</th>
-                                <th>Updated</th>
-                                <th>       </th>
+                                <th scope="col">Owner</th>
+                                <th scope="col">Added</th>
+                                <th scope="col">Updated</th>
+                                <th scope="col">       </th>
                             </tr>
                         </thead>
                         <tbody id="myTableBody">
@@ -75,7 +75,7 @@
                                     {
                                         <td>        _ </td>
                                     }
-                                    <td>
+                                    <td align="center">
                                         <a href="#" onclick="itemDetails(@item.Id)" data-toggle="modal"><i class="glyphicon glyphicon-eye-open"></i></a> |
                                         <a href="#" onclick="editItem(@item.Id);" data-toggle="modal"><i class="glyphicon glyphicon-edit"></i></a> |
                                         <a href="#" onclick="confirmDelete(@item.Id)"><i class="glyphicon glyphicon-trash"></i></a>

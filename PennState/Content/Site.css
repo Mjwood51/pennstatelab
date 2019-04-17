@@ -252,10 +252,18 @@ p.thick {
     top: 62px;
     left:280px;
     background: #FFFFFF;
+    height:100%
 }
 
+table tbody, table thead {
+    display: block;
+    width: 1637px;
+}
 
-
+table tbody {
+    overflow: auto;
+    height: 950px;
+}
 
 
 .modal-content {
