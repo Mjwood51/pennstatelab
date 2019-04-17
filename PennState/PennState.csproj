@@ -355,6 +355,7 @@
     <Folder Include="Database\" />
     <Folder Include="Images\Uploads\SubLocations\" />
     <Folder Include="Scripts\Uploadify\" />
+    <Folder Include="Test\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
