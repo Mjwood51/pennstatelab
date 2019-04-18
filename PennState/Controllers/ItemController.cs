@@ -1500,6 +1500,10 @@ namespace PennState.Controllers
                 var requests = Mapper.Map<IEnumerable<Requests>>(_context.Tbl_Requests.ToList());
                 model.Requests = requests;
             }
+            else
+            {
+                TempData["SM"] = "There are no pending requests.";
+            }
             return View(model);
         }
 
