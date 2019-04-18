@@ -24,25 +24,25 @@
                 <table id="myTable" class="table tablesorter table-hover table-striped header-fixed ">
                     <thead>
                         <tr>
-                            <th scope="col">
+                            <th scope="col" style="font-size:14px">
                                 Name
                             </th>
-                            <th scope="col">
+                            <th scope="col" style="font-size:14px">
                                 Vendor
                             </th>
-                            <th scope="col">
+                            <th scope="col" style="font-size:14px">
                                 Amount
                             </th>
-                            <th scope="col">
+                            <th scope="col" style="font-size:14px">
                                 Location
                             </th>
-                            <th scope="col">
+                            <th scope="col" style="font-size:14px">
                                 Type
                             </th>
-                            <th scope="col">Owner</th>
-                            <th scope="col">Added</th>
-                            <th scope="col">Updated</th>
-                            <th scope="col">       </th>
+                            <th scope="col" style="font-size:14px">Owner</th>
+                            <th scope="col" style="font-size:14px">Added</th>
+                            <th scope="col" style="font-size:14px">Updated</th>
+                            <th scope="col" style="font-size:14px">       </th>
                         </tr>
                     </thead>
                     <tbody id="myTableBody">
@@ -50,39 +50,39 @@
                         {
                             <tr class="table-primary" scope="row" id="row_@item.Id" data-toggle="modal">
                                 <td>
-                                    <a class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.ItemName</a>
+                                    <a style="font-size:14px" class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.ItemName</a>
                                 </td>
                                 <td>
-                                    <a class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.Vendor</a>
+                                    <a style="font-size:14px" class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.Vendor</a>
                                 </td>
                                 <td>
-                                    <a class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.AmountInStock</a>
+                                    <a style="font-size:14px" class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.AmountInStock</a>
                                 </td>
                                 <td>
-                                    <a class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.Location.LocationName</a><br>
-                                    <a class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.SubLocation.SubLocationName</a><br>
+                                    <a style="font-size:14px" class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.Location.LocationName</a><br>
+                                    <a style="font-size:14px" class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.SubLocation.SubLocationName</a><br>
                                     @item.LocationComments<br>
                                 </td>
                                 <td>
-                                    <a class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.ItemType</a>
+                                    <a style="font-size:14px" class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.ItemType</a>
                                 </td>
-                                <td><a class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.User.FirstName @item.User.LastName</a></td>
-                                <td><a class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.Added.ToShortDateString()</a></td>
+                                <td><a style="font-size:14px" class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.User.FirstName @item.User.LastName</a></td>
+                                <td><a style="font-size:14px" class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.Added.ToShortDateString()</a></td>
                                 @if (item.Updated != null)
                                 {
-                                    <td><a class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.Updated.ToShortDateString()</a></td>
+                                    <td><a style="font-size:14px" class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.Updated.ToShortDateString()</a></td>
                                 }
                                 else
                                 {
                                     <td>        _ </td>
                                 }
                                 <td align="center">
-                                    <a href="#" onclick="itemDetails(@item.Id)" data-toggle="modal"><i class="glyphicon glyphicon-eye-open"></i></a> |
-                                    <a href="#" onclick="editItem(@item.Id);" data-toggle="modal"><i class="glyphicon glyphicon-edit"></i></a> |
-                                    <a href="#" onclick="confirmDelete(@item.Id)"><i class="glyphicon glyphicon-trash"></i></a>
+                                    <a style="font-size:14px" href="#" onclick="itemDetails(@item.Id)" data-toggle="modal"><i class="glyphicon glyphicon-eye-open"></i></a> |
+                                    <a style="font-size:14px" href="#" onclick="editItem(@item.Id);" data-toggle="modal"><i class="glyphicon glyphicon-edit"></i></a> |
+                                    <a style="font-size:14px" href="#" onclick="confirmDelete(@item.Id)"><i class="glyphicon glyphicon-trash"></i></a>
                                     <br />
                                     <br />
-                                    @Html.ActionLink("Request", "FlagItem", new { id = item.Id }, new { @style = "margin-left:10px" })
+                                    @Html.ActionLink("Request", "FlagItem", new { id = item.Id }, new { @style = "margin-left:10px;font-size:14px" })
                                     <form id="itemId" hidden="hidden">
                                         @item.Id
                                     </form>
