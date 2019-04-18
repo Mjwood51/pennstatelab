@@ -73,12 +73,18 @@ namespace PennState.Controllers
         [HttpGet]
         public ActionResult Search(string query)
         {
+            if(query == null)
+            {
+                var items = PopulateList();
+                return View("GetItemList", items);
+            }
             var text = string.Format("%{0}%", query);
             var lower = query.ToLower();
-            var something = _context.Tbl_Items.Where(x => DbFunctions.Like(x.ItemName, text)).ToList();
+            var something = _context.Tbl_Items.Where(x => DbFunctions.Like(x.ItemType, text)).ToList();
+            
             if (something.Count == 0)
             {
-                something = _context.Tbl_Items.Where(x => DbFunctions.Like(x.ItemType, text)).ToList();
+                something = _context.Tbl_Items.Where(x => DbFunctions.Like(x.ItemName, text)).ToList();
             }
             if (something.Count == 0)
             {
