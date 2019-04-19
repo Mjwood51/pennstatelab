@@ -169,8 +169,7 @@ namespace PennState.Controllers
             return Json(check, JsonRequestBehavior.AllowGet);
         }
 
-        [CustomAuthorize(Roles = "Admin")]
-        [CustomAuthorize(Roles = "User")]
+        [CustomAuthorize(Roles = "Admin, User")]
         [HttpPost]
         public ActionResult Edit(EditItemViewModel model)
         {
@@ -1436,21 +1435,34 @@ namespace PennState.Controllers
 
         public ActionResult Export()
         {
+            
             //string conString = "your connection string";
             StringBuilder query = new StringBuilder();
             query.Append("SELECT * ");
             query.Append("FROM [dbo].[Tbl_Items] ");
             query.Append("ORDER BY ItemType ");
-              
-
+            string cstr = ConfigurationManager.ConnectionStrings["PennStateDB"].ToString();
+            if (cstr.ToLower().StartsWith("metadata="))
+            {
+                System.Data.Entity.Core.EntityClient.EntityConnectionStringBuilder efBuilder = new System.Data.Entity.Core.EntityClient.EntityConnectionStringBuilder(cstr);
+                cstr = efBuilder.ProviderConnectionString;
+            }
             SQL.DataTable dtItems = new SQL.DataTable();
-            DbConnection();
-            con.Open();
-            using (SqlDataAdapter da = new SqlDataAdapter(query.ToString(), con))
+            using (SqlConnection conn = new SqlConnection(cstr))
+            {
+                if (conn.State == ConnectionState.Closed)
                 {
-                    da.Fill(dtItems);
+                    conn.Open();
+                    
+                    using (SqlDataAdapter da = new SqlDataAdapter(query.ToString(), conn))
+                    {
+                        da.Fill(dtItems);
+                    }
+                    conn.Close();
                 }
-            con.Close();
+            }
+
+        
             dtItems.Columns["Id"].SetOrdinal(1);
             dtItems.Columns["IsDeleted"].SetOrdinal(2);
             dtItems.Columns["ItemName"].SetOrdinal(3);
@@ -1465,6 +1477,7 @@ namespace PennState.Controllers
             dtItems.Columns["Manufacturer"].SetOrdinal(12);
             dtItems.Columns["WebAddress"].SetOrdinal(14);
             dtItems.Columns["ItemNotes"].SetOrdinal(15);
+
             Excel.Application oXL = new Excel.Application();
             Excel._Workbook oWB;
             Excel._Worksheet oSheet;
@@ -1483,11 +1496,11 @@ namespace PennState.Controllers
                     foreach (SQL.DataColumn dc in dtItems.Columns)
                         colNames[col++] = dc.ColumnName;
 
-                    char lastColumn = (char)(65 + dtItems.Columns.Count - 1);
+                    //char lastColumn = (char)(60 + dtItems.Columns.Count - 1);
 
-                    oSheet.get_Range("A1", lastColumn + "1").Value = colNames;
-                    oSheet.get_Range("A1", lastColumn + "1").Font.Bold = true;
-                    oSheet.get_Range("A1", lastColumn + "1").VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+                    oSheet.get_Range("A1", "AA1").Value = colNames;
+                    oSheet.get_Range("A1", "AA1").Font.Bold = true;
+                    oSheet.get_Range("A1", "AA1").VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
 
                     SQL.DataRow[] dr = dtItems.Select(string.Format("ItemType='{0}'",catagory[0].ToString()));
 
@@ -1527,7 +1540,7 @@ namespace PennState.Controllers
                         redRows++;
                         rowCnt++;
                     }
-                    oSheet.get_Range("A2", lastColumn + rowCnt.ToString()).Value2 = rowData;
+                    oSheet.get_Range("A2", "AA1" + rowCnt.ToString()).Value2 = rowData;
 
                 }
                 oXL.Worksheets[oXL.Sheets.Count].Delete();
