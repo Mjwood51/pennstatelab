@@ -82,6 +82,9 @@
           <Property Name="LocId" Type="int" />
           <Property Name="SubId" Type="int" />
           <Property Name="Flagged" Type="nvarchar" MaxLength="150" />
+          <Property Name="MarkedDeleted" Type="bit" Nullable="false" />
+          <Property Name="CheckedOut" Type="bit" Nullable="false" />
+          <Property Name="CheckedOutById" Type="int" />
         </EntityType>
         <EntityType Name="Tbl_Locations">
           <Key>
@@ -494,6 +497,9 @@
           <NavigationProperty Name="Tbl_Photo" Relationship="Self.Tbl_PhotoItems" FromRole="Tbl_Items" ToRole="Tbl_Photo" />
           <Property Name="Flagged" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Tbl_Requests" Relationship="PennStateNewDB.FK_dbo_Tbl_Requests_dbo_Tbl_Items_ItemId" FromRole="Tbl_Items" ToRole="Tbl_Requests" />
+          <Property Name="MarkedDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="CheckedOut" Type="Boolean" Nullable="false" />
+          <Property Name="CheckedOutById" Type="Int32" />
         </EntityType>
         <EntityType Name="Tbl_Locations">
           <Key>
@@ -829,6 +835,9 @@
           <EntitySetMapping Name="Tbl_Items">
             <EntityTypeMapping TypeName="PennStateNewDB.Tbl_Items">
               <MappingFragment StoreEntitySet="Tbl_Items">
+                <ScalarProperty Name="CheckedOutById" ColumnName="CheckedOutById" />
+                <ScalarProperty Name="CheckedOut" ColumnName="CheckedOut" />
+                <ScalarProperty Name="MarkedDeleted" ColumnName="MarkedDeleted" />
                 <ScalarProperty Name="Flagged" ColumnName="Flagged" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="ItemName" ColumnName="ItemName" />

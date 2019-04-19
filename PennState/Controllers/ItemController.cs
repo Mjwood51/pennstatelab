@@ -138,14 +138,39 @@ namespace PennState.Controllers
         [HttpGet]
         public ActionResult ItemDetails(int cid)
         {
+            
             var model = new ItemDetailsModel();
             using (PennStateDB db = new PennStateDB())
             {
+                
                 model.Item = Mapper.Map<Tbl_Items, Item>(db.Tbl_Items.Where(x => x.Id == cid).Include(i => i.Tbl_Photo).Include(i => i.Tbl_File).FirstOrDefault());
+                if(model.Item.CheckedOutById != null)
+                {
+                    model.User = Mapper.Map<Tbl_Users, User>(db.Tbl_Users.Where(x => x.Id == model.Item.CheckedOutById).FirstOrDefault());
+                }
             }
             return PartialView("ItemDetails", model);
         }
 
+        [HttpPost]
+        public JsonResult MarkDelete(int id, bool check)
+        {
+            using (PennStateDB db = new PennStateDB())
+            {
+                Tbl_Items item = db.Tbl_Items.Find(id);
+                if(item.MarkedDeleted == false)
+                {
+                    item.MarkedDeleted = true;
+                    check = true;
+                    db.SaveChanges();
+                }
+            }
+                
+            return Json(check, JsonRequestBehavior.AllowGet);
+        }
+
+        [CustomAuthorize(Roles = "Admin")]
+        [CustomAuthorize(Roles = "User")]
         [HttpPost]
         public ActionResult Edit(EditItemViewModel model)
         {
@@ -413,7 +438,7 @@ namespace PennState.Controllers
             return RedirectToAction("GetAllItems", "Item");
         }
 
-
+        [CustomAuthorize(Roles = "Admin")]
         [HttpGet]
         public ActionResult AddItem()
         {
@@ -704,6 +729,7 @@ namespace PennState.Controllers
             return (Image)(new Bitmap(imgToResize, size));
         }
 
+        [CustomAuthorize(Roles = "Admin")]
         [HttpPost]
         public JsonResult DeleteItem(int id)
         {
@@ -719,6 +745,44 @@ namespace PennState.Controllers
                 }
             }
             return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+        [CustomAuthorize(Roles = "Admin")]
+        [HttpPost]
+        public JsonResult CheckItem(int id, bool check)
+        {
+            using (PennStateDB db = new PennStateDB())
+            {
+                var uid = db.Tbl_Users.Where(x => x.UserName == User.Identity.Name).FirstOrDefault();
+                var checkId = db.Tbl_Items.Where(x => x.CheckedOutById == uid.Id && x.Id == id).FirstOrDefault();
+                Tbl_Items item = db.Tbl_Items.SingleOrDefault(x => x.Id == id && x.CheckedOut == false);
+                if(item != null)
+                {
+                    item.CheckedOut = true;
+                    item.CheckedOutById = uid.Id;
+                    db.SaveChanges();
+                    check = true;
+                    return Json(check, JsonRequestBehavior.AllowGet);
+                }
+                else if(checkId != null)
+                {
+                    checkId.CheckedOut = false;
+                    checkId.CheckedOutById = null;
+                    db.SaveChanges();
+                    return Json("null", JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(check, JsonRequestBehavior.AllowGet);
+                }
+            }
+                
+            
+        }
+
+        public ActionResult MarkForDeletion(int id)
+        {
+            return View();
         }
 
         public ActionResult GetAllItems()

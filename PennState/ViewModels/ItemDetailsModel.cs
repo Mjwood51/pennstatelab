@@ -8,6 +8,7 @@ namespace PennState.ViewModels
 {
     public class ItemDetailsModel
     {
+        public User User { get; set; } 
         public Item Item { get; set; }
     }
 }

@@ -88,6 +88,12 @@ namespace PennState.Models
 
         public bool IsDeleted { get; set; }
 
+        public bool MarkedDeleted { get; set; }
+
+        public bool CheckedOut { get; set; }
+
+        public int? CheckedOutById { get; set; }
+
 
         public virtual ICollection<Photos> Photos { get; set; }
         public virtual ICollection<Files> Files { get; set; }

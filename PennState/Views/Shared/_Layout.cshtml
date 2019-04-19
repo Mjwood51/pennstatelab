@@ -90,6 +90,21 @@
         }
     });
 
+    $.notify.addStyle('dangerred', {
+        html: "<div>☺<span data-notify-text/>☺</div>",
+        classes: {
+            base: {
+                "white-space": "nowrap",
+                "background-color": "red",
+                "padding": "5px"
+            },
+            superred: {
+                "color": "white",
+                "background-color": "red"
+            }
+        }
+    });
+
     function validateAddForm() {
         if (!$("#createForm").valid()) {
             return false;
@@ -134,11 +149,61 @@
         //
         //
 
-        
-        //Set Mouse Inside and Outside From Modals
+        //read CheckOut Checkbox
         //
+        function checkOut(event, id) {
+        var check = false;         
+            $.ajax({
+                url: '@Url.Action("CheckItem", "Item")/' + id + '/' + check,
+                type: 'POST',
+                success: function (data) {
+                    debugger
+                    if (data == true) {
+                        event.checked = true;
+                        $.notify("You haved checked out this item.", {
+                            style: 'happygreen'
+                        });
+                    }
+                    else if (data == "null") {
+                        event.checked = false;
+                        $.notify("You haved returned this item.", {
+                            style: 'happygreen'
+                        });
+                    }
+                    else {
+                        event.checked = true;
+                        $.notify("This Item Is Already Checked Out By Someone Else. Please see item details.", {
+                            style: 'dangerred'
+                        });
+                    }                    
+                }
+            });
+        }
+
+        //Mark Item to be deleted
         //
-        //
+            function markDelete(event, id) {
+                var check = false;
+                $.ajax({
+                    url: '@Url.Action("MarkDelete", "Item")/' + id + '/' + check,
+                    type: 'POST',
+                    success: function (data) {
+                        debugger
+                        if (data == true) {
+                            event.checked = true;
+                            $.notify("You have marked this item for deletion.", {
+                                style: 'happygreen'
+                            });
+                        }
+                        else {
+                            event.checked = false;
+                            $.notify("You have unmarked this item for deletion.", {
+                                style: 'happygreen'
+                            });
+                        }
+                    }
+                });
+            }
 
         //Edit modal open and close
         //
@@ -273,12 +338,12 @@
 
 
         $('.dropdown-toggle').on("hover", function (e) {
-                e.stopPropagation();
+            e.stopPropagation();
             e.preventDefault();
             $(this).next('.dropdown-menu').toggle().fadeOut(9000);
 
 
-    });
+        });
 
 
 

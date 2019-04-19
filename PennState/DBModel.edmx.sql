@@ -171,7 +171,10 @@ CREATE TABLE [dbo].[Tbl_Items] (
     [UsrId] int  NULL,
     [LocId] int  NULL,
     [SubId] int  NULL,
-	[Flagged] nvarchar(150) NULL
+	[Flagged] nvarchar(150) NULL,
+	[CheckedOut] BIT NOT NULL DEFAULT ((0)),
+	[MarkedDeleted] BIT NOT NULL DEFAULT ((0)),
+	[CheckedOutById] INT NULL
 );
 GO
 
@@ -563,6 +566,17 @@ GO
 INSERT INTO [dbo].[Tbl_Roles] (RoleName)
 VALUES('Observer');
 GO
+
+CREATE Procedure [dbo].[GetFileDetails]  
+(  
+@Id int=null  
+)  
+as  
+begin  
+select Id, ItemFileName, DataStream from Tbl_File  
+where Id=isnull(@Id,Id)  
+End 
+
 
 -- --------------------------------------------------
 -- Script has ended

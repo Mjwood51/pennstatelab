@@ -144,16 +144,24 @@
                 @Html.DisplayFor(model => model.Item.ItemNotes)
             </dd>
         }
-        @{ if (Model.Item.UpdatedBy != null && Model.Item.UpdatedBy != "")
-            {
-                <dt>
-                    @Html.DisplayNameFor(model => model.Item.UpdatedBy)
-                </dt>
+        @if (Model.Item.UpdatedBy != null && Model.Item.UpdatedBy != "")
+        {
+            <dt>
+                @Html.DisplayNameFor(model => model.Item.UpdatedBy)
+            </dt>
 
-                <dd>
-                    @Html.DisplayFor(model => model.Item.UpdatedBy)
-                </dd>
-            }
+            <dd>
+                @Html.DisplayFor(model => model.Item.UpdatedBy)
+            </dd>
+        }
+        @if (Model.User != null)
+        {
+            <dt>
+                Checked Out By
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.User.FirstName) @Html.DisplayFor(model => model.User.LastName)
+            </dd>
         }
     </dl>
     @{

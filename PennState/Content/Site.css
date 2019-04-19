@@ -25,6 +25,20 @@
         display: inline-block;
     }
 
+input[type=checkbox] {
+    /* Double-sized Checkboxes */
+    -ms-transform: scale(1.25); /* IE */
+    -moz-transform: scale(1.25); /* FF */
+    -webkit-transform: scale(1.25); /* Safari and Chrome */
+    -o-transform: scale(1.25); /* Opera */
+}
+
+.checkboxtext {
+    /* Checkbox text */
+    font-size: 110%;
+    display: inline;
+    padding-left: 10px;
+}
 
 .labelClass {
     font-weight:100;

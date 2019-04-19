@@ -43,6 +43,9 @@ namespace PennState.Models
         public Nullable<int> LocId { get; set; }
         public Nullable<int> SubId { get; set; }
         public string Flagged { get; set; }
+        public bool MarkedDeleted { get; set; }
+        public bool CheckedOut { get; set; }
+        public Nullable<int> CheckedOutById { get; set; }
     
         public virtual Tbl_Locations Tbl_Locations { get; set; }
         public virtual Tbl_SubLocations Tbl_SubLocations { get; set; }

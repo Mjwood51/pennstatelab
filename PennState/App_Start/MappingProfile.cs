@@ -163,7 +163,10 @@ namespace PennState.App_Start
                 .ForMember(u => u.Tbl_Users, property => property.MapFrom(i => i.User))
                 .ForMember(u => u.UsrId, property => property.MapFrom(i => i.UsrId))
                 .ForMember(u => u.Vendor, property => property.MapFrom(i => i.Vendor))
-                .ForMember(u => u.WebAddress, property => property.MapFrom(i => i.WebAddress));
+                .ForMember(u => u.WebAddress, property => property.MapFrom(i => i.WebAddress))
+                .ForMember(u => u.MarkedDeleted, property => property.MapFrom(i => i.MarkedDeleted))
+                .ForMember(u => u.CheckedOut, property => property.MapFrom(i => i.CheckedOut))
+                .ForMember(u => u.CheckedOutById, property => property.MapFrom(i => i.CheckedOutById));
 
             Mapper.CreateMap<Tbl_Items, Item>()
                 .ForMember(u => u.Id, property => property.MapFrom(i => i.Id))
@@ -191,7 +194,10 @@ namespace PennState.App_Start
                 .ForMember(u => u.User, property => property.MapFrom(i => i.Tbl_Users))
                 .ForMember(u => u.UsrId, property => property.MapFrom(i => i.UsrId))
                 .ForMember(u => u.Vendor, property => property.MapFrom(i => i.Vendor))
-                .ForMember(u => u.WebAddress, property => property.MapFrom(i => i.WebAddress));
+                .ForMember(u => u.WebAddress, property => property.MapFrom(i => i.WebAddress))
+                .ForMember(u => u.MarkedDeleted, property => property.MapFrom(i => i.MarkedDeleted))
+                .ForMember(u => u.CheckedOut, property => property.MapFrom(i => i.CheckedOut))
+                .ForMember(u => u.CheckedOutById, property => property.MapFrom(i => i.CheckedOutById));
 
             Mapper.CreateMap<Location, Tbl_Locations>()
                 .ForMember(u => u.Id, property => property.MapFrom(i => i.Id))

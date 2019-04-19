@@ -14,7 +14,17 @@ namespace PennState
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
+                "MarkDelete",
+                "item/markdelete/{id}/{check}",
+                new { controller = "Item", action = "MarkDelete" });
+
+            routes.MapRoute(
                 "Search",
+                "item/checkitem/{id}/{check}",
+                new { controller = "Item", action = "CheckItem" });
+
+            routes.MapRoute(
+                "CheckItem",
                 "item/search/{query}",
                 new { controller = "Item", action = "Search" });
 
