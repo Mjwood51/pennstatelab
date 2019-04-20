@@ -1477,6 +1477,8 @@ namespace PennState.Controllers
             }
         }
 
+        //Export Database to an Excel file
+        //
         public ActionResult Export()
         {
             
@@ -1617,6 +1619,8 @@ namespace PennState.Controllers
 
         }
 
+        //Method to get all requests which returns to the 'GetRequests' view page
+        //
         [HttpGet]
         public ActionResult GetRequests()
         {
@@ -1633,6 +1637,7 @@ namespace PennState.Controllers
             return View(model);
         }
 
+        //Flag
         [HttpGet]
         public ActionResult FlagItem(int? id)
         {

@@ -178,6 +178,19 @@ CREATE TABLE [dbo].[Tbl_Items] (
 );
 GO
 
+CREATE TABLE [dbo].[Tbl_CheckedOut]
+(
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY,
+	[ItemName] varchar(50) NULL,
+	[FirstName] varchar(25) NULL,
+	[LastName] varchar(30) NULL,
+	[UserId] int NULL,
+	[ItemId] int NULL,
+	[CheckOutDate] datetime NULL,
+	[CheckInDate] datetime NULL,
+);
+GO
+
 CREATE TABLE [dbo].[Tbl_Requests] (
 	[Id] int IDENTITY(1, 1) NOT NULL,
 	[ItemName] nvarchar(50) NULL,
@@ -589,17 +602,7 @@ select Id, ItemFileName, DataStream from Tbl_File
 where Id=isnull(@Id,Id)  
 End 
 
-CREATE TABLE [dbo].[Tbl_CheckedOut]
-(
-	[Id] INT NOT NULL PRIMARY KEY IDENTITY,
-	[ItemName] varchar(50) NULL,
-	[FirstName] varchar(25) NULL,
-	[LastName] varchar(30) NULL,
-	[UserId] int NULL,
-	[ItemId] int NULL,
-	[CheckOutDate] datetime NULL,
-	[CheckInDate] datetime NULL,
-);
+
 
 
 -- --------------------------------------------------
