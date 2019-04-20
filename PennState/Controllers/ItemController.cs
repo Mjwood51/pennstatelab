@@ -70,6 +70,26 @@ namespace PennState.Controllers
             base.Dispose(disposing);
         }
 
+        public ActionResult Scheduler()
+        {
+            using (PennStateDB db = new PennStateDB())
+            {
+                var model = Mapper.Map<IEnumerable<CheckedOut>>(db.Tbl_CheckedOut.Take(100));
+                return View(model);
+            }                
+        }
+
+        public JsonResult DeleteRequest(int id)
+        {
+            using (PennStateDB db = new PennStateDB())
+            {
+                Tbl_Requests request = db.Tbl_Requests.Find(id);
+                db.Tbl_Requests.Remove(request);
+                db.SaveChanges();
+                return Json(true, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         [HttpGet]
         public ActionResult Search(string query)
         {
@@ -118,6 +138,7 @@ namespace PennState.Controllers
             return View("GetItemList", model);
         }
 
+        [CustomAuthorize(Roles = "Admin,User")]
         [HttpGet]
         public ActionResult Edit(int cid)
         {
@@ -152,6 +173,7 @@ namespace PennState.Controllers
             return PartialView("ItemDetails", model);
         }
 
+        [CustomAuthorize(Roles = "Admin,User")]
         [HttpPost]
         public JsonResult MarkDelete(int id, bool check)
         {
@@ -163,13 +185,21 @@ namespace PennState.Controllers
                     item.MarkedDeleted = true;
                     check = true;
                     db.SaveChanges();
+                    return Json(check, JsonRequestBehavior.AllowGet);
                 }
+                else
+                {
+                    item.MarkedDeleted = false;
+                    db.SaveChanges();
+                    return Json("null", JsonRequestBehavior.AllowGet);
+                }
+
             }
                 
-            return Json(check, JsonRequestBehavior.AllowGet);
+            
         }
 
-        [CustomAuthorize(Roles = "Admin, User")]
+        [CustomAuthorize(Roles = "Admin,User")]
         [HttpPost]
         public ActionResult Edit(EditItemViewModel model)
         {
@@ -452,6 +482,7 @@ namespace PennState.Controllers
             return PartialView(model);
         }
 
+        [CustomAuthorize(Roles = "Admin")]
         [HttpPost]
         public ActionResult AddItem(AddItemViewModel model)
         {
@@ -746,7 +777,6 @@ namespace PennState.Controllers
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
-        [CustomAuthorize(Roles = "Admin")]
         [HttpPost]
         public JsonResult CheckItem(int id, bool check)
         {
@@ -759,6 +789,14 @@ namespace PennState.Controllers
                 {
                     item.CheckedOut = true;
                     item.CheckedOutById = uid.Id;
+                    var checkout = new Tbl_CheckedOut();
+                    checkout.CheckOutDate = DateTime.Now;
+                    checkout.FirstName = uid.FirstName;
+                    checkout.LastName = uid.LastName;
+                    checkout.ItemId = id;
+                    checkout.ItemName = item.ItemName;
+                    checkout.UserId = uid.Id;
+                    db.Tbl_CheckedOut.Add(checkout);
                     db.SaveChanges();
                     check = true;
                     return Json(check, JsonRequestBehavior.AllowGet);
@@ -766,6 +804,8 @@ namespace PennState.Controllers
                 else if(checkId != null)
                 {
                     checkId.CheckedOut = false;
+                    Tbl_CheckedOut checkout = db.Tbl_CheckedOut.Where(x => x.ItemId == id).FirstOrDefault();
+                    checkout.CheckInDate = DateTime.Now;
                     checkId.CheckedOutById = null;
                     db.SaveChanges();
                     return Json("null", JsonRequestBehavior.AllowGet);
@@ -779,10 +819,11 @@ namespace PennState.Controllers
             
         }
 
-        public ActionResult MarkForDeletion(int id)
-        {
-            return View();
-        }
+        //[CustomAuthorize(Roles = "Admin,User")]
+        //public ActionResult MarkForDeletion(int id)
+        //{
+        //    return View();
+        //}
 
         public ActionResult GetAllItems()
         {
@@ -998,6 +1039,7 @@ namespace PennState.Controllers
             return File(FileById.DataStream, "application/pdf", FileById.ItemFileName);
         }
 
+        [CustomAuthorize(Roles = "Admin")]
         [HttpPost]
         public JsonResult DeleteFile(int id, int itemId)
         {
@@ -1026,6 +1068,7 @@ namespace PennState.Controllers
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
+        [CustomAuthorize(Roles = "Admin")]
         [HttpPost]
         public JsonResult DeletePhoto(int photoId, int itemId, int subId, string name)
         {
@@ -1363,6 +1406,7 @@ namespace PennState.Controllers
             return items;
         }
 
+        [CustomAuthorize(Roles = "Admin")]
         [HttpPost]
         public ActionResult Import(FormCollection formCollection)
         {
@@ -1477,7 +1521,11 @@ namespace PennState.Controllers
             dtItems.Columns["Manufacturer"].SetOrdinal(12);
             dtItems.Columns["WebAddress"].SetOrdinal(14);
             dtItems.Columns["ItemNotes"].SetOrdinal(15);
-
+            dtItems.Columns.RemoveAt(26);
+            dtItems.Columns.RemoveAt(25);
+            dtItems.Columns.RemoveAt(24);
+            dtItems.Columns.RemoveAt(23);
+            dtItems.DefaultView.Sort = "ItemType desc";
             Excel.Application oXL = new Excel.Application();
             Excel._Workbook oWB;
             Excel._Worksheet oSheet;
@@ -1496,11 +1544,11 @@ namespace PennState.Controllers
                     foreach (SQL.DataColumn dc in dtItems.Columns)
                         colNames[col++] = dc.ColumnName;
 
-                    //char lastColumn = (char)(60 + dtItems.Columns.Count - 1);
+                    char lastColumn = (char)(65 + dtItems.Columns.Count - 1);
 
-                    oSheet.get_Range("A1", "AA1").Value = colNames;
-                    oSheet.get_Range("A1", "AA1").Font.Bold = true;
-                    oSheet.get_Range("A1", "AA1").VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+                    oSheet.get_Range("A1", lastColumn + "1").Value2 = colNames;
+                    oSheet.get_Range("A1", lastColumn + "1").Font.Bold = true;
+                    oSheet.get_Range("A1", lastColumn + "1").VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
 
                     SQL.DataRow[] dr = dtItems.Select(string.Format("ItemType='{0}'",catagory[0].ToString()));
 
@@ -1540,7 +1588,8 @@ namespace PennState.Controllers
                         redRows++;
                         rowCnt++;
                     }
-                    oSheet.get_Range("A2", "AA1" + rowCnt.ToString()).Value2 = rowData;
+                    rowCnt++;
+                    oSheet.get_Range("A2", lastColumn + rowCnt.ToString()).Value2 = rowData;
 
                 }
                 oXL.Worksheets[oXL.Sheets.Count].Delete();

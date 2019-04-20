@@ -177,7 +177,7 @@ namespace PennState.Controllers
             return View(loginView);
         }
 
-        //[CustomAuthorize(Roles = "Admin")]
+        [CustomAuthorize(Roles = "Admin")]
         [HttpGet]
         public ActionResult AddUser()
         {
@@ -192,6 +192,7 @@ namespace PennState.Controllers
             }
         }
 
+        [CustomAuthorize(Roles = "Admin")]
         [HttpPost]
         public ActionResult AddUser(AddUserViewModel model)
         {

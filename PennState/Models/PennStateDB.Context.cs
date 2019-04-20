@@ -37,5 +37,6 @@ namespace PennState.Models
         public virtual DbSet<Tbl_SubLocations> Tbl_SubLocations { get; set; }
         public virtual DbSet<Tbl_Users> Tbl_Users { get; set; }
         public virtual DbSet<Tbl_Requests> Tbl_Requests { get; set; }
+        public virtual DbSet<Tbl_CheckedOut> Tbl_CheckedOut { get; set; }
     }
 }

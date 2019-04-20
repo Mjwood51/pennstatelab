@@ -1,0 +1,77 @@
+﻿@model IEnumerable<PennState.Models.CheckedOut>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="@Url.Content("~/Scripts/tablesorter/themes/blue/style.css")" />
+<div class="page-init">
+    <div id="scheduleBoxId" class="requestBox">
+        <table id="scheduleTable" class="table tablesorter table-hover table-striped header-fixed" style="height:100%">
+            <thead>
+                <tr>
+                    <th style="font-size:14px;width:210px">
+                        Item Name
+                    </th>
+                    <th style="font-size:14px;width:210px">
+                        User
+                    </th>
+                    <th style="font-size:14px;width:210px">
+                        User ID
+                    </th>
+                    <th style="font-size:14px;width:210px">
+                        Item ID
+                    </th>
+                    <th style="font-size:14px;width:210px">
+                        Checked Out
+                    </th>
+                    <th style="font-size:14px;width:210px">
+                        Returned
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr style="height:50px">
+                        <td style="font-size:14px;width:210px">
+                            @Html.DisplayFor(modelItem => item.ItemName)
+                        </td>
+                        <td style="font-size:14px;width:210px">
+                            @Html.DisplayFor(modelItem => item.FirstName) @Html.DisplayFor(modelItem => item.LastName)
+                        </td>
+                        <td style="font-size:14px;width:210px">
+                            @Html.DisplayFor(modelItem => item.UserId)
+                        </td>
+                        <td style="font-size:14px;width:210px">
+                            @Html.DisplayFor(modelItem => item.ItemId)
+                        </td>
+                        <td style="font-size:14px;width:210px">
+                            @Html.DisplayFor(modelItem => item.CheckOutDate)
+                        </td>
+                        <td style="font-size:14px;width:210px">
+                            @Html.DisplayFor(modelItem => item.CheckInDate)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+    </div>
+    <div class="parent-sidebar">
+        <div class="sidebar">
+        </div>
+    </div>
+    <div class="parent-sidebar">
+        <div class="rightbar">
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/Scripts/tablesorter/jquery.tablesorter.min.js"></script>
+    <script>
+                $(document).ready(function () {
+                    $("#scheduleTable").tablesorter({ sortList: [[0, 0], [2, 1]] });
+                });
+    </script>
+}

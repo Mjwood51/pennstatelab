@@ -30,6 +30,7 @@
         <EntityTypeShape EntityType="PennStateNewDB.Tbl_Requests" Width="1.5" PointX="7.5" PointY="14.625" />
         <AssociationConnector Association="PennStateNewDB.FK_dbo_Tbl_Requests_dbo_Tbl_Items_ItemId" />
         <AssociationConnector Association="PennStateNewDB.FK_dbo_Tbl_Requests_dbo_Tbl_Users_UserId" />
+        <EntityTypeShape EntityType="PennStateNewDB.Tbl_CheckedOut" Width="1.5" PointX="9" PointY="3.625" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

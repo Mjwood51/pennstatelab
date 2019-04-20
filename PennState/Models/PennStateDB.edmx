@@ -41,6 +41,19 @@
           <Property Name="Pid" Type="int" />
           <Property Name="HasChildren" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="Tbl_CheckedOut">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ItemName" Type="varchar" MaxLength="50" />
+          <Property Name="FirstName" Type="varchar" MaxLength="25" />
+          <Property Name="LastName" Type="varchar" MaxLength="30" />
+          <Property Name="UserId" Type="int" />
+          <Property Name="ItemId" Type="int" />
+          <Property Name="CheckOutDate" Type="datetime" />
+          <Property Name="CheckInDate" Type="datetime" />
+        </EntityType>
         <EntityType Name="Tbl_File">
           <Key>
             <PropertyRef Name="Id" />
@@ -338,6 +351,7 @@
           <EntitySet Name="Tbl_CatagoryOwners" EntityType="Self.Tbl_CatagoryOwners" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tbl_CatagoryTypes" EntityType="Self.Tbl_CatagoryTypes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tbl_CatagoryVendors" EntityType="Self.Tbl_CatagoryVendors" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Tbl_CheckedOut" EntityType="Self.Tbl_CheckedOut" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tbl_File" EntityType="Self.Tbl_File" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tbl_ItemFiles" EntityType="Self.Tbl_ItemFiles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tbl_Items" EntityType="Self.Tbl_Items" Schema="dbo" store:Type="Tables" />
@@ -736,6 +750,7 @@
             <End Role="Tbl_Users" EntitySet="Tbl_Users" />
             <End Role="Tbl_Requests" EntitySet="Tbl_Requests" />
           </AssociationSet>
+          <EntitySet Name="Tbl_CheckedOut" EntityType="PennStateNewDB.Tbl_CheckedOut" />
         </EntityContainer>
         <EntityType Name="Tbl_Requests">
           <Key>
@@ -777,6 +792,19 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Tbl_CheckedOut">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ItemName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="FirstName" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Name="LastName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="UserId" Type="Int32" />
+          <Property Name="ItemId" Type="Int32" />
+          <Property Name="CheckOutDate" Type="DateTime" Precision="3" />
+          <Property Name="CheckInDate" Type="DateTime" Precision="3" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -939,6 +967,20 @@
                 <ScalarProperty Name="UnitPrice" ColumnName="UnitPrice" />
                 <ScalarProperty Name="Quantity" ColumnName="Quantity" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Tbl_CheckedOut">
+            <EntityTypeMapping TypeName="PennStateNewDB.Tbl_CheckedOut">
+              <MappingFragment StoreEntitySet="Tbl_CheckedOut">
+                <ScalarProperty Name="CheckInDate" ColumnName="CheckInDate" />
+                <ScalarProperty Name="CheckOutDate" ColumnName="CheckOutDate" />
+                <ScalarProperty Name="ItemId" ColumnName="ItemId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="ItemName" ColumnName="ItemName" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

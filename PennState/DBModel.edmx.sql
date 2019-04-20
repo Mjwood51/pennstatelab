@@ -567,6 +567,18 @@ INSERT INTO [dbo].[Tbl_Roles] (RoleName)
 VALUES('Observer');
 GO
 
+INSERT INTO [dbo].[Tbl_Users] (UserName, Email, FirstName, LastName, PasswordHashed, IsActive, ActivationCode, RoleId)
+VALUES('Mjwood51', 'MarkWoodard2227@gmail.com', 'Mark', 'Woodard', 'dz+WHl13jUxWZjTtVo4f9a1WlcSVIg4s2BFXon2WFdaGEK9Q', 0, '16205851-a8e9-4890-9c55-5ebeefda9579', 1);
+GO
+
+INSERT INTO [dbo].[Tbl_Users] (UserName, Email, FirstName, LastName, PasswordHashed, IsActive, ActivationCode, RoleId)
+VALUES('Affiliate', 'affiliate.nil@gmail.com', 'Affiliate', 'Nil', 'OHxBO1qpbd0eVreAX6bwQuKL1YP49TAAaEJqIGOQ06I28y0r', 0, '89ff5484-e61a-46ad-89ee-f73fb33defc3', 2);
+GO
+
+INSERT INTO [dbo].[Tbl_Users] (UserName, Email, FirstName, LastName, PasswordHashed, IsActive, ActivationCode, RoleId)
+VALUES('mmw5709', 'mmw5709@psu.edu', 'Bob', 'Wilson', 'thyot3ZqK3UM48iRkFhvOyKKe12ssjlermmSW0y3UaLDUpUr', 0, '8b3d1f76-1422-4223-a617-9cf8546086d9', 3);
+GO
+
 CREATE Procedure [dbo].[GetFileDetails]  
 (  
 @Id int=null  
@@ -576,6 +588,18 @@ begin
 select Id, ItemFileName, DataStream from Tbl_File  
 where Id=isnull(@Id,Id)  
 End 
+
+CREATE TABLE [dbo].[Tbl_CheckedOut]
+(
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY,
+	[ItemName] varchar(50) NULL,
+	[FirstName] varchar(25) NULL,
+	[LastName] varchar(30) NULL,
+	[UserId] int NULL,
+	[ItemId] int NULL,
+	[CheckOutDate] datetime NULL,
+	[CheckInDate] datetime NULL,
+);
 
 
 -- --------------------------------------------------

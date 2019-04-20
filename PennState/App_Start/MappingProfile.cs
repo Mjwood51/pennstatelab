@@ -275,6 +275,27 @@ namespace PennState.App_Start
                 .ForMember(u => u.RoleId, property => property.MapFrom(i => i.RoleId))
                 .ForMember(u => u.Roles, property => property.MapFrom(i => i.Tbl_Roles))
                 .ForMember(u => u.UserName, property => property.MapFrom(i => i.UserName));
+
+            Mapper.CreateMap<Tbl_CheckedOut, CheckedOut>()
+                .ForMember(u => u.Id, property => property.MapFrom(i => i.Id))
+                .ForMember(u => u.CheckInDate, property => property.MapFrom(i => i.CheckInDate))
+                .ForMember(u => u.CheckOutDate, property => property.MapFrom(i => i.CheckOutDate))
+                .ForMember(u => u.FirstName, property => property.MapFrom(i => i.FirstName))
+                .ForMember(u => u.LastName, property => property.MapFrom(i => i.LastName))
+                .ForMember(u => u.ItemId, property => property.MapFrom(i => i.ItemId))
+                .ForMember(u => u.ItemName, property => property.MapFrom(i => i.ItemName))
+                .ForMember(u => u.UserId, property => property.MapFrom(i => i.UserId));
+
+            Mapper.CreateMap<CheckedOut, Tbl_CheckedOut>()
+                .ForMember(u => u.Id, property => property.MapFrom(i => i.Id))
+                .ForMember(u => u.CheckInDate, property => property.MapFrom(i => i.CheckInDate))
+                .ForMember(u => u.CheckOutDate, property => property.MapFrom(i => i.CheckOutDate))
+                .ForMember(u => u.FirstName, property => property.MapFrom(i => i.FirstName))
+                .ForMember(u => u.LastName, property => property.MapFrom(i => i.LastName))
+                .ForMember(u => u.ItemId, property => property.MapFrom(i => i.ItemId))
+                .ForMember(u => u.ItemName, property => property.MapFrom(i => i.ItemName))
+                .ForMember(u => u.UserId, property => property.MapFrom(i => i.UserId));
+
         }
     }
 }

@@ -11,7 +11,7 @@ namespace PennState.Controllers
         // GET: Error
         public ActionResult AccessDenied()
         {
-            return View();
+            return PartialView();
         }
     }
 }

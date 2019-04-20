@@ -14,11 +14,20 @@
             <li class="nav-item">
                 @Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link", @style = "margin-left:20px" })
             </li>
-            @if (HttpContext.Current.User.Identity.IsAuthenticated && HttpContext.Current.User.IsInRole("Admin"))
+            @if (HttpContext.Current.User.Identity.IsAuthenticated)
             {
-                <li class="nav-item">
-                    @Html.ActionLink("Invite", "AddUser", "Account", new { area = "" }, new { @class = "nav-link", @style = "margin-left:20px" })
-                </li>
+                if (HttpContext.Current.User.IsInRole("Admin"))
+                {
+                    <li class="nav-item">
+                        @Html.ActionLink("Invite", "AddUser", "Account", new { area = "" }, new { @class = "nav-link", @style = "margin-left:20px" })
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a href="#" class = "nav-link" style="margin-left:20px;color:red" onclick = "notAllowed()">Invite</a>
+                    </li>
+                }
                 <li class="nav-item">
                     @Html.ActionLink("Inventory", "GetAllItems", "Item", new { area = "" }, new { @class = "nav-link", @style = "margin-left:20px" })
                 </li>
@@ -29,7 +38,10 @@
                     @Html.ActionLink("Requests", "GetRequests", "Item", new { area = "" }, new { @class = "nav-link", @style = "overflow:hidden;white-space:nowrap;margin-left:20px" })
                 </li>
                 <li class="nav-item">
-                    @Html.ActionLink("Log out", "LogOut", "Account", new { area = "" }, new { @class = "nav-link", @style = "overflow:hidden;white-space:nowrap;margin-left:300px" })
+                    @Html.ActionLink("Schedule", "Scheduler", "Item", new { area = "" }, new { @class = "nav-link", @style = "overflow:hidden;white-space:nowrap;margin-left:20px" })
+                </li>
+                <li class="nav-item" style="float:right">
+                    @Html.ActionLink("Log out", "LogOut", "Account", new { area = "" }, new { @class = "nav-link", @style = "overflow:hidden;white-space:nowrap;margin-left:600px" })
                 </li>
                 var identity = ((CustomPrincipal)HttpContext.Current.User);
                 <li class="nav-item">
@@ -41,7 +53,6 @@
             {
                 <li class="nav-item">
                     <a href="#" class="nav-link" onclick="logIn()" data-target="#logInModal" style="margin-left:20px" data-toggle="modal">Login</a>
-                    @*@Html.ActionLink("Login", "#", new { area = "" }, new { @class = "nav-link", @onclick = "logIn()" })*@
                 </li>
 
             }
@@ -49,8 +60,4 @@
         <form class="form-inline my-2 my-lg-0"></form>
     </nav>
 </div>
-@*@if (HttpContext.Current.User.Identity.IsAuthenticated)
-    {
-
-        }*@
 
