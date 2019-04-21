@@ -10,11 +10,39 @@
 
     <div class="jumbotron">
 
-        <h1>Physics Lab Inventory</h1>
+        <h1 style="text-align:center">Physics Lab Inventory</h1>
 
-        <p class="lead">Welcome to the Penn State Harrisburg Physics Lab Inventory Application.</p>
-
-        <p><a href="#" class="btn btn-primary btn-lg" onclick="logIn()" data-target="#logInModal" data-toggle="modal">Log In &raquo;</a></p>
+        <p style="text-align:center"class="lead">Welcome to the Penn State Harrisburg Physics Lab Inventory Application.</p>
+        <br />
+        <br />
+        <br />
+        <div style="position:relative">
+            @if (!HttpContext.Current.User.Identity.IsAuthenticated)
+            {
+                <a href="#" class="btn btn-primary btn-lg" style="width:21%" onclick="logIn(null)" data-target="#logInModal" data-toggle="modal">Log In &raquo;</a>
+                <div style="position:absolute;right:40%;top:0%">
+                    <a href="#" class="btn btn-primary btn-lg" onclick="logIn('/Item/GetAllItems')" data-target="#logInModal" data-toggle="modal">View Inventory &raquo;</a>
+                </div>
+                <div style="position:absolute;right:0%;top:0%">
+                    <a href="#" class="btn btn-primary btn-lg" onclick="logIn('/Item/GetRequests')" data-target="#logInModal" data-toggle="modal">View Requests &raquo;</a>
+                </div>
+            }
+            else
+            {
+                <a href="~/Item/GetAllItems" class="btn btn-primary btn-lg">View Inventory &raquo;</a>
+                <div style="position:absolute;right:41%;top:0%">
+                    <a href="~/Item/GetRequests" class="btn btn-primary btn-lg" style="width:105%">View Requests &raquo;</a>
+                </div>
+                <div style="position:absolute;right:0%;top:0%">
+                    <a href="~/Item/FlagItem" class="btn btn-primary btn-lg" style="width:100%">Make A Request &raquo;</a>
+                </div>
+                <hr />
+                <p><a href="~/Item/Scheduler" class="btn btn-primary btn-lg" style="bottom:0%;margin-top:5%;width:30%;margin-left:13%">View Schedule &raquo;</a></p>
+                <div style="position:absolute;right:24%;top:71%">
+                    <a href="~/Item/AddItem2" class="btn btn-primary btn-lg" style="width:155%">Add New Item &raquo;</a>
+                </div>
+            }
+        </div>
 
     </div>
 

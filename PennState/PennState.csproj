@@ -168,7 +168,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
-    <Compile Include="App_Start\EmailJob.cs" />
+    <Compile Include="App_Start\EmailAndDBBackupJob.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
@@ -382,6 +382,8 @@
     <Content Include="Views\Item\GetRequests.cshtml" />
     <Content Include="Views\Error\AccessDenied.cshtml" />
     <Content Include="Views\Item\Scheduler.cshtml" />
+    <Content Include="Views\Item\AddItem2.cshtml" />
+    <Content Include="Views\Home\UserGuide.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

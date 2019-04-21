@@ -34,8 +34,11 @@ using Microsoft.Office.Interop.Excel;
 //Test commit
 namespace PennState.Controllers
 {
+    [CustomAuthorize(Roles = "Admin,User,Observer")]
     public class ItemController : Controller
     {
+        //Create instances of SQL connection objects, the Entity Framework database context, and containers for new files and photos to be uploaded
+        //
         private SqlConnection con;
         private string constr;
         private PennStateDB _context;
@@ -45,18 +48,22 @@ namespace PennState.Controllers
 
         public ItemController()
         {
+            //Instantiate those objects
             _context = new PennStateDB();
             files = new List<Tbl_File>();
             photos = new List<Tbl_Photo>();
             catLoc2 = new Tbl_CatagoryLocations();
 
         }
+
         // GET: Item
         public ActionResult Index()
         {
             return View();
         }
 
+        //Dispose of all method objects once those methods complete a cycle
+        //
         protected override void Dispose(bool disposing)
         {
             using (PennStateDB _context = new PennStateDB())
@@ -70,6 +77,9 @@ namespace PennState.Controllers
             base.Dispose(disposing);
         }
 
+
+        //This method retrieves the schedule view page of items that have a record of being checked out
+        //
         public ActionResult Scheduler()
         {
             using (PennStateDB db = new PennStateDB())
@@ -79,6 +89,9 @@ namespace PennState.Controllers
             }                
         }
 
+        //This method deletes requests that have already been handled by the administrator
+        //
+        [CustomAuthorize(Roles = "Admin")]
         public JsonResult DeleteRequest(int id)
         {
             using (PennStateDB db = new PennStateDB())
@@ -90,6 +103,9 @@ namespace PennState.Controllers
             }
         }
 
+
+        //This method returns search results to the inventory page when users type and submit a string in the sidebar search textbox
+        //
         [HttpGet]
         public ActionResult Search(string query)
         {
@@ -138,6 +154,8 @@ namespace PennState.Controllers
             return View("GetItemList", model);
         }
 
+        //This method opens up the side edit modal view for an individual item
+        //
         [CustomAuthorize(Roles = "Admin,User")]
         [HttpGet]
         public ActionResult Edit(int cid)
@@ -156,60 +174,32 @@ namespace PennState.Controllers
             return PartialView("Edit", model);
         }
 
-        [HttpGet]
-        public ActionResult ItemDetails(int cid)
-        {
-            
-            var model = new ItemDetailsModel();
-            using (PennStateDB db = new PennStateDB())
-            {
-                
-                model.Item = Mapper.Map<Tbl_Items, Item>(db.Tbl_Items.Where(x => x.Id == cid).Include(i => i.Tbl_Photo).Include(i => i.Tbl_File).FirstOrDefault());
-                if(model.Item.CheckedOutById != null)
-                {
-                    model.User = Mapper.Map<Tbl_Users, User>(db.Tbl_Users.Where(x => x.Id == model.Item.CheckedOutById).FirstOrDefault());
-                }
-            }
-            return PartialView("ItemDetails", model);
-        }
-
-        [CustomAuthorize(Roles = "Admin,User")]
-        [HttpPost]
-        public JsonResult MarkDelete(int id, bool check)
-        {
-            using (PennStateDB db = new PennStateDB())
-            {
-                Tbl_Items item = db.Tbl_Items.Find(id);
-                if(item.MarkedDeleted == false)
-                {
-                    item.MarkedDeleted = true;
-                    check = true;
-                    db.SaveChanges();
-                    return Json(check, JsonRequestBehavior.AllowGet);
-                }
-                else
-                {
-                    item.MarkedDeleted = false;
-                    db.SaveChanges();
-                    return Json("null", JsonRequestBehavior.AllowGet);
-                }
-
-            }
-                
-            
-        }
-
+        //This is the post method for editing an item in the database
+        //
         [CustomAuthorize(Roles = "Admin,User")]
         [HttpPost]
         public ActionResult Edit(EditItemViewModel model)
         {
+            //Check that the model is valid
+            //
             if (ModelState.IsValid)
             {
-                var photos2 = new List<Tbl_Photo>();
+
+                //Create a second container for photos that exist in the database to be included with the edited item
+                //
+                var photosExisting = new List<Tbl_Photo>();
+    
+                //Grab a reference of the item to be edited from the database
+                //
                 Tbl_Items modelItem = _context.Tbl_Items.Find(model.Item.Id);
+
+                //Create containers for image bytes and for images that will be stored in the Gallery folder
+                //
                 List<Image> images = null;
                 List<byte[]> photoDatas = null;
 
+                //If there are any files that were added from the Existing files list, include them with this item
+                //
                 if (model.Files != null)
                 {
                     if (model.Files.FileList != null)
@@ -224,6 +214,8 @@ namespace PennState.Controllers
                     }
                 }
 
+                //If there are any photos added from the existing photos list, include them with this item
+                //
                 if (model.Photos != null)
                 {
                     if (model.Photos.PhotoList != null)
@@ -233,11 +225,13 @@ namespace PennState.Controllers
                             var pId = Convert.ToInt32(photoId);
                             var existingPhoto = _context.Tbl_Photo.Where(x => x.Id == pId).FirstOrDefault();
                             modelItem.Tbl_Photo.Add(existingPhoto);
-                            photos2.Add(existingPhoto);
+                            photosExisting.Add(existingPhoto);
                         }
                     }
                 }
 
+                //If there are any new files uploaded (not already existing), include them with this item
+                //
                 if (model.FileUpload != null)
                 {
                     foreach (HttpPostedFileBase file in model.FileUpload)
@@ -260,10 +254,16 @@ namespace PennState.Controllers
                     }
                 }
 
-                
+                //Retrieve the user object of the currently logged in user
+                //
                 var id = _context.Tbl_Users.Where(x => x.UserName == User.Identity.Name).FirstOrDefault();
+
+                //Add any changed or new locations to the item. GetLocation() is another method within this class that handles the operation
+                //
                 modelItem = GetLocation(modelItem, model.Item.SubLocation.SubLocationName, model.Item.Location.LocationName);
 
+                //If any existing files were added, add them with the item, make sure to concatenate with files that may already exist with the item
+                //
                 if (files.Count > 0)
                 {
                     if (modelItem.Tbl_File.Count > 0)
@@ -278,7 +278,10 @@ namespace PennState.Controllers
                             modelItem.Tbl_File = files;
                     }
                 }
-                
+
+
+                //Fill out any changes made to the item
+                //
                 modelItem.Id = model.Item.Id;
                 modelItem.ItemNotes = model.Item.ItemNotes;
                 modelItem.Manufacturer = model.Item.Manufacturer;
@@ -295,6 +298,9 @@ namespace PennState.Controllers
                 modelItem.PurchasePrice = model.Item.PurchasePrice;
                 modelItem.Vendor = model.Item.Vendor;
                 modelItem.WebAddress = model.Item.WebAddress;
+
+                //Save to the database
+                //
                 try
                 {
                     _context.SaveChanges();
@@ -310,6 +316,8 @@ namespace PennState.Controllers
                     }
                 }
 
+                //After saving to the database, retrieve the item again so you can associate photo uploads with any Sub-Location changes
+                //
                 Tbl_Items testItem = _context.Tbl_Items.Find(modelItem.Id);
 
                 if (model.PhotoUpload != null)
@@ -341,6 +349,8 @@ namespace PennState.Controllers
                     }
                 }
 
+                //If any photos were added, concatenate them with photos that may exist with the item
+                //
                 if (photos.Count > 0)
                 {
                     if (modelItem.Tbl_Photo.Count > 0)
@@ -358,6 +368,8 @@ namespace PennState.Controllers
 
                 _context.SaveChanges();
 
+                //Create necessary path variables for saving photos to the Application directory
+                //
                 var pathString1 = "";
                 var pathString2 = "";
                 var pathString3 = "";
@@ -367,15 +379,20 @@ namespace PennState.Controllers
                 var path2 = "";
                 var path4 = "";
                 var imageName = "";
-                               
-                if (photos.Count > 0 || photos2.Count > 0)
+
+                if (photos.Count > 0 || photosExisting.Count > 0)
                 {
                     var i = 0;
+
+                    //Retrieve the sublication that is associated with the item
+                    //
                     var subLocId = (from s in _context.Tbl_SubLocations
                                     join it in _context.Tbl_Items on s.Id equals it.SubId
                                     where it.Id == modelItem.Id
                                     select s).FirstOrDefault();
+
                     //Create necessary directories
+                    //
                     var originalDir = new DirectoryInfo(string.Format("{0}Images\\Uploads", Server.MapPath(@"\")));
                     //Check if file was uploaded
                     pathString1 = Path.Combine(originalDir.ToString(), "SubLocations");
@@ -398,15 +415,18 @@ namespace PennState.Controllers
 
                     if (!Directory.Exists(pathString5))
                         Directory.CreateDirectory(pathString5);
+
+                    //Save existing photos to their appropriate sublocation paths within the applcation directory "~/Images/Uploads/Sublocations
+                    //
                     var listImages = new List<Image>();
                     ImageConverter imageConverter = new System.Drawing.ImageConverter();
-                    foreach (var photoObj in photos2)
+                    foreach (var photoObj in photosExisting)
                     {
-                        
-                        imageName = photoObj.PhotoName;                        
+
+                        imageName = photoObj.PhotoName;
                         path = string.Format("{0}\\{1}", pathString2, imageName);
-                        
-                        
+
+
                         if (model.Photos.PhotoList != null)
                         {
                             var newId = _context.Tbl_Photo.Where(x => x.PhotoName == imageName).FirstOrDefault().SubId;
@@ -418,9 +438,9 @@ namespace PennState.Controllers
                         }
                         path2 = string.Format("{0}\\{1}", pathString3, imageName);
                         path4 = string.Format("{0}\\{1}", pathString4, imageName);
-                                               
 
-                        if(model.Photos.PhotoList != null)
+
+                        if (model.Photos.PhotoList != null)
                         {
                             var img = listImages.ElementAt(i);
                             img = resizeImage(img, new Size(200, 200));
@@ -435,8 +455,11 @@ namespace PennState.Controllers
                         i++;
                     }
                     i = 0;
-                    foreach(var objPhoto in photos)
-                    {                        
+
+                    //Save new photos to their appropriate sub-location paths in the application directory 
+                    //
+                    foreach (var objPhoto in photos)
+                    {
                         imageName = objPhoto.PhotoName;
                         path = string.Format("{0}\\{1}", pathString2, imageName);
                         path2 = string.Format("{0}\\{1}", pathString3, imageName);
@@ -460,13 +483,67 @@ namespace PennState.Controllers
                     }
                 }
 
-                SaveCatagories(model.Item.Location.LocationName, model.Item.SubLocation.SubLocationName, 
-                               id.FirstName + " " + id.LastName, model.Item.ItemType, model.Item.Vendor);                
+                //Add any new vendors, owners, locations, sublocations, and types as a Tree catagory
+                //
+                SaveCatagories(model.Item.Location.LocationName, model.Item.SubLocation.SubLocationName,
+                               id.FirstName + " " + id.LastName, model.Item.ItemType, model.Item.Vendor);
 
+                files = null;
+                photos = null;
+                modelItem = null;
             }
             return RedirectToAction("GetAllItems", "Item");
         }
 
+        //This method opens up the details modal view for an individual item
+        [HttpGet]
+        public ActionResult ItemDetails(int cid)
+        {
+            
+            var model = new ItemDetailsModel();
+            using (PennStateDB db = new PennStateDB())
+            {
+                
+                model.Item = Mapper.Map<Tbl_Items, Item>(db.Tbl_Items.Where(x => x.Id == cid).Include(i => i.Tbl_Photo).Include(i => i.Tbl_File).FirstOrDefault());
+                if(model.Item.CheckedOutById != null)
+                {
+                    model.User = Mapper.Map<Tbl_Users, User>(db.Tbl_Users.Where(x => x.Id == model.Item.CheckedOutById).FirstOrDefault());
+                }
+            }
+            return PartialView("ItemDetails", model);
+        }
+
+        //This method changes items in the database to be marked as 'Deleted'
+        //
+        [CustomAuthorize(Roles = "Admin,User")]
+        [HttpPost]
+        public JsonResult MarkDelete(int id, bool check)
+        {
+            using (PennStateDB db = new PennStateDB())
+            {
+                Tbl_Items item = db.Tbl_Items.Find(id);
+                if(item.MarkedDeleted == false)
+                {
+                    item.MarkedDeleted = true;
+                    check = true;
+                    db.SaveChanges();
+                    return Json(check, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    item.MarkedDeleted = false;
+                    db.SaveChanges();
+                    return Json("null", JsonRequestBehavior.AllowGet);
+                }
+
+            }
+                
+            
+        }
+
+        
+        //This method retrieves the modal view where Admins can add a new item
+        //
         [CustomAuthorize(Roles = "Admin")]
         [HttpGet]
         public ActionResult AddItem()
@@ -482,16 +559,49 @@ namespace PennState.Controllers
             return PartialView(model);
         }
 
+        //This method retrieves the modal view where Admins can add a new item
+        //
+        [CustomAuthorize(Roles = "Admin")]
+        [HttpGet]
+        public ActionResult AddItem2()
+        {
+            AddItemViewModel model = new AddItemViewModel();
+
+            using (PennStateDB db = new PennStateDB())
+            {
+                model.Files.GetFileList = db.Tbl_File.Select(x => new Files { Id = x.Id, ItemFileName = x.ItemFileName }).ToList();
+                model.Photos.GetPhotoList = db.Tbl_Photo.Select(x => new Photos { Id = x.Id, PhotoName = x.PhotoName }).ToList();
+            }
+
+            return View(model);
+        }
+
+        //This is the post method for Adding a new item to the database
+        //
         [CustomAuthorize(Roles = "Admin")]
         [HttpPost]
         public ActionResult AddItem(AddItemViewModel model)
         {
+            //Check that the model is valid
+            //
             if (ModelState.IsValid)
             {
+
+                //Create a second container for photos that exist in the database to be included with the edited item
+                //
                 var photos2 = new List<Tbl_Photo>();
+
+                //Create a new item object to be added to the database
+                //
                 var modelItem = new Tbl_Items();
+
+                //Create containers for image bytes and for images that will be stored in the Gallery folder
+                //
                 List<Image> images = null;
                 List<byte[]> photoDatas = null;
+
+                //If there are any files that were added from the Existing files list, include them with this item
+                //
                 if (model.Files.FileList != null)
                 {
                     foreach (var fileId in model.Files.FileList)
@@ -503,6 +613,9 @@ namespace PennState.Controllers
                     }
                 }
 
+
+                //If there are any photos added from the existing photos list, include them with this item
+                //
                 if (model.Photos.PhotoList != null)
                 {
                     foreach (var photoId in model.Photos.PhotoList)
@@ -514,6 +627,8 @@ namespace PennState.Controllers
                     }
                 }
 
+                //If there are any new files uploaded (not already existing), include them with this item
+                //
                 if (model.FileUpload != null)
                 {
                     foreach (HttpPostedFileBase file in model.FileUpload)
@@ -536,15 +651,17 @@ namespace PennState.Controllers
                     }
                 }
 
-                
+                //Retrieve the user object of the currently logged in user
+                //
+                var id = _context.Tbl_Users.Where(x => x.UserName == User.Identity.Name).FirstOrDefault();
 
-                var id = new Tbl_Users();
-
-                id = _context.Tbl_Users.Where(x => x.UserName == User.Identity.Name).FirstOrDefault();
+                //Add any changed or new locations to the item. GetLocation() is another method within this class that handles the operation
+                //
                 modelItem = GetLocation(modelItem, model.Item.SubLocation.SubLocationName, model.Item.Location.LocationName);
 
 
-
+                //If any existing files were added, add them with the item, make sure to concatenate with files that may already exist with the item
+                //
                 if (files.Count > 0)
                 {
                     if (modelItem.Tbl_File.Count > 0)
@@ -556,8 +673,9 @@ namespace PennState.Controllers
                         modelItem.Tbl_File = files;
                     }
                 }
-                
 
+                //Fill out all fields associated with the item
+                //
                 modelItem.UsrId = id.Id;
                 modelItem.Added = DateTime.Now;
                 modelItem.Updated = DateTime.Now;
@@ -570,6 +688,9 @@ namespace PennState.Controllers
                 modelItem.PurchasePrice = model.Item.PurchasePrice;
                 modelItem.Vendor = model.Item.Vendor;
                 modelItem.WebAddress = model.Item.WebAddress;
+
+                //Add item to the table and save to the database
+                //
                 try
                 {
                     _context.Tbl_Items.Add(modelItem);
@@ -585,6 +706,9 @@ namespace PennState.Controllers
                         }
                     }
                 }
+
+                //After saving to the database, retrieve the item again so you can associate photo uploads with any Sub-Location changes
+                //
                 Tbl_Items testItem = _context.Tbl_Items.Find(modelItem.Id);
 
                 if (model.PhotoUpload != null)
@@ -630,6 +754,9 @@ namespace PennState.Controllers
 
                 _context.SaveChanges();
 
+
+                //Create necessary path variables for saving photos to the Application directory
+                //
                 var pathString1 = "";
                 var pathString2 = "";
                 var pathString3 = "";
@@ -643,11 +770,16 @@ namespace PennState.Controllers
                 if (photos.Count > 0 || photos2.Count > 0)
                 {
                     var i = 0;
+
+                    //Retrieve the sublication that is associated with the item
+                    //
                     var subLocId = (from s in _context.Tbl_SubLocations
                                     join it in _context.Tbl_Items on s.Id equals it.SubId
                                     where it.Id == modelItem.Id
                                     select s).FirstOrDefault();
+
                     //Create necessary directories
+                    //
                     var originalDir = new DirectoryInfo(string.Format("{0}Images\\Uploads", Server.MapPath(@"\")));
                     //Check if file was uploaded
                     pathString1 = Path.Combine(originalDir.ToString(), "SubLocations");
@@ -670,6 +802,9 @@ namespace PennState.Controllers
 
                     if (!Directory.Exists(pathString5))
                         Directory.CreateDirectory(pathString5);
+
+                    //Save existing photos to their appropriate sublocation paths within the applcation directory "~/Images/Uploads/Sublocations
+                    //
                     var listImages = new List<Image>();
                     ImageConverter imageConverter = new System.Drawing.ImageConverter();
                     foreach (var photoObj in photos2)
@@ -707,6 +842,9 @@ namespace PennState.Controllers
                         i++;
                     }
                     i = 0;
+
+                    //Save new photos to their appropriate sub-location paths in the application directory 
+                    //
                     foreach (var objPhoto in photos)
                     {
                         imageName = objPhoto.PhotoName;
@@ -731,6 +869,9 @@ namespace PennState.Controllers
                         i++;
                     }
                 }
+
+                //Add any new vendors, owners, locations, sublocations, and types as a Tree catagory
+                //
                 SaveCatagories(model.Item.Location.LocationName, model.Item.SubLocation.SubLocationName,
                                id.FirstName + " " + id.LastName, model.Item.ItemType, model.Item.Vendor);
                 
@@ -746,6 +887,8 @@ namespace PennState.Controllers
             return RedirectToAction("GetAllItems", "Item");
         }
 
+        //This is the method that creates an image out of a file byte array, which is then added to the gallery
+        //
         public Image imageFromBytes(byte[] array)
         {
             using (var ms = new MemoryStream(array))
@@ -754,11 +897,18 @@ namespace PennState.Controllers
             }
         }
 
+        //This method resizes images
+        //
         public static Image resizeImage(Image imgToResize, Size size)
         {
             return (Image)(new Bitmap(imgToResize, size));
         }
 
+
+        //This method marks items in the database 'IsDeleted = true' 
+        //Administrators can delete items perminently by first checking child tables first : Tbl_PhotoItems, or Tbl_ItemFiles for 
+        //If the 'ItemId' to be deleted is associated with any record in these two tables, delete them first before deleting the item record from Tbl_Items
+        //
         [CustomAuthorize(Roles = "Admin")]
         [HttpPost]
         public JsonResult DeleteItem(int id)
@@ -818,12 +968,6 @@ namespace PennState.Controllers
                 
             
         }
-
-        //[CustomAuthorize(Roles = "Admin,User")]
-        //public ActionResult MarkForDeletion(int id)
-        //{
-        //    return View();
-        //}
 
         public ActionResult GetAllItems()
         {

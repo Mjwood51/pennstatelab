@@ -15,10 +15,13 @@ using System.Management.Automation.Runspaces;
 
 namespace PennState.App_Start
 {
-    public class EmailJob : Quartz.IJob
+    public class EmailAndDBBackupJob : Quartz.IJob
     {
         public void Execute(Quartz.IJobExecutionContext context)
         {
+            //This method creates a new email object, prepares an HTML table to be appended to the email, and then sends the email
+            //to the admin on a weekly basis
+            //
             using (var message = new System.Net.Mail.MailMessage("mmw5709@psu.edu", "mmw5709@psu.edu"))
             {
                 var requests = new List<Tbl_Requests>();
@@ -26,7 +29,8 @@ namespace PennState.App_Start
                 {
                     requests = db.Tbl_Requests.ToList();
 
-
+                    //Build an HTML table onto a string
+                    //
                     StringBuilder builder = new StringBuilder();
                     builder.Append("<table>");
                     builder.Append("<thead><tr>");
@@ -58,6 +62,9 @@ namespace PennState.App_Start
                     message.IsBodyHtml = true;
                     message.Body = builder.ToString();
                 }
+
+                //The admins PSU Harrisburg Email Login credentials must be entered appropriately here.
+                //
                 using (SmtpClient client = new SmtpClient
                 {
                     EnableSsl = true,
@@ -69,11 +76,16 @@ namespace PennState.App_Start
                     client.Send(message);
                 }
             }
+
             //Make sure to run this command in powershell when you start up the server
             // PS C:\WINDOWS\system32>  Set-ExecutionPolicy RemoteSigned
             //Then Run
             //Import-Module SQLPS
+
             StringBuilder script = new StringBuilder();
+
+            //Assign the correct paths to where the database backup files will be backed up
+            //Make sure the SQL Server backup retrieval path is also correct
             script.Append("function validpath($path){\n");
             script.Append("$retval = Test-Path $path\n");
             script.Append("return $retval}\n");
@@ -85,56 +97,84 @@ namespace PennState.App_Start
             script.Append("$SQLSrvInst = '(localdb)\\MSSQLLocalDB'\n");
             script.Append("$BUScriptPBB = $Scriptpath + '\\PennStateDB_Backup.sql'\n");
             script.Append("$SQKBAKpath = 'C:\\Program Files\\Microsoft SQL Server\\MSSQL14.MSSQLSERVER\\MSSQL\\Backup\\'\n");
+
+            //Write to the log file in ~\PowerShell\ that the backup process has started
+            //
             script.Append("$comment = '`nBu started at'\n");
             script.Append("$comment += $comdate\n");
             script.Append("Add-Content $logfile $comment\n");
+
+            //Create the directory for the backups, if not already created
+            //
             script.Append("$outpath = $basepath + '\\PennStateSQLbackups'\n");
             script.Append("$foundout = validpath($outpath)\n");
             script.Append("If(!$foundout){\n");
             script.Append("New-Item -ItemType directory -Path $outpath}\n");
+
+            //Create the directory for the onedrive path, if not already created
+            //
             script.Append("$Onedriveoutpath = $basepath + '\\PennStateSQLbackups\\Onedrive'\n");
             script.Append("$foundout = validpath($Onedriveoutpath)\n");
             script.Append("If (!$foundout){\n");
             script.Append("New-Item -ItemType directory -Path $Onedriveoutpath}\n");
+
+            //Append a unique date and time to the new backup directory
+            //
             script.Append("$outpathDBfiles = $outpath + '\\SQLBU_' + $BUDate\n");
             script.Append("New-Item -ItemType directory -Path $outpathDBfiles\n");
+
+            //Run the backup SQL Script that is located in the ~\PowerShell directory
+            //
             script.Append("Invoke-Sqlcmd -ServerInstance $SQLSrvInst -Database PennStateDB -inputfile $BUScriptPBB\n");
+
+            //Save the master database file within the backup directory
+            //
             script.Append("$DBName= 'master'\n");
             script.Append("$WrkSQLPath = $SQKBAKpath + $DBName + '.bak'\n");
             script.Append("$foundfile = validpath($WrkSQLPath)\n");
             script.Append("If ($foundfile){\n");
             script.Append("Copy-Item $WrkSQLPath -Destination $outpathDBfiles -Force -Recurse\n");
             script.Append("Copy-Item $WrkSQLPath -Destination $Onedriveoutpath -Force -Recurse}\n");
+
+            //Save the model database file within the backup directory
+            //
             script.Append("$DBName= 'model'\n");
             script.Append("$WrkSQLPath = $SQKBAKpath + $DBName + '.bak'\n");
             script.Append("$foundfile = validpath($WrkSQLPath)\n");
             script.Append("If($foundfile){\n");
             script.Append("Copy-Item $WrkSQLPath -Destination $outpathDBfiles -Force -Recurse\n");
             script.Append("Copy-Item $WrkSQLPath -Destination $Onedriveoutpath -Force -Recurse}\n");
+
+            //Save the msdb database file within the backup directory
+            //
             script.Append("$DBName = 'msdb'\n");
             script.Append("$WrkSQLPath = $SQKBAKpath + $DBName + '.bak'\n");
             script.Append("$foundfile = validpath($WrkSQLPath)\n");
             script.Append("If($foundfile){\n");
             script.Append("Copy-Item $WrkSQLPath -Destination $outpathDBfiles -Force -Recurse\n");
             script.Append("Copy-Item $WrkSQLPath -Destination $Onedriveoutpath -Force -Recurse}\n");
+
+            //Finally, Save the primary database to the backup directory
             script.Append("$DBName = 'PennStateDB'\n");
             script.Append("$WrkSQLPath = $SQKBAKpath + $DBName + '.bak'\n");
             script.Append("$foundfile = validpath($WrkSQLPath)\n");
             script.Append("If($foundfile){\n");
             script.Append("Copy-Item $WrkSQLPath -Destination $outpathDBfiles -Force -Recurse\n");
             script.Append("Copy-Item $WrkSQLPath -Destination $Onedriveoutpath -Force -Recurse}\n");
+
+            //Write to the log file that the backup process has completed
+            //
             script.Append("$comment = '`nBu ended at'\n");
             script.Append("$comdate = Get-Date\n");
             script.Append("Add-Content $logfile $comment\n");
-
-
-
-
 
             var scrString = script.ToString();
             RunScript(scrString);
         }
 
+
+        //Function to run the PowerShell script
+        //
         private void RunScript(string scriptText)
         {
             // create Powershell runspace
@@ -173,6 +213,8 @@ namespace PennState.App_Start
         }
     }
 
+    //This is the automated job scheduler where you can change the day and time for report emails and database backups to be sent
+    //
     public class JobScheduler
     {
         public static void Start()
@@ -180,11 +222,11 @@ namespace PennState.App_Start
             IScheduler scheduler = StdSchedulerFactory.GetDefaultScheduler();
             scheduler.Start();
 
-            IJobDetail job = JobBuilder.Create<EmailJob>().Build();
+            IJobDetail job = JobBuilder.Create<EmailAndDBBackupJob>().Build();
 
             ITrigger trigger = TriggerBuilder.Create()
                 .WithSchedule(CronScheduleBuilder
-                .WeeklyOnDayAndHourAndMinute(DayOfWeek.Saturday, 17, 41)
+                .WeeklyOnDayAndHourAndMinute(DayOfWeek.Saturday, 19, 41)
                 .InTimeZone(TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time")))
                 .Build();
 

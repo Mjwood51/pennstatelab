@@ -319,6 +319,17 @@
     <script src="~/Scripts/jstree.min.js"></script>
     <script>
 
+        $.tablesorter.addParser({
+            id: 'checkbox',
+            is: function (s, table, cell) {
+                return $(cell).find('input[type=checkbox]').length > 0;
+            },
+            format: function (s, table, cell) {
+                return $(cell).find('input:checked').length > 0 ? 0 : 1;
+            },
+            type: "numeric"
+        });
+
         $(document).ready(function () {
             $("#myTable").tablesorter({ sortList: [[0, 0], [2, 1]] });
         });

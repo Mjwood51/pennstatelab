@@ -136,11 +136,17 @@
         }
     };
 
+
         //Login modal open
         //
-        var logIn = function () {
-            var modal = document.getElementById('logInModal');
-            var url = '@Url.Action("Login", "Account")';
+    var logIn = function (returnUrl) {
+        debugger
+        var modal = document.getElementById('logInModal');
+        var url;
+        if (returnUrl == null)
+            url = '@Url.Action("Login", "Account")';
+        else
+            url = '@Url.Action("Login", "Account")/?ReturnUrl=' + returnUrl;
             $("#logInBod").load(url, function () {
                 $("#logInModal").fadeIn(500).modal(modal.style.display = "block").show();
                
@@ -371,7 +377,124 @@
 
         });
 
+    function stopRKey(evt) {
+        var evt = (evt) ? evt : ((event) ? event : null);
+        var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+        if ((evt.keyCode == 13) && (node.type == "text")) { return false; }
+    }
+    document.onkeypress = stopRKey;
 
+    $.validator.unobtrusive.adapters.add('filetype', ['validtypes'], function (options) {
+        options.rules['filetype'] = { validtypes: options.params.validtypes.split(',') };
+        options.messages['filetype'] = options.message;
+    });
+
+    $.validator.addMethod("filetype", function (value, element, param) {
+        if (!value) {
+            return true;
+        }
+        var extension = getFileExtension(value);
+        return $.inArray(extension, param.validtypes) !== -1;
+    });
+
+    function getFileExtension(fileName) {
+        if (/[.]/.exec(fileName)) {
+            return /[^.]+$/.exec(fileName)[0].toLowerCase();
+        }
+        return null;
+    }
+
+    $.notify.addStyle('happygreen', {
+        html: "<div>☺<span data-notify-text/>☺</div>",
+        classes: {
+            base: {
+                "white-space": "nowrap",
+                "background-color": "lightgreen",
+                "padding": "5px"
+            },
+            supergreen: {
+                "color": "white",
+                "background-color": "limegreen"
+            }
+        }
+    });
+
+
+    $(document).ready(function () {
+        $("#autoType3").click("input", function comboType3() {
+            var options = {};
+            options.url = "/item/getterm";
+            options.type = "GET";
+            options.data = { "text": $("#autoType3").val() };
+            options.dataType = "json";
+            options.success = function (data) {
+                $("#dataList6").empty();
+                for (var i = 0; i < data.length; i++) {
+                    $("#dataList6").append("<option value='" +
+                        data[i].ItemType + "'></option>");
+                }
+            };
+            $.ajax(options);
+        });
+
+    });
+
+    $(document).ready(function () {
+        $("#autoLoc3").click("input", function comboLoc3() {
+            var options = {};
+            options.url = "/item/getloc";
+            options.type = "GET";
+            options.data = { "text": $("#autoLoc3").val() };
+            options.dataType = "json";
+            options.success = function (data) {
+                $("#dataList7").empty();
+                for (var i = 0; i < data.length; i++) {
+                    $("#dataList7").append("<option value='" +
+                        data[i].LocationName + "'></option>");
+                }
+            };
+            $.ajax(options);
+        });
+
+    });
+
+    $(document).ready(function () {
+        $("#autoVen3").click("input", function comboVen3() {
+            var options = {};
+            options.url = "/item/getven";
+            options.type = "GET";
+            options.data = { "text": $("#autoVen3").val() };
+            options.dataType = "json";
+            options.success = function (data) {
+                $("#dataList5").empty();
+                for (var i = 0; i < data.length; i++) {
+                    $("#dataList5").append("<option value='" +
+                        data[i].Vendor + "'></option>");
+                }
+            };
+            $.ajax(options);
+        });
+
+    });
+
+    $(document).ready(function () {
+        $("#autoSub3").click("input", function comboSub3() {
+            var options = {};
+            options.url = "/item/getsub";
+            options.type = "GET";
+            options.data = { "text": $("#autoSub3").val() };
+            options.dataType = "json";
+            options.success = function (data) {
+                $("#dataList8").empty();
+                for (var i = 0; i < data.length; i++) {
+                    $("#dataList8").append("<option value='" +
+                        data[i].SubLocationName + "'></option>");
+                }
+            };
+            $.ajax(options);
+        });
+
+    });
 
  
 

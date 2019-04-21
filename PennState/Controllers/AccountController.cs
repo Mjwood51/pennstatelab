@@ -22,8 +22,11 @@ using PennState.App_Start;
 
 namespace PennState.Controllers
 {
+    
     public class AccountController : Controller
     {
+        //This is the Entity Framework data context class that is used to query tables within the SQL Server database
+        //
         private PennStateDB _context;
 
         public AccountController()
@@ -37,15 +40,19 @@ namespace PennState.Controllers
         }
 
         //GET: Account
+        //This is the method to "Get Users" but is not applied to anything in the database
         public ActionResult GetUsers()
         {
             using (PennStateDB _context = new PennStateDB())
             {
                 var user = _context.Tbl_Users.Include(c => c.Tbl_Roles).ToList();
                 return View(Mapper.Map<IEnumerable<User>>(user));
-            }          
+            }
         }
 
+
+        //This is a method to view Account Details, but a view page is not set up for the function
+        //
         public ActionResult AccountDetails(int id)
         {
             var user = new Tbl_Users();
@@ -59,6 +66,8 @@ namespace PennState.Controllers
             return View(Mapper.Map<Tbl_Users, User>(user));
         }
 
+        //This method will dispose of used objects after processes have completed
+        //
         protected override void Dispose(bool disposing)
         {
             using (PennStateDB _context = new PennStateDB())
@@ -67,6 +76,8 @@ namespace PennState.Controllers
             }
         }
 
+        //This method retrieves a hashed version of the passwords that are submitted with registration
+        //
         private string GetHashedPassword(string password)
         {
             byte[] salt;
@@ -83,6 +94,8 @@ namespace PennState.Controllers
             return savedPasswordHash;
         }
         
+        //Validation to check if username exists
+        //
         [AllowAnonymous]
         [HttpPost]
         public ActionResult CheckExistingUsername(string userName)
@@ -97,9 +110,14 @@ namespace PennState.Controllers
             }
         }
 
+        //^^ Called from the method above to check if Username exists
+        //
         private bool IsUsernameExists(string userName)
             => _context.Tbl_Users.Where(x => x.UserName == userName).FirstOrDefault() != null;
 
+
+        //Validation to check if email exists
+        //
         [AllowAnonymous]
         [HttpPost]
         public ActionResult CheckExistingEmail(string Email)
@@ -114,20 +132,26 @@ namespace PennState.Controllers
             }
         }
 
+        //^^ Called from the method above to check if email exists
         private bool IsEmailExists(string email)
             => _context.Tbl_Users.Where(x=>x.Email == email).FirstOrDefault() != null;
 
+        //This is the function that returns the Viewpage for the Login
+        //It returns a partial view for the modal
         [HttpGet]
-        public ActionResult Login(string ReturnUrl = "")
+        public ActionResult Login(string ReturnUrl)
         {
             if (User.Identity.IsAuthenticated)
             {
                 return LogOut();
             }
+            if(ReturnUrl != null)
             ViewBag.ReturnUrl = ReturnUrl;
             return PartialView("Login");
         }
 
+
+        //This is the post method for Logging in
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -177,6 +201,8 @@ namespace PennState.Controllers
             return View(loginView);
         }
 
+        //This is the method that retrieves the form which Administrators can invite users to the website
+        //
         [CustomAuthorize(Roles = "Admin")]
         [HttpGet]
         public ActionResult AddUser()
@@ -192,6 +218,8 @@ namespace PennState.Controllers
             }
         }
 
+        //This is the post action method after an Admin submits an invitation to a new User
+        //
         [CustomAuthorize(Roles = "Admin")]
         [HttpPost]
         public ActionResult AddUser(AddUserViewModel model)
@@ -207,18 +235,20 @@ namespace PennState.Controllers
 
                 var url = "/account/registration/?id=" + encr;
 
+                //It is necessary that the email and password credentials are set up correctly to whomever the administrator is
+                //
                 var link = Request.Url.AbsoluteUri.Replace(Request.Url.PathAndQuery, url);
-                var fromEmail = new MailAddress("MarkWoodard2227@gmail.com", "Activation Account - Penn State Physics Lab Inventory");
+                var fromEmail = new MailAddress("mmw5709@psu.edu", "Activation Account - Penn State Physics Lab Inventory");
                 var toEmail = new MailAddress(model.User.Email);
 
-                var fromEmailPassword = "Dod&erf@n42";
+                var fromEmailPassword = "Dodgerfan42";
                 string subject = "Activation Account !";
 
                 string body = "<br/> Please click on the following link in order to register!" + "<br/><a href='" + link + "'> Account Registration ! </a>";
 
                 var smtp = new SmtpClient
                 {
-                    Host = "smtp.gmail.com",
+                    Host = "authsmtp.psu.edu",
                     Port = 587,
                     EnableSsl = true,
                     DeliveryMethod = SmtpDeliveryMethod.Network,
@@ -240,6 +270,8 @@ namespace PennState.Controllers
             return RedirectToAction("AddUser", "Account");
         }
 
+        //This method retrieves the registration view page with query string decrypted
+        //
         [HttpGet]
         public ActionResult Registration(string id)
         {
@@ -263,6 +295,8 @@ namespace PennState.Controllers
             }
         }
 
+        //This is the post method for registration
+        //
         [HttpPost]
         public ActionResult Registration(RegistrationView registrationView)
         {
