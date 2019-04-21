@@ -2,6 +2,13 @@
     position: relative;
 }
 
+li{
+    margin-left:5%;
+}
+
+li:last-child{
+    right:0%;
+}
 .categoryButton {
     width: 190px;
     left: 5px;

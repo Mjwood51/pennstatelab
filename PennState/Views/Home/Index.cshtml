@@ -36,11 +36,19 @@
                 <div style="position:absolute;right:0%;top:0%">
                     <a href="~/Item/FlagItem" class="btn btn-primary btn-lg" style="width:100%">Make A Request &raquo;</a>
                 </div>
-                <hr />
                 <p><a href="~/Item/Scheduler" class="btn btn-primary btn-lg" style="bottom:0%;margin-top:5%;width:30%;margin-left:13%">View Schedule &raquo;</a></p>
-                <div style="position:absolute;right:24%;top:71%">
-                    <a href="~/Item/AddItem2" class="btn btn-primary btn-lg" style="width:155%">Add New Item &raquo;</a>
-                </div>
+                if (HttpContext.Current.User.IsInRole("Admin"))
+                {
+                    <div style="position:absolute;right:24%;top:63.5%">
+                        <a href="~/Item/AddItem2" class="btn btn-primary btn-lg" style="width:157%">Add New Item &raquo;</a>
+                    </div>
+                }
+                else
+                {
+                    <div style="position:absolute;right:24%;top:63.5%">
+                        <a href="#" onclick="cannotAdd()"class="btn btn-primary btn-lg" style="width:157%;color:red">Add New Item &raquo;</a>
+                    </div>
+                }
             }
         </div>
 

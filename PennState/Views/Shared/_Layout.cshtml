@@ -124,6 +124,12 @@
         }
     };
 
+    function cannotAdd() {
+        $.notify("You do not have permission to add new items.", {
+            style: 'dangerred'
+        });
+    }
+
     function validateEditForm() {
         if (!$("#editForm").valid()) {
             return false;

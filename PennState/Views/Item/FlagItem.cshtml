@@ -198,9 +198,11 @@
     </div>
 }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
+    <div>
+        @Html.ActionLink("Back to List", "GetAllItems", "Item")
+        <br />
+        @Html.ActionLink("Back to Home", "Index", "Home")
+    </div>
 
 <script>
 
