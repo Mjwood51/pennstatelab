@@ -21,7 +21,7 @@
             <div class="row">
                 <div class="control-group">
                     @Html.LabelFor(model => model.User.Email, "Email Address")<br>
-                    @Html.EditorFor(model => model.User.Email, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.EditorFor(model => model.User.Email, new { htmlAttributes = new { @class = "form-control", @style = "width:100%" } })
                     @Html.ValidationMessageFor(model => model.User.Email, "", new { @class = "text-danger" })
                     @Html.ValidationMessage("ErrorEmail", new { @class = "text-danger" })
                 </div>

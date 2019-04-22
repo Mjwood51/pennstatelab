@@ -81,11 +81,11 @@
                             }
                             @if (item.CheckedOut == true)
                             {
-                                <td style="width:1%"><input type="checkbox" id="checkCheck" checked style="margin-left:6%" class="linkAnchor" onchange="checkOut(this, @item.Id)" /><span class="checkboxtext">Checked Out</span></td>
+                                <td style="width:1%"><input type="checkbox" id="checkCheck" checked  class="linkAnchor" onchange="checkOut(this, @item.Id)" /><span class="checkboxtext">Checked Out</span></td>
                             }
                             else
                             {
-                                <td style="width:1%"><input type="checkbox" id="checkCheck2" style="margin-left:6%" class="linkAnchor" onchange="checkOut(this, @item.Id)" /><span class="checkboxtext">Checked Out</span></td>
+                                <td style="width:1%"><input type="checkbox" id="checkCheck2" class="linkAnchor" onchange="checkOut(this, @item.Id)" /><span class="checkboxtext">Checked Out</span></td>
                             }
                             @if (item.MarkedDeleted == true)
                             {

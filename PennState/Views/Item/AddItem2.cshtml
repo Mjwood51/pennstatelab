@@ -37,7 +37,7 @@
                 <div class="form-group">
                     <div class="inner-addon left-addon">
                         @Html.LabelFor(m => m.Item.PurchaseDate, new { @style = "position:relative", @class = "control-label col-md-2 padRight" })
-                        @Html.EditorFor(m => m.Item.PurchaseDate, new { htmlAttributes = new { @name = "purchasedate", @style = "padding-bottom:1%;padding-top:0%", @class = "form-control text-box2", @autocomplete = "off" } })
+                        @Html.EditorFor(m => m.Item.PurchaseDate, new { htmlAttributes = new { @name = "purchasedate", @style = "padding-bottom:0%;padding-top:0%", @class = "form-control text-box2", @autocomplete = "off" } })
                     </div>
                     @Html.ValidationMessageFor(m => m.Item.PurchaseDate, "", new { @class = "text-danger" })
                 </div>

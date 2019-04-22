@@ -1,5 +1,9 @@
-﻿body {
-    position: relative;
+﻿body, html {
+    margin: 0;
+    padding: 0;
+    line-height: 1.5em;
+    height: 100%;
+    width: 100%;
 }
 
 li{
