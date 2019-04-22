@@ -21,94 +21,96 @@
     <div class="page-init">
         <div id="listBoxId" class="listBox">
             <div id="theTable" style="height:100%">
-                <table id="myTable" class="tablesorter table-hover table-striped">
+                <table id="myTable" class="table tablesorter table-hover table-striped">
                     <thead>
-                        <tr>
+                        <tr style="width:100%">
                             <th scope="col" style="font-size:134%;width:18%">
                                 Name
                             </th>
                             <th scope="col" style="font-size:134%;width:11%">
                                 Vendor
                             </th>
-                            <th scope="col" style="font-size:134%;width:4.6%">
-                                Amount
+                            <th scope="col" style="font-size:134%;width:4.5%">
+                                Amt
                             </th>
-                            <th scope="col" style="font-size:134%;width:13.6%">
+                            <th scope="col" style="font-size:134%;width:13.8%">
                                 Location
                             </th>
                             <th scope="col" style="font-size:134%;width:11%">
                                 Type
                             </th>
                             <th scope="col" style="font-size:134%;width:7.2%">Owner</th>
-                            <th scope="col" style="font-size:134%;width:6%">Added</th>
+                            <th scope="col" style="font-size:134%;width:5.6%">Added</th>
                             <th scope="col" style="font-size:134%;width:7%">Updated</th>
                             <th scope="col" style="font-size:134%;width:1%">Checked Out&nbsp; &nbsp; &nbsp;</th>
-                            <th class="extend" scope="col" style="font-size:135%;width:15%">Marked Delete</th>
+                            <th scope="col" style="font-size:135%;width:7.5%">Marked Delete</th>
+                            <th scope="col" style="font-size:134%">Options</th>
 
                         </tr>
                     </thead>
-                    <tbody id="myTableBody">
+                    <tbody style="width:100%;margin-right:2%" id="myTableBody">
                         @foreach (var item in ViewBag.ItemList)
                         {
-                        <tr class="table-primary wi" scope="row" id="row_@item.Id" data-toggle="modal">
-                            <td>
-                                <a style="font-size:135%" class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.ItemName</a>
+                        <tr style="width:100%;margin-right:2%" scope="row" id="row_@item.Id" data-toggle="modal">
+                            <td style="width:18%">
+                                <a style="font-size:135%;width:18%" class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.ItemName</a>
                             </td>
-                            <td>
-                                <a style="font-size:135%" class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.Vendor</a>
+                            <td style="width:11%">
+                                <a style="font-size:135%;width:11%" class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.Vendor</a>
                             </td>
-                            <td>
-                                <a style="font-size:135%" class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.AmountInStock</a>
+                            <td style="width:4.6%">
+                                <a style="font-size:135%;width:4.6%" class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.AmountInStock</a>
                             </td>
-                            <td>
-                                <a style="font-size:135%" class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.Location.LocationName</a><br>
-                                <a style="font-size:135%" class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.SubLocation.SubLocationName</a><br>
+                            <td style="width:13.6%">
+                                <a style="font-size:135%;width:13.6%" class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.Location.LocationName</a><br>
+                                <a style="font-size:135%;width:13.6%" class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.SubLocation.SubLocationName</a><br>
                                 @item.LocationComments<br>
                             </td>
-                            <td>
-                                <a style="font-size:135%" class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.ItemType</a>
+                            <td style="width:11%">
+                                <a style="font-size:135%;width:11%" class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.ItemType</a>
                             </td>
-                            <td><a style="font-size:135%" class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.User.FirstName @item.User.LastName</a></td>
-                            <td><a style="font-size:135%" class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.Added.ToShortDateString()</a></td>
+                            <td style="width:7.2%"><a style="font-size:135%;width:7.2%" class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.User.FirstName @item.User.LastName</a></td>
+                            <td style="width:6%"><a style="font-size:135%;width:6%" class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.Added.ToShortDateString()</a></td>
                             @if (item.Updated != null)
                             {
-                                <td><a style="font-size:135%" class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.Updated.ToShortDateString()</a></td>
+                                <td style="width:7%"><a style="font-size:135%;width:7%" class="linkAnchor" href="#" onclick="editItem(@item.Id)">@item.Updated.ToShortDateString()</a></td>
                             }
                             else
                             {
-                                <td>        _ </td>
+                                <td style="width:7%">        _ </td>
                             }
                             @if (item.CheckedOut == true)
                             {
-                                <td><input type="checkbox" id="checkCheck" checked style="margin-left:6%" class="linkAnchor" onchange="checkOut(this, @item.Id)" /><span class="checkboxtext">Checked Out</span></td>
+                                <td style="width:1%"><input type="checkbox" id="checkCheck" checked style="margin-left:6%" class="linkAnchor" onchange="checkOut(this, @item.Id)" /><span class="checkboxtext">Checked Out</span></td>
                             }
                             else
                             {
-                                <td><input type="checkbox" id="checkCheck2" style="margin-left:6%" class="linkAnchor" onchange="checkOut(this, @item.Id)" /><span class="checkboxtext">Checked Out</span></td>
+                                <td style="width:1%"><input type="checkbox" id="checkCheck2" style="margin-left:6%" class="linkAnchor" onchange="checkOut(this, @item.Id)" /><span class="checkboxtext">Checked Out</span></td>
                             }
                             @if (item.MarkedDeleted == true)
                             {
-                                <td><input type="checkbox" id="markCheck" checked style="margin-left:6%" class="linkAnchor" onclick="markDelete(this, @item.Id)" /><span class="checkboxtext">Mark For Deletion</span></td>
+                                <td style="width:8%"><input type="checkbox" id="markCheck" checked style="margin-left:11%" class="linkAnchor" onclick="markDelete(this, @item.Id)" /><span class="checkboxtext">Mark Deletion</span></td>
                             }
                             else
                             {
-                                <td><input type="checkbox" id="markCheck2" style="margin-left:6%" class="linkAnchor" onclick="markDelete(this, @item.Id)" /><span class="checkboxtext">Mark For Deletion</span></td>
+                                <td style="width:8%"><input type="checkbox" id="markCheck2" style="margin-left:11%" class="linkAnchor" onclick="markDelete(this, @item.Id)" /><span class="checkboxtext">Mark Deletion</span></td>
                             }
-                            <td align="center">
-                                <a style="font-size:135%" href="#" onclick="itemDetails(@item.Id)" data-toggle="modal"><i class="glyphicon glyphicon-eye-open"></i></a> |
-                                <a style="font-size:135%" href="#" onclick="editItem(@item.Id);" data-toggle="modal"><i class="glyphicon glyphicon-edit"></i></a> |
-                                <a style="font-size:135%" href="#" onclick="confirmDelete(@item.Id)"><i class="glyphicon glyphicon-trash"></i></a>
-                                <br />
-                                <br />
-                                @Html.ActionLink("Request", "FlagItem", new { id = item.Id }, new { @style = "margin-left:10px;font-size:14px" })
-                                <form id="itemId" hidden="hidden">
-                                    @item.Id
-                                </form>
-                            </td>
+                                <td>
+                                    <a style="font-size:135%" href="#" onclick="itemDetails(@item.Id)" data-toggle="modal"><i class="glyphicon glyphicon-eye-open"></i></a> |
+                                    <a style="font-size:135%" href="#" onclick="editItem(@item.Id);" data-toggle="modal"><i class="glyphicon glyphicon-edit"></i></a> |
+                                    <a style="font-size:135%" href="#" onclick="confirmDelete(@item.Id)"><i class="glyphicon glyphicon-trash"></i></a>
+                                    <br />
+                                    <br />
+                                    @Html.ActionLink("Request", "FlagItem", new { id = item.Id }, new { @style = "font-size:14px;margin-right:5%" })
+                                    <form id="itemId" hidden="hidden">
+                                        @item.Id
+                                    </form>
+                                </td>
                         </tr>
                         }
                     </tbody>
                 </table>
+                
             </div>
         </div>
     </div>

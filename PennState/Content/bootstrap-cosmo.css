@@ -1680,29 +1680,14 @@ tr:after {
         visibility: hidden;
         clear: both;
     }
-.table th,
-.table td {
-    padding: 0.75rem;
-    vertical-align: top;
-    border-top: 1px solid #dee2e6;
-}
-
-.table thead th {
-  vertical-align: bottom;
-  border-bottom: 2px solid #dee2e6;
-  width:inherit;
-}
 
 .table tbody + tbody {
     border-top: 2px solid #dee2e6;
 }
 
-/*tbody tr{
-    width:3%
-}*/
-
 tbody {
     height: 100%;
+    width:100%;
 }
 
 .table-sm th,
@@ -1747,8 +1732,8 @@ tbody {
 .table-primary > tr,
 .table-primary > td {
     background-color: #c3dbf7;
-    width: 8.5%;
     bottom: 0%;
+    width:100%;
 }
     .table-primary th
     .table-primary td,
@@ -1756,7 +1741,7 @@ tbody {
     .table-primary thead th,
     .table-primary tbody + tbody {
         border-color: #8fbdf0;
-        width: inherit;
+        width:100%;
     }
 
 .table-hover .table-primary:hover {

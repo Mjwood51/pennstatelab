@@ -219,9 +219,6 @@ label {
     position: inherit;
 }
 
-tr{
-    width:100%;
-}
 .myTableRow tr {
     background: #F5F5DC;
 
@@ -315,16 +312,20 @@ p.thick {
 
 table tbody, table thead {
     display: block;
+    width:99.5%
 }
 
 table tbody {
     overflow: auto;
-    height: 830px;
+    height: 850px;
     width:100%;
 }
 
+
+
 tr{
     white-space:nowrap;
+    width:100%;
 }
 
 .modal-content {
@@ -449,12 +450,12 @@ thead{
     vertical-align: middle;
 }
 
-table.myFormat {
+/*table.myFormat {
     table-layout: fixed;
     width: 100%;
     float: right;
     position: relative;
-}
+}*/
 
 .modallogin {
     background-color: #fefefe;

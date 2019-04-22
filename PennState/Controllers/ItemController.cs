@@ -1568,7 +1568,7 @@ namespace PennState.Controllers
                 {
                     if (file.FileName.EndsWith("xls") || file.FileName.EndsWith("xlsx") || file.FileName.EndsWith("xlsm"))
                     {
-                        string path = Server.MapPath("~/Item/" + file.FileName);
+                        string path = Path.Combine("~/Item/", file.FileName);
                         if (System.IO.File.Exists(path))
                         {
                             var items = GetItemsUpload(path);
