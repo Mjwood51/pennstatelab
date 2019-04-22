@@ -65,7 +65,7 @@
                 <div class="form-group">
                     @Html.LabelFor(model => model.TheItem.Flagged, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
-                        @Html.TextAreaFor(model => model.TheItem.Flagged, new { @class = "form-control", @style = "width:350px" })
+                        @Html.TextAreaFor(model => model.TheItem.Flagged, new { @class = "form-control", @style = "width:45%" })
                         @Html.ValidationMessageFor(model => model.TheItem.Flagged, "", new { @class = "text-danger" })
                     </div>
                 </div>
@@ -130,7 +130,7 @@
                     </div>
                 </div>
             }
-            <div style="position:absolute;left:600px;top:0">
+            <div style="position:absolute;left:60%;top:0">
 
                 <div class="form-group">
                     @Html.LabelFor(model => model.TheRequest.StatEnum, htmlAttributes: new { @class = "control-label col-md-2", @style = "text-align:right" })
@@ -176,9 +176,9 @@
                 else
                 {
                     <div class="form-group">
-                        @Html.LabelFor(model => model.TheRequest.Message, htmlAttributes: new { @class = "control-label col-md-2", @style = "text-align:right;margin-top:105px" })
+                        @Html.LabelFor(model => model.TheRequest.Message, htmlAttributes: new { @class = "control-label col-md-2", @style = "text-align:right;margin-top:25%" })
                         <div class="col-md-10">
-                            @Html.TextAreaFor(model => model.TheRequest.Message, new { @class = "form-control", @style = "width:350px;margin-left:80px;margin-top:105px", @readonly = "readonly" })
+                            @Html.TextAreaFor(model => model.TheRequest.Message, new { @class = "form-control", @style = "width:45%;margin-left:0%;margin-top:10%", @readonly = "readonly" })
                             @Html.ValidationMessageFor(model => model.TheRequest.Message, "", new { @class = "text-danger" })
                         </div>
                     </div>

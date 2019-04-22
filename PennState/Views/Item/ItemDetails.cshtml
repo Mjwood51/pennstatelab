@@ -167,12 +167,12 @@
     @{
         if (Model.Item.Photos.Count > 0)
         {
-            <div style="position:absolute;left:450px;top:0px">
+            <div style="position:absolute;left:40%;top:0%">
                 <ul id="slider">
 
                     @foreach(var image in Model.Item.Photos)
                     {
-                    <li><img src="@Url.Content("~/Images/Uploads/SubLocations/" + Model.Item.SubId + "/Gallery/" + image.PhotoName)" /></li>
+                    <li><img style="padding-right:60%;width:200%;height:200%" src="@Url.Content("~/Images/Uploads/SubLocations/" + Model.Item.SubId + "/Gallery/" + image.PhotoName)" /></li>
                     }
                                         
                 </ul>
@@ -180,7 +180,7 @@
         }
         else
         {
-            <div style="position:absolute;left:470px;bottom:80px">
+            <div style="position:absolute;left:60%;bottom:20%">
             <h3>There are no gallery images.</h3>
             </div>
         }
@@ -195,6 +195,6 @@
 <script>
     $(document).ready(function () {
         $('#slider').bxSlider();
-        $('.bx-wrapper').width('70%');
+        $('.bx-wrapper').width('80%').height('80%');
     })
 </script>

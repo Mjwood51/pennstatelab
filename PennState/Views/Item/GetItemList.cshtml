@@ -11,7 +11,7 @@
 {
     <div class="alert alert-success">@TempData["SM"]</div>
 }
-
+    @*<div id="loading-bar-spinner" class="spinner"><div class="spinner-icon"></div></div>*@
 @{
     List<Item> items = Model.Items.ToList();
     TempData["List"] = items;
@@ -320,6 +320,21 @@
     <script src="~/Scripts/jstree.min.js"></script>
     <script>
 
+        function hideLoader() {
+            $('#loading-bar-spinner').hide();
+        }
+
+        $(window).ready(hideLoader);
+
+        window.onload = function () {
+            //display loader on page load 
+            $('.spinner-icon').hide();
+
+        }
+
+        // Strongly recommended: Hide loader after 20 seconds, even if the page hasn't finished loading
+        setTimeout(hideLoader, 30);
+
         $.tablesorter.addParser({
             id: 'checkbox',
             is: function (s, table, cell) {
@@ -522,6 +537,9 @@
             }
 
             $('#jstreeLoc').on('changed.jstree', function (e, data) {
+                if (data.node.children.length == 0) {
+                    return false;
+                }
                 e.preventDefault();
                 var l = [], t = [], v = [], o = [];
                 if (data.event.type = "click") {
@@ -575,6 +593,9 @@
 
 
             $('#jstree1').on('changed.jstree', function (e, data) {
+                if (data.node.children.length == 0) {
+                    return false;
+                }
                 e.preventDefault();
                 var l = [], t = [], v = [], o = [];
                 if (data.event.type = "click") {
@@ -628,6 +649,9 @@
 
 
             $('#jstree2').on('changed.jstree', function (e, data) {
+                if (data.node.children.length == 0) {
+                    return false;
+                }
                 var l = [], t = [], v = [], o = [];
                 e.preventDefault();
                 if (data.event.type = "click") {
@@ -680,6 +704,9 @@
 
 
             $('#jstree3').on('changed.jstree', function (e, data) {
+                if (data.node.children.length == 0) {
+                    return false;
+                }
                 var l = [], t = [], v = [], o = [];
                 e.preventDefault();
                 if (data.event.type = "click") {

@@ -1024,6 +1024,10 @@ namespace PennState.Controllers
         [HttpGet]
         public ActionResult GetItemList(string locations, string types, string vendors, string owners)
         {
+            if(locations == null && types == null && vendors == null && owners == null)
+            {
+                return RedirectToAction("GetAllItems", "Item");
+            }
             var test = "";
             string[] location = null;
             string[] vendor = null;
@@ -1550,6 +1554,8 @@ namespace PennState.Controllers
             return items;
         }
 
+        // Import Excel file to the database
+        //
         [CustomAuthorize(Roles = "Admin")]
         [HttpPost]
         public ActionResult Import(FormCollection formCollection)
@@ -1568,10 +1574,12 @@ namespace PennState.Controllers
                 {
                     if (file.FileName.EndsWith("xls") || file.FileName.EndsWith("xlsx") || file.FileName.EndsWith("xlsm"))
                     {
-                        string path = Path.Combine("~/Item/", file.FileName);
-                        if (System.IO.File.Exists(path))
+                        string filePath = Server.MapPath(Url.Content("~/Item/" + file.FileName));
+                        if (System.IO.File.Exists(filePath))
                         {
-                            var items = GetItemsUpload(path);
+                            //This method imports the database
+                            //
+                            var items = GetItemsUpload(filePath);
                                 if (items == null)
                                 {
                                     var model = PopulateList();
@@ -1587,8 +1595,8 @@ namespace PennState.Controllers
                         }
                          else
                          {
-                                file.SaveAs(path);
-                                var items = GetItemsUpload(path);
+                                file.SaveAs(filePath);
+                                var items = GetItemsUpload(filePath);
                                 if (items == null)
                                 {
                                     var model = PopulateList();
@@ -1741,6 +1749,9 @@ namespace PennState.Controllers
                 oXL.Worksheets[oXL.Sheets.Count].Delete();
                 oSheet = (Excel._Worksheet)oXL.Worksheets.Add();
                 oSheet.Name = "Test";
+                oSheet.Cells[1, 1].Value = "THIS PAGE MUST NOT BE DELETED FOR DATABASE IMPORTS";
+                oSheet.get_Range("A1", "A1").Cells.Font.Size = 38;
+                oXL.Windows.Application.ActiveWindow.DisplayGridlines = false;
 
                 oXL.Visible = true;
                 oXL.UserControl = true;
