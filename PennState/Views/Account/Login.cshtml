@@ -1,5 +1,4 @@
 ﻿@model PennState.Models.LoginView
-
 @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @onsubmit="return valLogIn()", @id="logInForm"}))
 {
     @Html.AntiForgeryToken()

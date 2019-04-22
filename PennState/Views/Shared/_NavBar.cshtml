@@ -40,7 +40,7 @@
                 <li class="nav-item">
                     @Html.ActionLink("Schedule", "Scheduler", "Item", new { area = "" }, new { @class = "nav-link", @style = "overflow:hidden;white-space:nowrap" })
                 </li>
-                <li class="nav-item" style="right:0%">
+                <li class="end nav-item">
                     @Html.ActionLink("Log out", "LogOut", "Account", new { area = "" }, new { @class = "nav-link", @style = "overflow:hidden;white-space:nowrap" })
                 </li>
                 var identity = ((CustomPrincipal)HttpContext.Current.User);

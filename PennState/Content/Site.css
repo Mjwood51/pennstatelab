@@ -6,8 +6,13 @@ li{
     margin-left:5%;
 }
 
-li:last-child{
-    right:0%;
+li.end{
+    margin-left:70%
+}
+
+
+li:last-child {
+    right: 0%;
 }
 .categoryButton {
     width: 190px;
@@ -96,7 +101,8 @@ div.fakefile {
 }
 
 .padLeft {
-    position: relative
+    position: absolute;
+    left:50%;
 }
 
 .inner-addon {
@@ -107,7 +113,7 @@ div.fakefile {
     .inner-addon .glyphicon {
         position: absolute;
         float: right;
-        padding: 10px;
+        padding: 5%;
         pointer-events: none;
     }
 
@@ -121,8 +127,11 @@ div.fakefile {
     }
 
 .text-box {
-    width: 200px;
-    height: 40px;
+    width: 40%;
+}
+
+.text-box2 {
+    width: 20%;
 }
 
 .check-box {
@@ -231,7 +240,7 @@ tr{
 }
 
 .text-left {
-    left: 90px;
+    width: 50%;
 }
 
 .align-left {
@@ -281,7 +290,7 @@ p.thick {
 }
 
 .listBox {
-    width: 1650px;
+    width:85.5%;
     position:fixed;
     border-style: solid;
     border-width: 1px;
@@ -306,14 +315,17 @@ p.thick {
 
 table tbody, table thead {
     display: block;
-    width: 1637px;
 }
 
 table tbody {
     overflow: auto;
-    height: 860px;
+    height: 830px;
+    width:100%;
 }
 
+tr{
+    white-space:nowrap;
+}
 
 .modal-content {
     height: 50%;
@@ -321,10 +333,15 @@ table tbody {
     margin: 15% auto;
 
 }
+
+thead{
+    width:100%;
+}
+
 .modal-content2 {
     position: relative;
     background-color: #fefefe;
-    margin: auto;
+    margin: 1%;
     padding: 0;
     border: 1px solid #888;
     width: 99.9%;

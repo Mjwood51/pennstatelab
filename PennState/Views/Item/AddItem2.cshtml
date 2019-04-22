@@ -8,63 +8,62 @@
     {
         @Html.AntiForgeryToken()
         <div style="position:relative">
-            <div class="form-horizontal" style="margin-left:138px; margin-top:50px">
+            <div class="form-horizontal" style="margin-left:0%; margin-top:5%">
                 <div class="form-group">
                     @Html.LabelFor(m => m.Item.Vendor, new { @class = "control-label col-md-2 padRight" })
-                    @Html.TextBoxFor(m => m.Item.Vendor, "", new { @name = "vendor", @class = "form-control text-box", @id = "autoVen3", @list = "dataList5", @placeholder = "Type/Click For Existing", @onchange = "comboVen3()", @autocomplete = "off" })
+                    @Html.TextBoxFor(m => m.Item.Vendor, "", new { @name = "vendor", @class = "form-control text-box2", @id = "autoVen3", @list = "dataList5", @placeholder = "Type/Click For Existing", @onchange = "comboVen3()", @autocomplete = "off" })
                     @Html.ValidationMessageFor(m => m.Item.Vendor, "", new { @class = "text-danger" })
                     <datalist id="dataList5"></datalist>
                 </div>
 
                 <div class="form-group">
                     @Html.LabelFor(m => m.Item.CatalogNumber, new { @class = "control-label col-md-2 padRight" })
-                    @Html.TextBoxFor(m => m.Item.CatalogNumber, new { @name = "catnumber", @id = "catNum3", @class = "form-control text-box", @autocomplete = "off" })
+                    @Html.TextBoxFor(m => m.Item.CatalogNumber, new { @name = "catnumber", @id = "catNum3", @class = "form-control text-box2", @autocomplete = "off" })
                     @Html.ValidationMessageFor(m => m.Item.CatalogNumber, "", new { @class = "text-danger" })
                 </div>
 
                 <div class="form-group">
                     @Html.LabelFor(m => m.Item.ItemName, new { @class = "control-label col-md-2 padRight" })
-                    @Html.TextBoxFor(m => m.Item.ItemName, new { @name = "itemname", @id = "itemName3", @class = "form-control text-box input-mysize", @autocomplete = "off" })
+                    @Html.TextBoxFor(m => m.Item.ItemName, new { @name = "itemname", @id = "itemName3", @class = "form-control text-box2 input-mysize", @autocomplete = "off" })
                     @Html.ValidationMessageFor(m => m.Item.ItemName, "", new { @class = "text-danger" })
                 </div>
 
                 <div class="form-group">
                     @Html.LabelFor(m => m.Item.PurchasePrice, new { @class = "control-label col-md-2 padRight" })
-                    @Html.TextBoxFor(m => m.Item.PurchasePrice, new { @name = "purchaseprice", @id = "pPrice", @class = "form-control text-box", @autocomplete = "off" })
+                    @Html.TextBoxFor(m => m.Item.PurchasePrice, new { @name = "purchaseprice", @id = "pPrice", @class = "form-control text-box2", @autocomplete = "off" })
                     @Html.ValidationMessageFor(m => m.Item.PurchasePrice, "", new { @class = "text-danger" })
                 </div>
 
                 <div class="form-group">
                     <div class="inner-addon left-addon">
-                        <i class="glyphicon glyphicon-calendar" style="position:absolute;padding-left:170px"></i>
                         @Html.LabelFor(m => m.Item.PurchaseDate, new { @style = "position:relative", @class = "control-label col-md-2 padRight" })
-                        @Html.EditorFor(m => m.Item.PurchaseDate, new { htmlAttributes = new { @name = "purchasedate", @style = "padding-bottom:40px;padding-top:0px", @class = "form-control text-box", @autocomplete = "off" } })
+                        @Html.EditorFor(m => m.Item.PurchaseDate, new { htmlAttributes = new { @name = "purchasedate", @style = "padding-bottom:1%;padding-top:0%", @class = "form-control text-box2", @autocomplete = "off" } })
                     </div>
                     @Html.ValidationMessageFor(m => m.Item.PurchaseDate, "", new { @class = "text-danger" })
                 </div>
 
                 <div class="form-group">
                     @Html.LabelFor(m => m.Item.AmountInStock, new { @style = "position:relative", @class = "control-label col-md-2 padRight", @autocomplete = "off" })
-                    @Html.TextBoxFor(m => m.Item.AmountInStock, new { @name = "amountinstock", @id = "inStock", @class = "form-control text-box", @autocomplete = "off" })
+                    @Html.TextBoxFor(m => m.Item.AmountInStock, new { @name = "amountinstock", @id = "inStock", @class = "form-control text-box2", @autocomplete = "off" })
                     @Html.ValidationMessageFor(m => m.Item.AmountInStock, "", new { @class = "text-danger" })
                 </div>
 
                 <div class="form-group">
                     @Html.LabelFor(m => m.Item.WebAddress, new { @style = "position:relative", @class = "control-label col-md-2 padRight", @autocomplete = "off" })
-                    @Html.TextBoxFor(m => m.Item.WebAddress, new { @name = "url", @id = "urlAddress", @class = "form-control text-box", @autocomplete = "off" })
+                    @Html.TextBoxFor(m => m.Item.WebAddress, new { @name = "url", @id = "urlAddress", @class = "form-control text-box2", @autocomplete = "off" })
                     @Html.ValidationMessageFor(m => m.Item.WebAddress, "", new { @class = "text-danger" })
                 </div>
                 <div style="position:absolute;right:0%;top:0%">
                     <div class="form-group">
                         @Html.LabelFor(m => m.FileUpload, new { @style = "position:relative", @class = "control-label col-md-2 padRight" })
-                        @Html.TextBoxFor(m => m.FileUpload, "Placeholder", new { @type = "file", @style = "top:20px", @id = "fileId3", @multiple = "multiple", @name = "files", @autocomplete = "off" })
+                        @Html.TextBoxFor(m => m.FileUpload, "Placeholder", new { @type = "file", @style = "top:5%", @id = "fileId3", @multiple = "multiple", @name = "files", @autocomplete = "off" })
                         @Html.ValidationMessageFor(m => m.FileUpload, "", new { @class = "text-danger" })
                         @Html.DropDownListFor(x => x.Files.FileList, Model.Files.GetFileList.Select(x => new SelectListItem { Text = x.ItemFileName, Value = x.Id.ToString() }), new { @class = "form-control chosen-select", @style = "width:200px", @multiple = true })
                     </div>
 
                     <div class="form-group">
                         @Html.LabelFor(m => m.PhotoUpload, new { @style = "position:relative", @class = "control-label col-md-2 padRight" })
-                        @Html.TextBoxFor(m => m.PhotoUpload, "", new { @type = "file", @id = "photoId3", @style = "top:20px", @multiple = "multiple", @name = "photos", @autocomplete = "off" })
+                        @Html.TextBoxFor(m => m.PhotoUpload, "", new { @type = "file", @id = "photoId3", @style = "top:5%", @multiple = "multiple", @name = "photos", @autocomplete = "off" })
                         @Html.ValidationMessageFor(m => m.PhotoUpload, "", new { @class = "text-danger" })
                         @Html.DropDownListFor(x => x.Photos.PhotoList, Model.Photos.GetPhotoList.Select(x => new SelectListItem { Text = x.PhotoName, Value = x.Id.ToString() }), new { @class = "form-control chosen-select", @style = "width:200px", @multiple = true })
                     </div>
@@ -101,8 +100,8 @@
         </div>
         <hr />
         <hr />
-        <input type="submit" style="width:200px;margin-top:20px;margin-left:-25px;margin-left:25%" class="btn btn-primary" name="name" value="Submit" />
-        <input type="button" value="Cancel" style="width:200px;margin-top:20px;" onclick="closeAdd()" class="btn btn-danger" />
+        <input type="submit" style="width:44%;margin-top:1%;margin-left:-1%" class="btn btn-primary" name="name" value="Submit" />
+        <input type="button" value="Cancel" style="width:44%;margin-top:1%" onclick="closeAdd()" class="btn btn-danger" />
     }
     @Html.ActionLink("Back To Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })
     <br />

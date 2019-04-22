@@ -5,7 +5,7 @@
     {
         @Html.AntiForgeryToken()
 
-        <div class="form-horizontal" style="margin-left:138px; margin-top:50px">
+        <div class="form-horizontal" style="margin-left:21%; margin-top:5%">
             <div class="form-group">
                 @Html.LabelFor(m => m.Item.Vendor, new { @class = "control-label col-md-2 padRight" })
                 @Html.TextBoxFor(m => m.Item.Vendor, "", new { @name = "vendor", @class = "form-control text-box", @id = "autoVen", @list = "dataList4", @placeholder = "Type/Click For Existing", @onchange = "comboVen()", @autocomplete = "off"})
@@ -33,9 +33,8 @@
 
             <div class="form-group">
                 <div class="inner-addon left-addon">
-                    <i class="glyphicon glyphicon-calendar" style="position:absolute;padding-left:170px"></i>
                     @Html.LabelFor(m => m.Item.PurchaseDate, new { @style = "position:relative", @class = "control-label col-md-2 padRight" })
-                    @Html.EditorFor(m => m.Item.PurchaseDate, new { htmlAttributes = new { @name = "purchasedate", @style = "padding-bottom:40px;padding-top:0px", @class = "form-control text-box", @autocomplete = "off"}})
+                    @Html.EditorFor(m => m.Item.PurchaseDate, new { htmlAttributes = new { @name = "purchasedate", @style = "padding-bottom:5%;padding-top:0%", @class = "form-control text-box", @autocomplete = "off"}})
                 </div>
                 @Html.ValidationMessageFor(m => m.Item.PurchaseDate, "", new { @class = "text-danger" })
             </div>
@@ -54,14 +53,14 @@
 
             <div class="form-group">
                 @Html.LabelFor(m => m.FileUpload, new { @style = "position:relative", @class = "control-label col-md-2 padRight" })
-                @Html.TextBoxFor(m => m.FileUpload, "Placeholder", new { @type = "file", @style = "top:20px", @id = "fileId", @multiple = "multiple", @name = "files", @autocomplete = "off"})
+                @Html.TextBoxFor(m => m.FileUpload, "Placeholder", new { @type = "file", @style = "top:5%", @id = "fileId", @multiple = "multiple", @name = "files", @autocomplete = "off"})
                 @Html.ValidationMessageFor(m => m.FileUpload, "", new { @class = "text-danger" })
                 @Html.DropDownListFor(x => x.Files.FileList, Model.Files.GetFileList.Select(x => new SelectListItem { Text = x.ItemFileName, Value = x.Id.ToString()}), new { @class = "form-control chosen-select", @style = "width:200px", @multiple = true})
             </div>
 
             <div class="form-group">
                 @Html.LabelFor(m => m.PhotoUpload, new { @style = "position:relative", @class = "control-label col-md-2 padRight" })
-                @Html.TextBoxFor(m => m.PhotoUpload, "", new { @type = "file", @id = "photoId", @style = "top:20px", @multiple = "multiple", @name = "photos", @autocomplete = "off"})
+                @Html.TextBoxFor(m => m.PhotoUpload, "", new { @type = "file", @id = "photoId", @style = "top:5%", @multiple = "multiple", @name = "photos", @autocomplete = "off"})
                 @Html.ValidationMessageFor(m => m.PhotoUpload, "", new { @class = "text-danger" })
                 @Html.DropDownListFor(x => x.Photos.PhotoList, Model.Photos.GetPhotoList.Select(x => new SelectListItem { Text = x.PhotoName, Value = x.Id.ToString()}),  new { @class = "form-control chosen-select", @style = "width:200px", @multiple = true})
             </div>
@@ -94,8 +93,8 @@
             </div>
 
 
-            <input type="submit" style="width:200px;margin-top:20px;margin-left:-25px" class="btn btn-primary" name="name" value="Submit" />
-            <input type="button" value="Cancel" style="width:200px;margin-top:20px;" onclick="closeAdd()" class="btn btn-danger" />
+            <input type="submit" style="width:44%;margin-top:1%;margin-left:-1%" class="btn btn-primary" name="name" value="Submit" />
+            <input type="button" value="Cancel" style="width:44%;margin-top:1%;" onclick="closeAdd()" class="btn btn-danger" />
         </div>
     }
 </div>
