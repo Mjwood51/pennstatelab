@@ -26,5 +26,10 @@ namespace PennState.Controllers
 
             return View();
         }
+
+        public ActionResult UserGuide()
+        {
+            return View();
+        }
     }
 }

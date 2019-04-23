@@ -9,25 +9,26 @@
         <table id="requestTable" class="tablesorter table-hover table-striped">
             <thead>
                 <tr>
-                    <th style="font-size:134%;width:10%">
+                    <th style="font-size:134%;width:17%">
                         Item Name
                     </th>
-                    <th style="font-size:134%;width:4%">
+                    <th style="font-size:134%;width:3%">
                         Qty
                     </th>
                     <th style="font-size:134%;width:5%">
                         Unit Price
                     </th>
-                    <th style="font-size:134%;width:19%">
+                    <th style="font-size:134%;width:5%">
+                        Total
+                    </th>
+                    <th style="font-size:134%;width:24%">
                         Message
                     </th>
                     <th style="font-size:14px;width:9%">
                         User
                     </th>
-                    <th style="font-size:134%;width:4%">
-                        Total Price
-                    </th>
-                    <th style="font-size:134%;width:15%"></th>
+
+                    <th style="font-size:134%;width:20%"></th>
                 </tr>
             </thead>
             <tbody>
@@ -36,35 +37,34 @@
                     foreach (var item in Model.Requests)
                     {
                 <tr id="rowReq_@item.Id" style="height:50px">
-                    <td style="font-size:134%;width:10%">
+                    <td style="font-size:134%;width:14%">
                         @Html.DisplayFor(modelItem => item.ItemName)
                     </td>
-                    <td style="font-size:134%;width:4%;text-align:left">
+                    <td style="font-size:134%;width:3%;text-align:left">
                         @Html.DisplayFor(modelItem => item.Quantity)
                     </td>
-                    <td style="font-size:134%;width:5%;text-align:left">
+                    <td style="font-size:134%;width:3%;text-align:left">
                         @Html.DisplayFor(modelItem => item.UnitPrice)
+                    </td>
+                    <td style="font-size:134%;width:5%;text-align:center">
+                        @Html.DisplayFor(modelItem => item.TotalPrice)
                     </td>
                     <td style="font-size:134%;width:10%;text-align:left">
                         @Html.DisplayFor(modelItem => item.Message)
                     </td>
-                    <td style="font-size:134%;width:15%;text-align:right">
+                    <td style="font-size:134%;width:17%;text-align:right">
                         @Html.DisplayFor(modelItem => item.User.FirstName) @Html.DisplayFor(modelItem => item.User.LastName)
                     </td>
-                    <td style="font-size:134%;width:8%;text-align:center">
-                        @Html.DisplayFor(modelItem => item.TotalPrice)
-                    </td>
+
                     @if (HttpContext.Current.User.IsInRole("Admin"))
                     {
-                    <td style="font-size:134%;width:15%;text-align:left">
-                        <a href="#" onclick="deleteRequest(@item.Id)">Delete</a>
-                    </td>
+                        <td style="font-size:134%;width:15%;text-align:left">
+                            <a href="#" onclick="deleteRequest(@item.Id)">Delete</a>
+                        </td>
                     }
                     else
                     {
-                        <td style="font-size:134%;width:18%">
-
-                        </td>
+                        <td style="font-size:134%;width:18%"></td>
                     }
                 </tr>
                     }

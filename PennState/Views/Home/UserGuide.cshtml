@@ -1,5 +1,54 @@
-﻿@{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+﻿
+@{
+    ViewBag.Title = "UserGuide";
 }
 
+<h1 style="text-align:center;text-decoration:underline"><strong>User Guide</strong></h1>
+<br />
+<br />
 
+<h2>Contents</h2>
+<br />
+<ul style="text-size-adjust:inherit">
+    <li>
+        1) Excel File Import (Administrator Only)
+    </li>
+    <li>
+        2)
+    </li>
+</ul>
+<br />
+<h3 style="text-decoration:underline"><strong>Excel File Import (Administrator Only)</strong></h3>
+
+<p class="lineHeight">Administrators can populate the database by importing a Microsoft Excel spreadsheet table.</p>
+<p class="lineHeight">The format of imported spreadsheets must be consistent with the format of tables exported from the predecessor application - Quartzy.</pclass="lineHeight">
+<p class="lineHeight">These are the specific format requirements for importing Excel workbooks:</p>
+<ul>
+    <li>
+        <p>The first workpage of the Excel worbook should not have any rows from the inventory.</p>  
+        <p>It must stay in place as a buffer before the subsequent tables are read by the application and copied to the database.</p>
+    </li>
+    <li>
+        <p>Table columns will begin reading from column 'C' and will continue through Column 'W'.</p>  
+        <p>The administrator, may reprogram the Item Controller's 'Import()' function to read columns A, B, X, Y, and Z if the Inventory requires more fields for future expansion.</p>
+        <p>It is important to note that the field count must not extend pass column Z, this will throw an error.</p>
+    </li>
+    <li>
+        <p>Any column changes made to the Excel file should be consistent with the order of datatable assignments in the GetItemsUpload() function. 
+        <p>Please refer to the function comments inside the Items Controller</p>
+    </li>
+    <li>
+        <p>Make sure that worksheet titles correspond to the inventory equipment types.</p>
+        <p>Any new 'type' worksheets will be read by the system accordingly.</p>
+    </li>
+</ul>
+<br />
+<br />
+
+<h4>Uploading a Spreadsheet</h4>
+<br />
+<p>To upload a spreadsheet please follow these directions:</p>
+<ul>
+
+</ul>
+<h3 style="text-decoration:underline"></h3>

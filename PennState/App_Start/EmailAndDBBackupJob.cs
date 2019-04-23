@@ -89,7 +89,7 @@ namespace PennState.App_Start
             script.Append("function validpath($path){\n");
             script.Append("$retval = Test-Path $path\n");
             script.Append("return $retval}\n");
-            script.Append("$basepath = 'C:\\Users\\Mark W'\n");
+            script.Append("$basepath = 'D:\\Users\\Mark W'\n");
             script.Append("$comdate = Get-Date\n");
             script.Append("$BUDate = Get-Date -Format o | foreach {$_ -replace ':', '.'}\n");
             script.Append("$Scriptpath = $basepath+'\\PowerShell'\n");
@@ -226,7 +226,7 @@ namespace PennState.App_Start
 
             ITrigger trigger = TriggerBuilder.Create()
                 .WithSchedule(CronScheduleBuilder
-                .WeeklyOnDayAndHourAndMinute(DayOfWeek.Saturday, 19, 41)
+                .WeeklyOnDayAndHourAndMinute(DayOfWeek.Tuesday, 19, 41)
                 .InTimeZone(TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time")))
                 .Build();
 

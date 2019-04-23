@@ -65,7 +65,7 @@
                 <div class="form-group">
                     @Html.LabelFor(model => model.TheItem.Flagged, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
-                        @Html.TextAreaFor(model => model.TheItem.Flagged, new { @class = "form-control", @style = "width:45%" })
+                        @Html.TextAreaFor(model => model.TheItem.Flagged, new { @class = "form-control", @style = "width:40%" })
                         @Html.ValidationMessageFor(model => model.TheItem.Flagged, "", new { @class = "text-danger" })
                     </div>
                 </div>
@@ -125,7 +125,7 @@
                 <div class="form-group">
                     @Html.LabelFor(model => model.TheItem.Flagged, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
-                        @Html.TextAreaFor(model => model.TheItem.Flagged, new { @class = "form-control", @style = "width:350px", @readonly = "readonly" })
+                        @Html.TextAreaFor(model => model.TheItem.Flagged, new { @class = "form-control", @style = "width:40%", @readonly = "readonly" })
                         @Html.ValidationMessageFor(model => model.TheItem.Flagged, "", new { @class = "text-danger" })
                     </div>
                 </div>
@@ -168,7 +168,7 @@
                     <div class="form-group">
                         @Html.LabelFor(model => model.TheRequest.Message, htmlAttributes: new { @class = "control-label col-md-2", @style = "text-align:right;margin-top:110px" })
                         <div class="col-md-10">
-                            @Html.TextAreaFor(model => model.TheRequest.Message, new { @class = "form-control", @style = "width:350px;margin-left:80px;margin-top:110px" })
+                            @Html.TextAreaFor(model => model.TheRequest.Message, new { @class = "form-control", @style = "width:100%;margin-left:21%;margin-top:32%" })
                             @Html.ValidationMessageFor(model => model.TheRequest.Message, "", new { @class = "text-danger" })
                         </div>
                     </div>
@@ -178,7 +178,7 @@
                     <div class="form-group">
                         @Html.LabelFor(model => model.TheRequest.Message, htmlAttributes: new { @class = "control-label col-md-2", @style = "text-align:right;margin-top:25%" })
                         <div class="col-md-10">
-                            @Html.TextAreaFor(model => model.TheRequest.Message, new { @class = "form-control", @style = "width:45%;margin-left:0%;margin-top:10%", @readonly = "readonly" })
+                            @Html.TextAreaFor(model => model.TheRequest.Message, new { @class = "form-control", @style = "width:100%;margin-left:21%;margin-top:32%", @readonly = "readonly" })
                             @Html.ValidationMessageFor(model => model.TheRequest.Message, "", new { @class = "text-danger" })
                         </div>
                     </div>
