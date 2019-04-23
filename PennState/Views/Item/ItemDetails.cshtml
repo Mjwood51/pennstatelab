@@ -1,5 +1,4 @@
 ﻿@model PennState.ViewModels.ItemDetailsModel
-<link href="~/Content/jquery.bxslider.css" rel="stylesheet" />
 <div style="position:relative">
     <dl class="dl-horizontal">
         <dt>
@@ -168,14 +167,13 @@
         if (Model.Item.Photos.Count > 0)
         {
             <div style="position:absolute;left:40%;top:0%">
-                <ul id="slider">
 
                     @foreach(var image in Model.Item.Photos)
                     {
-                    <li><img style="padding-right:60%;width:200%;height:200%" src="@Url.Content("~/Images/Uploads/SubLocations/" + Model.Item.SubId + "/Gallery/" + image.PhotoName)" /></li>
+                    <img class="mySlides" src="~/Images/Uploads/SubLocations/@Model.Item.SubId/Gallery/@image.PhotoName" title="@image.PhotoName" />
                     }
-                                        
-                </ul>
+                    <button class="w3-button w3-black w3-display-left" onclick="plusDivs(-1)">&#10094;</button>
+                    <button class="w3-button w3-black w3-display-right" onclick="plusDivs(1)">&#10095;</button>
             </div>
         }
         else
@@ -190,11 +188,22 @@
 <p>
     @Html.ActionLink("Back to List", "GetAllItems")
 </p>
-
-<script src="~/Scripts/jquery.bxslider.min.js"></script>
 <script>
-    $(document).ready(function () {
-        $('#slider').bxSlider();
-        $('.bx-wrapper').width('80%').height('80%');
-    })
+    var slideIndex = 1;
+    showDivs(slideIndex);
+
+    function plusDivs(n) {
+        showDivs(slideIndex += n);
+    }
+
+    function showDivs(n) {
+        var i;
+        var x = document.getElementsByClassName("mySlides");
+        if (n > x.length) { slideIndex = 1 }
+        if (n < 1) { slideIndex = x.length };
+        for (i = 0; i < x.length; i++) {
+            x[i].style.display = "none";
+        }
+        x[slideIndex - 1].style.display = "block";
+    }
 </script>
