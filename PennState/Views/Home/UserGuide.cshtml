@@ -1,54 +1,264 @@
-﻿
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
 @{
     ViewBag.Title = "UserGuide";
 }
+
 
 <h1 style="text-align:center;text-decoration:underline"><strong>User Guide</strong></h1>
 <br />
 <br />
 
-<h2>Contents</h2>
+<h2><strong>Contents</strong></h2>
+<ol>
+    <li><a href="#one">Importing Excel Files</a></li>
+    <li><a href="#two">Uploading Excel Spreadsheets</a></li>
+    <li><a href="#three">Exporting Database To Excel Spreadsheet</a></li>
+    <li><a href="#four">Filter Inventory Table</a></li>
+    <li><a href="#five">Sorting Inventory Table</a></li>
+    <li><a href="#six">Adding New Items</a></li>
+    <li><a href="#seven">Editing Items</a></li>
+    <li><a href="#eight">Deleting Items</a></li>
+    <li><a href="#nine">View Item Details</a></li>
+    <li><a href="#ten">Making Requests</a></li>
+    <li><a href="#eleven">Reserve Items - Add To Schedule</a></li>
+    <li><a href="#twelve">Mark For Deletion</a></li>
+    <li><a href="#thirteen">Invite Users to Register</a></li>
+    <li><a href="#fourteen">User Registration</a></li>
+    <li><a href="#fifteen">Automated System Tasks</a></li>
+    <li><a href="#sixteen">User Account Management</a></li>
+    <li><a href="#seventeen">Site Information</a></li>
+</ol>
 <br />
-<ul style="text-size-adjust:inherit">
+<h3 id="one">Importing Excel Files (Administrator Only)</h3>
+<br />
+<div class="a">
+    <p>Administrators can populate the database by importing a Microsoft Excel spreadsheet table. The format of</p>
+    <p>imported spreadsheets must be consistent with the format of tables exported from the predecessor application - Quartzy.</p>
+    <p>These are the specific format requirements for importing Excel workbooks:</p>
+</div>
+<br />
+    <ul>
+        <li>
+                <p>The first workpage of the Excel workbook should not include any rows from the inventory.</p>
+                <p>This workpage must stay in place as a buffer before the subsequent tables are read by the application and copied to the database.</p>   
+                <br />
+        </li>
+        <li>
+                <p>Table columns will begin reading from column 'C' and will continue through Column 'W'.</p>
+                <p>The administrator, may reprogram the Item Controller's 'Import()' function to read columns A, B, X, Y, and Z if the Inventory requires</p>
+                <p>more fields for future expansion. It is important to note that the field count must not extend pass column Z, this will throw an error.</p>
+                <br />
+        </li>
+        <li>
+                <p>Any column changes made to the Excel file should be consistent with the order of datatable assignments in the GetItemsUpload() function.
+                <p>Please refer to the function comments inside the Items Controller.</p>
+                <br />
+        </li>
+        <li>
+                <p>Make sure that worksheet titles correspond to the inventory equipment types.</p>
+                <p>Any new 'type' worksheets will be read by the system accordingly.</p>
+                <br />
+        </li>
+    </ul>
+<h3 id="two">Uploading Excel Spreadsheets</h3>
+<br />
+<p>To upload an Excel file spreadsheet to the database please follow these directions:</p>
+<ol>
     <li>
-        1) Excel File Import (Administrator Only)
+            After logging in, navigate to the lab inventory.
     </li>
     <li>
-        2)
+            Locate and click the the 'Import Excel File' link at the bottom of the left sidebar menu.
     </li>
-</ul>
+    <li>
+            Select the inventory excel file to import (Must be in Quartzy export excel table format).
+    </li>
+    <li>
+            Click the 'Import' button.
+    </li>
+</ol>
 <br />
-<h3 style="text-decoration:underline"><strong>Excel File Import (Administrator Only)</strong></h3>
-
-<p class="lineHeight">Administrators can populate the database by importing a Microsoft Excel spreadsheet table.</p>
-<p class="lineHeight">The format of imported spreadsheets must be consistent with the format of tables exported from the predecessor application - Quartzy.</pclass="lineHeight">
-<p class="lineHeight">These are the specific format requirements for importing Excel workbooks:</p>
+<h3 id="three">Exporting Database To Excel Spreadsheet (For all Users)</h3>
+<br />
+<ol>
+    <li>
+        Navigate to the Inventory page.
+    </li>
+    <li>
+        Click the 'Export Database to Excel' link at the very bottom of the left sidebar menu.
+    </li>
+</ol>
+<br />
+<br />
+<h3 id="four">Filter Inventory Table</h3>
+<br />
+    <p>Inventory table filtering can be accomplished through two ways on the left-hand sidebar:</p>
+    <p>Using the four dropdown catagory selection tree menus, or by typing a query string in the upper 'Search' textbox.</p>
+<br />
+<p>Follow these directions when filtering with the dropdown category selection menus:</p>
+<br />
+<ol>
+    <li>
+        Hover your mouse over any one of the four catagory selectors in the left sidebar(Location, Type, Vendor, Owner).
+    </li>
+    <li>
+        Select desired nodes across any of the four the catagory menus. The row count within the table will narrow down according to the user's selection.
+    </li>
+</ol>
+<br />
+    <p>A user may also search for records by typing a string keyword in the upper 'Search' textbox. </p>
+    <p>Press the 'Enter' key and the table will return entries using all or part of the query string.</p>
+    <br />
+    <p>To bring back the full inventory list, either press 'Enter' while the Search text-box is empty and selected, or click the 'Start Over (Full List)' link near the bottom.</p>
+<br />
+<h3 id="five">Sorting Inventory Table</h3>
+<br />
+    <p>A User may sort the inventory table by clicking on any one of the field headers at the top of the table</p>
+    <p>The direction of the arrow to the right of the header Title signifies the order type (Down arrow - Descending, Up Arrow - Ascending).</p>
+<br />
+<h3 id="six">Adding New Items (Administrator Only)</h3>
+<br />
+    <p>To navigate to the 'Add New Item' form, either click the 'Add New Item' button underneath the Home Page title</p>
+    <p>or click the 'Add New Item' link (with a pencil glyphicon) at the top of the left sidebar.</p>
+<br />
+    <p>- Fill in the desired fields to which a new item record will be recorded to the database.  An item's Name, Type, and Location are required for submission.</p>
+    <p>- A User may choose from an existing collection of values for Vendor, Type, Location, Upload Files, Location Photos, and Sub-Location form fields.</p>
+<br />
+<h3 id="seven">Editing Items (Administrator and User Only)</h3>
+<br />
+<p>To edit an inventory item, either click (or double-click) an underlined field value or click the middle 'notepad' glyphicon within the desired row.</p>
+<p>The edit form will appear from the right side of the screen. Fill in or change any desired fields</p>
+<br />
+<h3 id="eight">Deleting Items (Administrator Only)</h3>
+<br />
+    <p>- To delete an item, click the very right 'trash can' glyphicon in the row of the desired item to be deleted.</p>
+    <p>- Confirm that you want to delete this item by clicking 'Ok' in the confirmation box.</p>
+    <p>- *Note - Deleting items will also delete any requests made on the item and also any associated files and location photos.</p>
+<br />
+<h3 id="nine">View Item Details (All Users)</h3>
+<br />
 <ul>
-    <li>
-        <p>The first workpage of the Excel worbook should not have any rows from the inventory.</p>  
-        <p>It must stay in place as a buffer before the subsequent tables are read by the application and copied to the database.</p>
-    </li>
-    <li>
-        <p>Table columns will begin reading from column 'C' and will continue through Column 'W'.</p>  
-        <p>The administrator, may reprogram the Item Controller's 'Import()' function to read columns A, B, X, Y, and Z if the Inventory requires more fields for future expansion.</p>
-        <p>It is important to note that the field count must not extend pass column Z, this will throw an error.</p>
-    </li>
-    <li>
-        <p>Any column changes made to the Excel file should be consistent with the order of datatable assignments in the GetItemsUpload() function. 
-        <p>Please refer to the function comments inside the Items Controller</p>
-    </li>
-    <li>
-        <p>Make sure that worksheet titles correspond to the inventory equipment types.</p>
-        <p>Any new 'type' worksheets will be read by the system accordingly.</p>
-    </li>
+    <li>Click the 'eye' glyphicon under the 'Options' field of a desired row</li>
+    <li>The details view will show you specific item information, including an image gallery which you can shuffle through using the bottom arrow buttons</li>
 </ul>
 <br />
+<h3 id="ten">Making Requests (All Users)</h3>
 <br />
-
-<h4>Uploading a Spreadsheet</h4>
+<p>All Users have the ability to make requests.  Requests can be made on specific items in the database or they can be generated as a new request.</p>
+<p>To make a request on an existing item, click the "Request Link" under the 'Options' field for any desired row.</p>
+<p>Fill out the necessary information for the request and include a message for the request, i.e "Need to reorder more tracks".</p>
+<p>Make sure to click the submit button when finished.</p>
 <br />
-<p>To upload a spreadsheet please follow these directions:</p>
-<ul>
+<h3 id="eleven">Reserve Items - Add To Schedule (All Users)</h3>
+<p>All Users may reserve items for lab use.  To reserve an item, a user must click the checkbox value for their desired item underneath the 'Checked Out' heading.</p>
+<p>All users can view the log table of reserved items by clicking on the 'Schedule' navigation link in the top navigation bar.</p>
+<br />
+<p>- Items that have been returned will show a date value under the 'Returned' header.</p>
+<p>- Items that are still in use will show a blank value under the 'Returned' header.</p>
+<br />
+<p>To return an item, users should sort through the inventory list to find the checked-out item. The schedule log record will update when a user un-checks</p>
+<p>his reserved item.</p>
+<br />
+<h3 id="twelve">Mark For Deletion (Administrator and User Only)</h3>
+<br />
+<p>Users and Administrators can both mark an item for deletion, as a way of sort-organization of to-be-deleted items by the Administrator</p>
+<p>To mark an item for deletion, simply click the checkbox for the desired item under the 'Mark Deletion' header.</p>
+<br />
+<h3 id="thirteen">Invite Users to Register (Administrator only)</h3>
+<br />
+<p>Administrators can invite users to register a new user account through an email embedded link.</p>
+<p>To invite a user, click the 'Invite' navigation link in the top navigation bar.</p>
+<p>Type a new users email address in the text box and select a User Type from the given list. Click 'Send Email' to finish.</p>
+<br />
+<h3 id="fourteen">User Registration (All Users)</h3>
+<br />
+<p>To register as a new user, click the link provided in the email invitation sent by the administrator.</p>
+<p>Once you are redirected to the registration form, fill out all necessary fields before submitting the form.</p>
+<br />
+<h3 id="fifteen">Automated System Tasks</h3>
+<br />
+<p>This website is configured to send the primary administrator an table embedded email of current inventory requests.</p>
+<p>A backup of SQL Server database will also be scheduled at the same time and will be stored in a directory of the Administrator's choice.</p>
+<p>The PowerShell Script string, which includes the location path of the desired directories is located in the EmailAndDBBackUpJob.cs file in the 'AppStart' directory</p>
+<p>of the application's project directory.</p>
+<br />
+<p>Should an admin wish to change the time of the scheduled task, or the location of backed up files, he or she can edit the StringBuilder object  </p>
+<p>that contains the PowerShell script code (for backup location changes), or the JobScheduler class's Start() method (for changing the day and time of the scheduled task).</p>
+<br />
+<h3 id="sixteen">User Account Management</h3>
+<br />
+<p>For this current version, there is no way to remove or change user information through the user interface.</p>
+<p>Administrators must use SQL Server Management Studio, or the embedded SQL Server Lite tool in Visual Studio to delete accounts or change user information.</p>
+<p>Tutorials for SQL Server can be found at these links here: </p>
+<p><a href="https://docs.microsoft.com/en-us/sql/ssms/tutorials/tutorial-sql-server-management-studio?view=sql-server-2017">https://docs.microsoft.com/en-us/sql/ssms/tutorials/tutorial-sql-server-management-studio?view=sql-server-2017</a></p>
+<p><a href="https://docs.microsoft.com/en-us/sql/sql-server/tutorials-for-sql-server-2016?view=sql-server-2017">https://docs.microsoft.com/en-us/sql/sql-server/tutorials-for-sql-server-2016?view=sql-server-2017</a></p>
+<h3 id="seventeen">Site Information</h3>
+<br />
+<p>Users can contact the Administrator through the information provided in the 'Contacts' navigation link.</p>
 
-</ul>
-<h3 style="text-decoration:underline"></h3>
+@section Scripts{
+<script>
+    window.scroll({
+  top: 2500, 
+  left: 0, 
+  behavior: 'smooth'
+});
+
+// Scroll certain amounts from current position 
+window.scrollBy({ 
+  top: 100, // could be negative value
+  left: 0, 
+  behavior: 'smooth' 
+});
+
+// Scroll to a certain element
+document.querySelector('.hello').scrollIntoView({ 
+  behavior: 'smooth' 
+});
+
+    // Select all links with hashes
+    $('a[href*="#"]')
+        // Remove links that don't actually link to anything
+        .not('[href="#"]')
+        .not('[href="#0"]')
+        .click(function (event) {
+            // On-page links
+            if (
+                location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '')
+                &&
+                location.hostname == this.hostname
+            ) {
+                // Figure out element to scroll to
+                var target = $(this.hash);
+                target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+                // Does a scroll target exist?
+                if (target.length) {
+                    // Only prevent default if animation is actually gonna happen
+                    event.preventDefault();
+                    $('html, body').animate({
+                        scrollTop: target.offset().top
+                    }, 1000, function () {
+                        // Callback after animation
+                        // Must change focus!
+                        var $target = $(target);
+                        $target.focus();
+                        if ($target.is(":focus")) { // Checking if the target was focused
+                            return false;
+                        } else {
+                            $target.attr('tabindex', '-1'); // Adding tabindex for elements not focusable
+                            $target.focus(); // Set focus again
+                        };
+                    });
+                }
+            }
+        });
+
+    Resources 
+
+
+</script>    
+    
+}

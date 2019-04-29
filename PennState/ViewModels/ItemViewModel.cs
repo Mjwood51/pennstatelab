@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using PagedList;
 using PennState.Models;
 
 namespace PennState.ViewModels
@@ -17,6 +16,5 @@ namespace PennState.ViewModels
         public IEnumerable<CatagoryVendor> Vendors { get; set; }
         public IEnumerable<CatagoryOwner> Owners { get; set; }
         public IEnumerable<CatagoryType> Types { get; set; }
-        public PagedList<Item> PagedList { get; set; }
     }
 }

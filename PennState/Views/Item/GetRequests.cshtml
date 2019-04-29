@@ -1,4 +1,5 @@
 ﻿@model PennState.ViewModels.RequestViewModel
+
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -36,37 +37,37 @@
                 {
                     foreach (var item in Model.Requests)
                     {
-                <tr id="rowReq_@item.Id" style="width:210px">
-                    <td style="font-size:134%;width:210px">
-                        @Html.DisplayFor(modelItem => item.ItemName)
-                    </td>
-                    <td style="font-size:134%;width:210px;text-align:left">
-                        @Html.DisplayFor(modelItem => item.Quantity)
-                    </td>
-                    <td style="font-size:134%;width:210px;text-align:left">
-                        @Html.DisplayFor(modelItem => item.UnitPrice)
-                    </td>
-                    <td style="font-size:134%;width:210px;text-align:center">
-                        @Html.DisplayFor(modelItem => item.TotalPrice)
-                    </td>
-                    <td style="font-size:134%;width:210px;text-align:left">
-                        @Html.DisplayFor(modelItem => item.Message)
-                    </td>
-                    <td style="font-size:134%;width:105px;text-align:left">
-                        @Html.DisplayFor(modelItem => item.User.FirstName) @Html.DisplayFor(modelItem => item.User.LastName)
-                    </td>
+                        <tr id="rowReq_@item.Id" style="width:210px">
+                            <td style="font-size:134%;width:210px">
+                                @Html.DisplayFor(modelItem => item.ItemName)
+                            </td>
+                            <td style="font-size:134%;width:210px;text-align:left">
+                                @Html.DisplayFor(modelItem => item.Quantity)
+                            </td>
+                            <td style="font-size:134%;width:210px;text-align:left">
+                                @Html.DisplayFor(modelItem => item.UnitPrice)
+                            </td>
+                            <td style="font-size:134%;width:210px;text-align:center">
+                                @Html.DisplayFor(modelItem => item.TotalPrice)
+                            </td>
+                            <td style="font-size:134%;width:210px;text-align:left">
+                                @Html.DisplayFor(modelItem => item.Message)
+                            </td>
+                            <td style="font-size:134%;width:105px;text-align:left">
+                                @Html.DisplayFor(modelItem => item.User.FirstName) @Html.DisplayFor(modelItem => item.User.LastName)
+                            </td>
 
-                    @if (HttpContext.Current.User.IsInRole("Admin"))
-                    {
-                        <td style="font-size:134%;width:105px;text-align:left">
-                            <a href="#" onclick="deleteRequest(@item.Id)">Delete</a>
-                        </td>
-                    }
-                    else
-                    {
-                        <td style="font-size:134%;width:105px"></td>
-                    }
-                </tr>
+                            @if (HttpContext.Current.User.IsInRole("Admin"))
+                            {
+                                <td style="font-size:134%;width:105px;text-align:left">
+                                    <a href="#" onclick="deleteRequest(@item.Id)">Delete</a>
+                                </td>
+                            }
+                            else
+                            {
+                                <td style="font-size:134%;width:105px"></td>
+                            }
+                        </tr>
                     }
 
                 }
@@ -95,27 +96,27 @@
         </div>
     </div>
 </div>
-        @section Scripts{
-            <script src="~/Scripts/tablesorter/jquery.tablesorter.min.js"></script>
-            <script>
-                $(document).ready(function () {
-                    $("#requestTable").tablesorter({ sortList: [[0, 0], [2, 1]] });
-                });
+@section Scripts{
+    <script src="~/Scripts/tablesorter/jquery.tablesorter.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#requestTable").tablesorter({ sortList: [[0, 0], [2, 1]] });
+        });
 
-                function deleteRequest(id) {
-                    $.ajax({
-                        url: "/Item/DeleteRequest/" + id,
-                        async: false,
-                        beforeSend: function() {
-                            return confirm("Are you sure you want to delete this request?");
-                        }
-                    }).done(function (data) {
-                        $("#rowReq_" + id).remove();
-                        $.notify("Request Deleted", {
-                            style: 'happygreen'
-                        });
-                    })
-
+        function deleteRequest(id) {
+            $.ajax({
+                url: "/Item/DeleteRequest/" + id,
+                async: false,
+                beforeSend: function () {
+                    return confirm("Are you sure you want to delete this request?");
                 }
-            </script>
+            }).done(function (data) {
+                $("#rowReq_" + id).remove();
+                $.notify("Request Deleted", {
+                    style: 'happygreen'
+                });
+            })
+
         }
+    </script>
+}

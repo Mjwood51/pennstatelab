@@ -238,33 +238,25 @@ namespace PennState.Controllers
                 //It is necessary that the email and password credentials are set up correctly to whomever the administrator is
                 //
                 var link = Request.Url.AbsoluteUri.Replace(Request.Url.PathAndQuery, url);
-                var fromEmail = new MailAddress("mmw5709@psu.edu", "Activation Account - Penn State Physics Lab Inventory");
-                var toEmail = new MailAddress(model.User.Email);
-
-                var fromEmailPassword = "Dodgerfan42";
-                string subject = "Activation Account !";
-
-                string body = "<br/> Please click on the following link in order to register!" + "<br/><a href='" + link + "'> Account Registration ! </a>";
-
-                var smtp = new SmtpClient
+                using (var message = new System.Net.Mail.MailMessage("mmw5709@psu.edu", model.User.Email.ToString()))
                 {
-                    Host = "authsmtp.psu.edu",
-                    Port = 587,
-                    EnableSsl = true,
-                    DeliveryMethod = SmtpDeliveryMethod.Network,
-                    UseDefaultCredentials = false,
-                    Credentials = new NetworkCredential(fromEmail.Address, fromEmailPassword)
-                };
+                    message.Subject = "Activation Account !";
+                    message.Body = "<br/> Please click on the following link in order to register!" + "<br/><a href='" + link + "'> Account Registration ! </a>";
+                    message.IsBodyHtml = true;
 
-                using (var message = new MailMessage(fromEmail, toEmail)
-                {
-                    Subject = subject,
-                    Body = body,
-                    IsBodyHtml = true
-
-                })
-
-                    smtp.Send(message);
+                    using (SmtpClient client = new SmtpClient
+                    {
+                        EnableSsl = true,
+                        Host = "authsmtp.psu.edu",
+                        Port = 587,
+                        Credentials = new NetworkCredential("mmw5709@psu.edu", "Dodgerfan42")
+                    })
+                    {
+                        client.Send(message);
+                    }
+                }
+                   
+                
                 TempData["SM"] = "Email sent to " + model.User.Email + "!";
             }
             return RedirectToAction("AddUser", "Account");

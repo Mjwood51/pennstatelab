@@ -78,7 +78,7 @@ namespace PennState.App_Start
             }
 
             //Make sure to run this command in powershell when you start up the server
-            // PS C:\WINDOWS\system32>  Set-ExecutionPolicy RemoteSigned
+            // PS C:\  Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
             //Then Run
             //Import-Module SQLPS
 
@@ -89,7 +89,7 @@ namespace PennState.App_Start
             script.Append("function validpath($path){\n");
             script.Append("$retval = Test-Path $path\n");
             script.Append("return $retval}\n");
-            script.Append("$basepath = 'D:'\n");
+            script.Append("$basepath = 'E:'\n");
             script.Append("$comdate = Get-Date\n");
             script.Append("$BUDate = Get-Date -Format o | foreach {$_ -replace ':', '.'}\n");
             script.Append("$Scriptpath = $basepath+'\\PowerShell'\n");
@@ -169,7 +169,7 @@ namespace PennState.App_Start
             script.Append("Add-Content $logfile $comment\n");
 
             var scrString = script.ToString();
-            RunScript(scrString);
+            //RunScript(scrString);
         }
 
 
@@ -226,7 +226,7 @@ namespace PennState.App_Start
 
             ITrigger trigger = TriggerBuilder.Create()
                 .WithSchedule(CronScheduleBuilder
-                .WeeklyOnDayAndHourAndMinute(DayOfWeek.Tuesday, 12, 36)
+                .WeeklyOnDayAndHourAndMinute(DayOfWeek.Monday, 15, 19)
                 .InTimeZone(TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time")))
                 .Build();
 

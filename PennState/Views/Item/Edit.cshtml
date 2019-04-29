@@ -1,222 +1,223 @@
 ﻿@model PennState.ViewModels.EditItemViewModel
+
 <link href="~/Content/chosen.css" rel="stylesheet" />
 <div id="divEdit">
     @using (Html.BeginForm("Edit", "Item", FormMethod.Post, new { @onsubmit = "return validateEditForm()", @id = "editForm", enctype = "multipart/form-data" }))
     {
         @Html.AntiForgeryToken()
 
-    <div class="form-horizontal" style="margin-left:21%">
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.Item.Id)
+        <div class="form-horizontal" style="margin-left:21%">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.Item.Id)
 
-        <div class="form-group" style="padding-bottom:5%;margin-left:-1%">
-            @Html.LabelFor(model => model.Item.ItemName, htmlAttributes: new { @class = "control-label col-md-2", @style = "right:10px" })
-            <div class="col-md-10 padLeft">
-                @Html.EditorFor(model => model.Item.ItemName, new { htmlAttributes = new { @class = "form-control text-left", @autocomplete = "off" } })
-                @Html.ValidationMessageFor(model => model.Item.ItemName, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group" style="padding-bottom:5%">
-            @Html.LabelFor(model => model.Item.AmountInStock, htmlAttributes: new { @class = "control-label col-md-2 align-left" })
-            <div class="col-md-10 padLeft">
-                @Html.EditorFor(model => model.Item.AmountInStock, new { htmlAttributes = new { @class = "form-control text-left", @autocomplete = "off" } })
-                @Html.ValidationMessageFor(model => model.Item.AmountInStock, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group" style="padding-bottom:5%">
-            @Html.LabelFor(model => model.Item.Manufacturer, htmlAttributes: new { @class = "control-label col-md-2 align-left" })
-            <div class="col-md-10 padLeft">
-                @Html.EditorFor(model => model.Item.Manufacturer, new { htmlAttributes = new { @class = "form-control text-left", @autocomplete = "off" } })
-                @Html.ValidationMessageFor(model => model.Item.Manufacturer, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group" style="padding-bottom:5%">
-            @Html.LabelFor(model => model.Item.CatalogNumber, htmlAttributes: new { @class = "control-label col-md-2 align-left" })
-            <div class="col-md-10 padLeft">
-                @Html.EditorFor(model => model.Item.CatalogNumber, new { htmlAttributes = new { @class = "form-control text-left", @autocomplete = "off" } })
-                @Html.ValidationMessageFor(model => model.Item.CatalogNumber, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group" style="padding-bottom:5%">
-            @Html.LabelFor(model => model.Item.PurchaseDate, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10 padLeft">
-                @Html.EditorFor(model => model.Item.PurchaseDate, new { htmlAttributes = new { @class = "form-control text-left", @style = "padding-bottom:0%;padding-top:0%", @autocomplete = "off" } })
-                @Html.ValidationMessageFor(model => model.Item.PurchaseDate, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group" style="padding-bottom:5%">
-            @Html.LabelFor(model => model.Item.WebAddress, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10 padLeft">
-                @Html.EditorFor(model => model.Item.WebAddress, new { htmlAttributes = new { @class = "form-control text-left", @autocomplete = "off" } })
-                @Html.ValidationMessageFor(model => model.Item.WebAddress, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group" style="padding-bottom:5%">
-            @Html.LabelFor(model => model.Item.Vendor, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10 padLeft">
-                @Html.EditorFor(model => model.Item.Vendor, new { htmlAttributes = new { @id = "autoVen2", @list = "dataListVen", @onchange = "comboVen2()", @class = "form-control text-left", @autocomplete = "off" } })
-                <datalist id="dataListVen"></datalist>
-                @Html.ValidationMessageFor(model => model.Item.Vendor, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group" style="padding-bottom:5%">
-            @Html.LabelFor(model => model.Item.ContactInfo, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10 padLeft">
-                @Html.EditorFor(model => model.Item.ContactInfo, new { htmlAttributes = new { @class = "form-control text-left", @autocomplete = "off" } })
-                @Html.ValidationMessageFor(model => model.Item.ContactInfo, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-
-
-        <div class="form-group" style="padding-bottom:5%">
-            @Html.LabelFor(model => model.FileUpload, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10" style="left:21%;top:1%">
-                @Html.TextBoxFor(model => model.FileUpload, "", new { @multiple = "multiple", @type = "file", @autocomplete = "off" })
-                @Html.ValidationMessageFor(model => model.FileUpload, "", new { @class = "text-danger" })
-                @Html.DropDownListFor(x => x.Files.FileList,
-                 Model.Files.GetFileList.Select(x => new SelectListItem { Text = x.ItemFileName, Value = x.Id.ToString()}),
-                 new { @class = "form-control chosen-select", @style = "width:200px", @multiple = true})
-                <div class="form-group">
-                    <div class="col-md-10" style="right:0%;top:5%">
-                        @{ if (Model.Item.Files != null)
-                            {
-                                foreach (var file in Model.Item.Files)
-                                {
-                                    <a href="#" id="f_@file.Id" onclick="confirmFileDel('@file.Id,@Model.Item.Id')"><i class="glyphicon glyphicon-trash"></i></a>
-                                    @Html.ActionLink(file.ItemFileName, "DownloadFile", new { id = file.Id }, new { @id = "file_" + file.Id })
-                                    <br />
-                                }
-                            }
-                        }
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-
-        <div class="form-group" style="padding-bottom:5%">
-            @Html.LabelFor(model => model.PhotoUpload, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10" style="left:21%;top:1%">
-                @Html.TextBoxFor(model => model.PhotoUpload, "", new { @multiple = "multiple", @type = "file", @autocomplete = "off" })
-                @Html.ValidationMessageFor(model => model.PhotoUpload, "", new { @class = "text-danger" })
-                @Html.DropDownListFor(x => x.Photos.PhotoList,
-                Model.Photos.GetPhotoList.Select(x => new SelectListItem { Text = x.PhotoName, Value = x.Id.ToString()}),
-                new { @class = "form-control chosen-select", @style = "width:200px", @multiple = true})
-                <div class="form-group">
-                    <div class="col-md-10" style="float:left;right:0%;top:5%">
-                        @{if (Model.Item.Photos != null)
-                            {
-                                foreach (var photo in Model.Item.Photos)
-                                {
-                                    <div class="imgHolder">
-                                        <span>@photo.PhotoName|<a href="#" id="p_@photo.Id" onclick="confirmPhotoDel('@photo.Id,@photo.PhotoName,@Model.Item.Id,@Model.Item.SubId')"><i class="glyphicon glyphicon-trash"></i></a></span>
-                                        <img id="photo_@photo.Id" src="~/Images/Uploads/SubLocations/@Model.Item.SubId/Thumbs/@photo.PhotoName" style="padding-top:15%;height:20%;width:70%" />
-                                    </div>
-                                    <br />
-                                }
-                            }
-                        }
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <div class="form-group" style="padding-bottom:5%;margin-left:-1.5%">
-            @Html.LabelFor(model => model.Item.Added, htmlAttributes: new { @class = "control-label col-md-2", @style = "right:7px" })
-            <div class="col-md-10 padLeft">
-                @Html.EditorFor(model => model.Item.Added, new { htmlAttributes = new { @class = "form-control text-left", @readonly = "readonly" } })
-                <div class="col-md-10">
-                    <p class="thick">By @Model.Item.User.FirstName @Model.Item.User.LastName</p>
-                </div>
-                @Html.ValidationMessageFor(model => model.Item.Added, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        @if (Model.Item.UpdatedBy != null)
-        {
-            <div class="form-group" style="padding-bottom:5%;padding-top:5%">
-                @Html.LabelFor(model => model.Item.Updated, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="form-group" style="padding-bottom:5%;margin-left:-1%">
+                @Html.LabelFor(model => model.Item.ItemName, htmlAttributes: new { @class = "control-label col-md-2", @style = "right:10px" })
                 <div class="col-md-10 padLeft">
-                    @Html.EditorFor(model => model.Item.Updated, new { htmlAttributes = new { @class = "form-control text-left", @readonly = "readonly" } })
+                    @Html.EditorFor(model => model.Item.ItemName, new { htmlAttributes = new { @class = "form-control text-left", @autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.Item.ItemName, "", new { @class = "text-danger" })
+                </div>
+            </div>
 
-                    <div class="col-md-10">
-                        <p class="thick">By @Model.Item.UpdatedBy </p>
+            <div class="form-group" style="padding-bottom:5%">
+                @Html.LabelFor(model => model.Item.AmountInStock, htmlAttributes: new { @class = "control-label col-md-2 align-left" })
+                <div class="col-md-10 padLeft">
+                    @Html.EditorFor(model => model.Item.AmountInStock, new { htmlAttributes = new { @class = "form-control text-left", @autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.Item.AmountInStock, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group" style="padding-bottom:5%">
+                @Html.LabelFor(model => model.Item.Manufacturer, htmlAttributes: new { @class = "control-label col-md-2 align-left" })
+                <div class="col-md-10 padLeft">
+                    @Html.EditorFor(model => model.Item.Manufacturer, new { htmlAttributes = new { @class = "form-control text-left", @autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.Item.Manufacturer, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group" style="padding-bottom:5%">
+                @Html.LabelFor(model => model.Item.CatalogNumber, htmlAttributes: new { @class = "control-label col-md-2 align-left" })
+                <div class="col-md-10 padLeft">
+                    @Html.EditorFor(model => model.Item.CatalogNumber, new { htmlAttributes = new { @class = "form-control text-left", @autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.Item.CatalogNumber, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group" style="padding-bottom:5%">
+                @Html.LabelFor(model => model.Item.PurchaseDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10 padLeft">
+                    @Html.EditorFor(model => model.Item.PurchaseDate, new { htmlAttributes = new { @class = "form-control text-left", @style = "padding-bottom:0%;padding-top:0%", @autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.Item.PurchaseDate, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group" style="padding-bottom:5%">
+                @Html.LabelFor(model => model.Item.WebAddress, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10 padLeft">
+                    @Html.EditorFor(model => model.Item.WebAddress, new { htmlAttributes = new { @class = "form-control text-left", @autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.Item.WebAddress, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group" style="padding-bottom:5%">
+                @Html.LabelFor(model => model.Item.Vendor, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10 padLeft">
+                    @Html.EditorFor(model => model.Item.Vendor, new { htmlAttributes = new { @id = "autoVen2", @list = "dataListVen", @onchange = "comboVen2()", @class = "form-control text-left", @autocomplete = "off" } })
+                    <datalist id="dataListVen"></datalist>
+                    @Html.ValidationMessageFor(model => model.Item.Vendor, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group" style="padding-bottom:5%">
+                @Html.LabelFor(model => model.Item.ContactInfo, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10 padLeft">
+                    @Html.EditorFor(model => model.Item.ContactInfo, new { htmlAttributes = new { @class = "form-control text-left", @autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.Item.ContactInfo, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+
+            <div class="form-group" style="padding-bottom:5%">
+                @Html.LabelFor(model => model.FileUpload, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10" style="left:21%;top:1%">
+                    @Html.TextBoxFor(model => model.FileUpload, "", new { @multiple = "multiple", @type = "file", @autocomplete = "off" })
+                    @Html.ValidationMessageFor(model => model.FileUpload, "", new { @class = "text-danger" })
+                    @Html.DropDownListFor(x => x.Files.FileList,
+                     Model.Files.GetFileList.Select(x => new SelectListItem { Text = x.ItemFileName, Value = x.Id.ToString()}),
+                     new { @class = "form-control chosen-select", @style = "width:200px", @multiple = true})
+                    <div class="form-group">
+                        <div class="col-md-10" style="right:0%;top:5%">
+                            @{ if (Model.Item.Files != null)
+                                {
+                                    foreach (var file in Model.Item.Files)
+                                    {
+                                        <a href="#" id="f_@file.Id" onclick="confirmFileDel('@file.Id,@Model.Item.Id')"><i class="glyphicon glyphicon-trash"></i></a>
+                                        @Html.ActionLink(file.ItemFileName, "DownloadFile", new { id = file.Id }, new { @id = "file_" + file.Id })
+                                        <br />
+                                    }
+                                }
+                            }
+                        </div>
                     </div>
-                    @Html.ValidationMessageFor(model => model.Item.Updated, "", new { @class = "text-danger" })
-                </div>
 
-            </div>
-        }
-
-        <div class="form-group" style="padding-bottom:5%;padding-top:5%">
-            @Html.LabelFor(model => model.Item.PurchasePrice, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10 padLeft">
-                @Html.EditorFor(model => model.Item.PurchasePrice, new { htmlAttributes = new { @class = "form-control text-left", @autocomplete = "off" } })
-                @Html.ValidationMessageFor(model => model.Item.PurchasePrice, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group" style="padding-bottom:5%">
-            @Html.LabelFor(model => model.Item.ItemType, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10 padLeft">
-                @Html.EditorFor(model => model.Item.ItemType, new { htmlAttributes = new { @class = "form-control text-left", @id = "autoType2", @list = "dataListType", @onchange = "comboType2()", @autocomplete = "off" } })
-                <datalist id="dataListType"></datalist>
-                @Html.ValidationMessageFor(model => model.Item.ItemType, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group" style="padding-bottom:5%">
-            @Html.LabelFor(model => model.Item.Location.LocationName, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10 padLeft">
-                @Html.EditorFor(model => model.Item.Location.LocationName, new { htmlAttributes = new { @class = "form-control text-left", @id = "autoLoc2", @list = "dataListLoc", @onchange = "comboLoc2()", @autocomplete = "off" } })
-                <datalist id="dataListLoc"></datalist>
-                @Html.ValidationMessageFor(model => model.Item.Location.LocationName, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group" style="padding-bottom:5%">
-            @Html.LabelFor(model => model.Item.SubLocation.SubLocationName, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10 padLeft">
-                @Html.EditorFor(model => model.Item.SubLocation.SubLocationName, new { htmlAttributes = new { @class = "form-control text-left", @id = "autoSub2", @list = "dataListSub", @onchange = "comboSub2()", @autocomplete = "off" } })
-                <datalist id="dataListSub"></datalist>
-                @Html.ValidationMessageFor(model => model.Item.SubLocation.SubLocationName, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group" style="padding-bottom:5%">
-            @Html.LabelFor(model => model.Item.LocationComments, htmlAttributes: new { @class = "control-label col-md-2 align-left" })
-            <div class="col-md-10 padLeft">
-                @Html.EditorFor(model => model.Item.LocationComments, new { htmlAttributes = new { @class = "form-control text-left", @autocomplete = "off" } })
-                @Html.ValidationMessageFor(model => model.Item.LocationComments, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group" style="padding-bottom:5%">
-            @Html.LabelFor(model => model.Item.ItemNotes, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10 padLeft">
-                @Html.EditorFor(model => model.Item.ItemNotes, new { htmlAttributes = new { @class = "form-control text-left", @autocomplete = "off" } })
-                @Html.ValidationMessageFor(model => model.Item.ItemNotes, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10" style="position:relative;left:0%">
-                <input type="submit" id="editSubmit" style="width:32%;margin-bottom:5%" value="Update" class="btn btn-primary" />
-                <div style="position:absolute;left:40%;top:0%">
-                    <input type="button" onclick="closeEdit()" style="width:120%;margin-bottom:5%" value="Cancel" class="btn btn-danger" />
                 </div>
             </div>
+
+
+            <div class="form-group" style="padding-bottom:5%">
+                @Html.LabelFor(model => model.PhotoUpload, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10" style="left:21%;top:1%">
+                    @Html.TextBoxFor(model => model.PhotoUpload, "", new { @multiple = "multiple", @type = "file", @autocomplete = "off" })
+                    @Html.ValidationMessageFor(model => model.PhotoUpload, "", new { @class = "text-danger" })
+                    @Html.DropDownListFor(x => x.Photos.PhotoList,
+                    Model.Photos.GetPhotoList.Select(x => new SelectListItem { Text = x.PhotoName, Value = x.Id.ToString()}),
+                    new { @class = "form-control chosen-select", @style = "width:200px", @multiple = true})
+                    <div class="form-group">
+                        <div class="col-md-10" style="float:left;right:0%;top:5%">
+                            @{if (Model.Item.Photos != null)
+                                {
+                                    foreach (var photo in Model.Item.Photos)
+                                    {
+                                        <div class="imgHolder">
+                                            <span>@photo.PhotoName|<a href="#" id="p_@photo.Id" onclick="confirmPhotoDel('@photo.Id,@photo.PhotoName,@Model.Item.Id,@Model.Item.SubId')"><i class="glyphicon glyphicon-trash"></i></a></span>
+                                            <img id="photo_@photo.Id" src="~/Images/Uploads/SubLocations/@Model.Item.SubId/Thumbs/@photo.PhotoName" style="padding-top:15%;height:20%;width:70%" />
+                                        </div>
+                                        <br />
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="form-group" style="padding-bottom:5%;margin-left:-1.5%">
+                @Html.LabelFor(model => model.Item.Added, htmlAttributes: new { @class = "control-label col-md-2", @style = "right:7px" })
+                <div class="col-md-10 padLeft">
+                    @Html.EditorFor(model => model.Item.Added, new { htmlAttributes = new { @class = "form-control text-left", @readonly = "readonly" } })
+                    <div class="col-md-10">
+                        <p class="thick">By @Model.Item.User.FirstName @Model.Item.User.LastName</p>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Item.Added, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            @if (Model.Item.UpdatedBy != null)
+            {
+                <div class="form-group" style="padding-bottom:5%;padding-top:5%">
+                    @Html.LabelFor(model => model.Item.Updated, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10 padLeft">
+                        @Html.EditorFor(model => model.Item.Updated, new { htmlAttributes = new { @class = "form-control text-left", @readonly = "readonly" } })
+
+                        <div class="col-md-10">
+                            <p class="thick">By @Model.Item.UpdatedBy </p>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.Item.Updated, "", new { @class = "text-danger" })
+                    </div>
+
+                </div>
+            }
+
+            <div class="form-group" style="padding-bottom:5%;padding-top:5%">
+                @Html.LabelFor(model => model.Item.PurchasePrice, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10 padLeft">
+                    @Html.EditorFor(model => model.Item.PurchasePrice, new { htmlAttributes = new { @class = "form-control text-left", @autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.Item.PurchasePrice, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group" style="padding-bottom:5%">
+                @Html.LabelFor(model => model.Item.ItemType, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10 padLeft">
+                    @Html.EditorFor(model => model.Item.ItemType, new { htmlAttributes = new { @class = "form-control text-left", @id = "autoType2", @list = "dataListType", @onchange = "comboType2()", @autocomplete = "off" } })
+                    <datalist id="dataListType"></datalist>
+                    @Html.ValidationMessageFor(model => model.Item.ItemType, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group" style="padding-bottom:5%">
+                @Html.LabelFor(model => model.Item.Location.LocationName, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10 padLeft">
+                    @Html.EditorFor(model => model.Item.Location.LocationName, new { htmlAttributes = new { @class = "form-control text-left", @id = "autoLoc2", @list = "dataListLoc", @onchange = "comboLoc2()", @autocomplete = "off" } })
+                    <datalist id="dataListLoc"></datalist>
+                    @Html.ValidationMessageFor(model => model.Item.Location.LocationName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group" style="padding-bottom:5%">
+                @Html.LabelFor(model => model.Item.SubLocation.SubLocationName, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10 padLeft">
+                    @Html.EditorFor(model => model.Item.SubLocation.SubLocationName, new { htmlAttributes = new { @class = "form-control text-left", @id = "autoSub2", @list = "dataListSub", @onchange = "comboSub2()", @autocomplete = "off" } })
+                    <datalist id="dataListSub"></datalist>
+                    @Html.ValidationMessageFor(model => model.Item.SubLocation.SubLocationName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group" style="padding-bottom:5%">
+                @Html.LabelFor(model => model.Item.LocationComments, htmlAttributes: new { @class = "control-label col-md-2 align-left" })
+                <div class="col-md-10 padLeft">
+                    @Html.EditorFor(model => model.Item.LocationComments, new { htmlAttributes = new { @class = "form-control text-left", @autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.Item.LocationComments, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group" style="padding-bottom:5%">
+                @Html.LabelFor(model => model.Item.ItemNotes, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10 padLeft">
+                    @Html.EditorFor(model => model.Item.ItemNotes, new { htmlAttributes = new { @class = "form-control text-left", @autocomplete = "off" } })
+                    @Html.ValidationMessageFor(model => model.Item.ItemNotes, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10" style="position:relative;left:0%">
+                    <input type="submit" id="editSubmit" style="width:32%;margin-bottom:5%" value="Update" class="btn btn-primary" />
+                    <div style="position:absolute;left:40%;top:0%">
+                        <input type="button" onclick="closeEdit()" style="width:120%;margin-bottom:5%" value="Cancel" class="btn btn-danger" />
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
     }
 </div>
 <script src="~/Scripts/jquery.validate.js"></script>

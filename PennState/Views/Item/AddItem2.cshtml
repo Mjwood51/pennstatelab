@@ -2,6 +2,7 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <link href="~/Content/chosen.css" rel="stylesheet" />
 <div id="divCreate2">
     @using (Html.BeginForm("AddItem", "Item", FormMethod.Post, new { @id = "createForm2", enctype = "multipart/form-data", @onsubmit = "return validateAddForm()" }))
@@ -101,7 +102,7 @@
         <hr />
         <hr />
         <input type="submit" style="width:22%;margin-top:1%;margin-left:22%" class="btn btn-primary" name="name" value="Submit" />
-        <input type="button" value="Cancel" style="width:22%;margin-top:1%" onclick="closeAdd()" class="btn btn-danger" />
+        <a href="/Home/Index" type="button" value="Cancel" style="width:22%;margin-top:1%" class="btn btn-danger">Cancel</a>
     }
     @Html.ActionLink("Back To Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })
     <br />

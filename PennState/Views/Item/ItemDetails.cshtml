@@ -1,4 +1,5 @@
 ﻿@model PennState.ViewModels.ItemDetailsModel
+
 <div style="position:relative">
     <dl class="dl-horizontal">
         <dt>
@@ -47,143 +48,149 @@
                 @Html.DisplayFor(model => model.Item.WebAddress)
             </dd>
         }
-        <dt>
-            @Html.DisplayNameFor(model => model.Item.Vendor)
-        </dt>
+        @if (Model.Item.Vendor != null && Model.Item.Vendor != "")
+        {
+            <dt>
+                @Html.DisplayNameFor(model => model.Item.Vendor)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Item.Vendor)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.Item.Vendor)
+            </dd>
+        }
         <dt>
             @Html.DisplayNameFor(model => model.Item.Location.LocationName)
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Item.Location.LocationName)
         </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Item.SubLocation.SubLocationName)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Item.SubLocation.SubLocationName)
-        </dd>
-        @if (Model.Item.LocationComments != null && Model.Item.LocationComments != "")
+        @if (Model.Item.SubLocation.SubLocationName != null && Model.Item.SubLocation.SubLocationName != "")
         {
             <dt>
-                @Html.DisplayNameFor(model => model.Item.LocationComments)
+                @Html.DisplayNameFor(model => model.Item.SubLocation.SubLocationName)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Item.SubLocation.SubLocationName)
+            </dd>
+        }
+            @if (Model.Item.LocationComments != null && Model.Item.LocationComments != "")
+            {
+                <dt>
+                    @Html.DisplayNameFor(model => model.Item.LocationComments)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Item.LocationComments)
+                </dd>
+            }
+            @if (Model.Item.ContactInfo != null && Model.Item.ContactInfo != "")
+            {
+                <dt>
+                    @Html.DisplayNameFor(model => model.Item.ContactInfo)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Item.ContactInfo)
+                </dd>
+            }
+            @if (Model.Item.PurchaseDate != null)
+            {
+                <dt>
+                    @Html.DisplayNameFor(model => model.Item.PurchaseDate)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Item.PurchaseDate)
+                </dd>
+            }
+            @if (Model.Item.PurchasePrice > 0)
+            {
+                <dt>
+                    @Html.DisplayNameFor(model => model.Item.PurchasePrice)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Item.PurchasePrice)
+                </dd>
+            }
+            @if (Model.Item.Added != null)
+            {
+                <dt>
+                    @Html.DisplayNameFor(model => model.Item.Added)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Item.Added)
+                </dd>
+            }
+            @if (Model.Item.Updated != null)
+            {
+                <dt>
+                    @Html.DisplayNameFor(model => model.Item.Updated)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Item.Updated)
+                </dd>
+            }
+            <dt>
+                @Html.DisplayNameFor(model => model.Item.ItemType)
             </dt>
 
             <dd>
-                @Html.DisplayFor(model => model.Item.LocationComments)
+                @Html.DisplayFor(model => model.Item.ItemType)
             </dd>
-        }
-        @if (Model.Item.ContactInfo != null && Model.Item.ContactInfo != "")
-        {
-            <dt>
-                @Html.DisplayNameFor(model => model.Item.ContactInfo)
-            </dt>
+            @if (Model.Item.ItemNotes != null && Model.Item.ItemNotes != "")
+            {
+                <dt>
+                    @Html.DisplayNameFor(model => model.Item.ItemNotes)
+                </dt>
 
-            <dd>
-                @Html.DisplayFor(model => model.Item.ContactInfo)
-            </dd>
-        }
-        @if (Model.Item.PurchaseDate != null)
-        {
-            <dt>
-                @Html.DisplayNameFor(model => model.Item.PurchaseDate)
-            </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Item.ItemNotes)
+                </dd>
+            }
+            @if (Model.Item.UpdatedBy != null && Model.Item.UpdatedBy != "")
+            {
+                <dt>
+                    @Html.DisplayNameFor(model => model.Item.UpdatedBy)
+                </dt>
 
-            <dd>
-                @Html.DisplayFor(model => model.Item.PurchaseDate)
-            </dd>
-        }
-        @if (Model.Item.PurchasePrice > 0)
-        {
-            <dt>
-                @Html.DisplayNameFor(model => model.Item.PurchasePrice)
-            </dt>
-
-            <dd>
-                @Html.DisplayFor(model => model.Item.PurchasePrice)
-            </dd>
-        }
-        @if (Model.Item.Added != null)
-        {
-            <dt>
-                @Html.DisplayNameFor(model => model.Item.Added)
-            </dt>
-
-            <dd>
-                @Html.DisplayFor(model => model.Item.Added)
-            </dd>
-        }
-        @if (Model.Item.Updated != null)
-        {
-            <dt>
-                @Html.DisplayNameFor(model => model.Item.Updated)
-            </dt>
-
-            <dd>
-                @Html.DisplayFor(model => model.Item.Updated)
-            </dd>
-        }
-        <dt>
-            @Html.DisplayNameFor(model => model.Item.ItemType)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Item.ItemType)
-        </dd>
-        @if (Model.Item.ItemNotes != null && Model.Item.ItemNotes != "")
-        {
-            <dt>
-                @Html.DisplayNameFor(model => model.Item.ItemNotes)
-            </dt>
-
-            <dd>
-                @Html.DisplayFor(model => model.Item.ItemNotes)
-            </dd>
-        }
-        @if (Model.Item.UpdatedBy != null && Model.Item.UpdatedBy != "")
-        {
-            <dt>
-                @Html.DisplayNameFor(model => model.Item.UpdatedBy)
-            </dt>
-
-            <dd>
-                @Html.DisplayFor(model => model.Item.UpdatedBy)
-            </dd>
-        }
-        @if (Model.User != null)
-        {
-            <dt>
-                Checked Out By
-            </dt>
-            <dd>
-                @Html.DisplayFor(model => model.User.FirstName) @Html.DisplayFor(model => model.User.LastName)
-            </dd>
-        }
-    </dl>
+                <dd>
+                    @Html.DisplayFor(model => model.Item.UpdatedBy)
+                </dd>
+            }
+            @if (Model.User != null)
+            {
+                <dt>
+                    Checked Out By
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.User.FirstName) @Html.DisplayFor(model => model.User.LastName)
+                </dd>
+            }
+        </dl>
     @{
         if (Model.Item.Photos.Count > 0)
         {
             <div style="position:absolute;left:40%;top:0%">
 
-                    @foreach(var image in Model.Item.Photos)
-                    {
+                @foreach (var image in Model.Item.Photos)
+                {
                     <img class="mySlides" src="~/Images/Uploads/SubLocations/@Model.Item.SubId/Gallery/@image.PhotoName" title="@image.PhotoName" />
-                    }
-                    <button class="w3-button w3-black w3-display-left" onclick="plusDivs(-1)">&#10094;</button>
-                    <button class="w3-button w3-black w3-display-right" onclick="plusDivs(1)">&#10095;</button>
+                }
+                <button class="w3-button w3-black w3-display-left" onclick="plusDivs(-1)">&#10094;</button>
+                <button class="w3-button w3-black w3-display-right" onclick="plusDivs(1)">&#10095;</button>
             </div>
         }
         else
         {
             <div style="position:absolute;left:60%;bottom:20%">
-            <h3>There are no gallery images.</h3>
+                <h3>There are no gallery images.</h3>
             </div>
         }
-     }
-        </div>
+    }
+</div>
 
 <p>
     @Html.ActionLink("Back to List", "GetAllItems")

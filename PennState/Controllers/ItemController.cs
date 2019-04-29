@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using PagedList;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -913,17 +912,69 @@ namespace PennState.Controllers
         [HttpPost]
         public JsonResult DeleteItem(int id)
         {
-            bool result = false;
+                                        
+                    string cstr = ConfigurationManager.ConnectionStrings["PennStateDB"].ToString();
+                    if (cstr.ToLower().StartsWith("metadata="))
+                    {
+                        System.Data.Entity.Core.EntityClient.EntityConnectionStringBuilder efBuilder = new System.Data.Entity.Core.EntityClient.EntityConnectionStringBuilder(cstr);
+                        cstr = efBuilder.ProviderConnectionString;
+                    }
+                    using (SqlConnection conn = new SqlConnection(cstr))
+                    {
+                        if (conn.State == ConnectionState.Closed)
+                        {
+                            conn.Open();
+
+                            using (SqlCommand cmd = new SqlCommand("SELECT * FROM [dbo].[Tbl_ItemFiles] WHERE Items_Id = " + id + ';', conn))
+                            {
+                                SqlDataReader reader = cmd.ExecuteReader();
+                                if (reader.Read())
+                                {
+                                    using (SqlCommand cmd2 = new SqlCommand("DELETE FROM [dbo].[Tbl_ItemFiles] WHERE Items_Id = " + id + ';', conn))
+                                    {
+                                        cmd2.ExecuteNonQuery();
+                                    }
+                                }
+                                reader.Close();
+                            }
+
+                            using (SqlCommand cmd = new SqlCommand("SELECT * FROM [dbo].[Tbl_PhotoItems] WHERE Items_Id = " + id + ';', conn))
+                            {
+                                SqlDataReader reader = cmd.ExecuteReader();
+                                if (reader.Read())
+                                {
+                                    using (SqlCommand cmd2 = new SqlCommand("DELETE FROM [dbo].[Tbl_PhotoItems] WHERE Items_Id = " + id + ';', conn))
+                                    {
+                                        cmd2.ExecuteNonQuery();
+                                    }
+                                }
+                                reader.Close();
+                            }
+
+                            using (SqlCommand cmd = new SqlCommand("SELECT * FROM [dbo].[Tbl_Requests] WHERE ItemId = " + id + ';', conn))
+                            {
+                                SqlDataReader reader = cmd.ExecuteReader();
+                                if (reader.Read())
+                                {
+                                    using (SqlCommand cmd2 = new SqlCommand("DELETE FROM [dbo].[Tbl_Requests] WHERE ItemId = " + id + ';', conn))
+                                    {
+                                        cmd2.ExecuteNonQuery();
+                                    }
+                                }
+                                reader.Close();
+                            }
+                    conn.Close();
+                        }
+                    }
+            var result = false;
             using (PennStateDB db = new PennStateDB())
             {
-                Tbl_Items item = db.Tbl_Items.SingleOrDefault(x => x.Id == id && x.IsDeleted == false);
-                if (item != null)
-                {
-                    item.IsDeleted = true;
-                    _context.SaveChanges();
-                    result = true;
-                }
-            }
+                Tbl_Items item = _context.Tbl_Items.Find(id);
+                _context.Tbl_Items.Remove(item);
+                _context.SaveChanges();
+                result = true;
+            }   
+            
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
