@@ -6,6 +6,7 @@ using System.Web.Mvc;
 
 namespace PennState.Controllers
 {
+    //some stuff
     public class ErrorController : Controller
     {
         // GET: Error
